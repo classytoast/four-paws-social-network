@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 
 class AnimalCategory(models.Model):
@@ -14,13 +14,8 @@ class AnimalCategory(models.Model):
         verbose_name_plural = 'Виды'
 
 
-class Owner(AbstractUser):
+class Owner(User):
     """Пользователь сайта"""
-    # first_name = models.CharField(max_length=55, verbose_name='имя пользователя')
-    # last_name = models.CharField(max_length=55, verbose_name='Фамилия пользователя')
-    # nickname = models.CharField(max_length=150, unique=True, verbose_name='никнейм')
-    # email = models.EmailField(max_length=255, verbose_name='email пользователя')
-    # password = models.CharField(max_length=105, verbose_name='пароль')
     date_of_birth = models.DateTimeField(blank=True, verbose_name='дата рождения пользователя')
     avatar = models.ImageField(upload_to="owners_photos/%Y/%m/%d/", blank=True, verbose_name='фото пользователя')
     date_of_registration = models.DateTimeField(auto_now_add=True, verbose_name='дата регистрации пользователя')

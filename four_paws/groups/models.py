@@ -1,6 +1,6 @@
 from django.db import models
 
-from four_paws.pet_owners.models import Owner, Animal
+from pet_owners.models import Owner, Animal
 
 
 class Group(models.Model):
@@ -21,7 +21,7 @@ class Group(models.Model):
 class GroupMember(models.Model):
     """Участник группы"""
     member = models.ForeignKey(Owner, on_delete=models.CASCADE,
-                               related_name='subscriptions', verbose_name='участник')
+                               related_name='group_subscriptions', verbose_name='участник')
     group = models.ForeignKey(Group, on_delete=models.CASCADE,
                               related_name='members', verbose_name='на что подписан')
     join_date = models.DateTimeField(auto_now_add=True, verbose_name='дата подписки')
