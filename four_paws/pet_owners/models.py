@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 
 class AnimalCategory(models.Model):
@@ -14,24 +15,29 @@ class AnimalCategory(models.Model):
         verbose_name_plural = 'Виды'
 
 
-class Owner(User):
+class Owner(AbstractUser):
     """Пользователь сайта"""
-    date_of_birth = models.DateTimeField(blank=True, verbose_name='дата рождения пользователя')
-    avatar = models.ImageField(upload_to="owners_photos/%Y/%m/%d/", blank=True, verbose_name='фото пользователя')
-    date_of_registration = models.DateTimeField(auto_now_add=True, verbose_name='дата регистрации пользователя')
-    about_myself = models.TextField(max_length=520, blank=True, verbose_name='о себе')
-    instagram = models.URLField(blank=True, verbose_name='инстаграм')
-    vkontakte = models.URLField(blank=True, verbose_name='вконтакте')
-    youtube = models.URLField(blank=True, verbose_name='ютуб')
+    date_of_birth = models.DateTimeField(blank=True, verbose_name='дата рождения пользователя', null=True)
+    avatar = models.ImageField(upload_to="owners_photos/%Y/%m/%d/", blank=True,
+                               verbose_name='фото пользователя', null=True)
+    about_myself = models.TextField(max_length=520, blank=True, verbose_name='о себе', null=True)
+    instagram = models.URLField(blank=True, verbose_name='инстаграм', null=True)
+    vkontakte = models.URLField(blank=True, verbose_name='вконтакте', null=True)
+    youtube = models.URLField(blank=True, verbose_name='ютуб', null=True)
 
 
 class Animal(models.Model):
     """Питомцец"""
+    GENDER = (
+        ("male", "male"),
+        ("female", "female")
+    )
     name_of_animal = models.CharField(max_length=55, verbose_name='имя питомца')
-    pet_owner = models.ForeignKey(Owner, on_delete=models.CASCADE, verbose_name='владелец')
+    pet_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец')
     category_of_animal = models.ForeignKey(AnimalCategory, on_delete=models.PROTECT, verbose_name='вид')
     animal_breed = models.CharField(max_length=100, blank=True, verbose_name='порода питомца')
     date_of_animal_birth = models.DateTimeField(verbose_name='дата рождения питомца')
+    sex = models.CharField(max_length=6, choices=GENDER, verbose_name='пол', null=True)
     animal_photo = models.ImageField(upload_to="animals_photos/%Y/%m/%d/", verbose_name='фото питомца')
     about_pet = models.TextField(max_length=520, verbose_name='о питомце')
 
@@ -45,7 +51,7 @@ class Animal(models.Model):
 
 class AnimalFollower(models.Model):
     """Подписчик животного"""
-    follower = models.ForeignKey(Owner, on_delete=models.CASCADE,
+    follower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                  related_name='subscriptions', verbose_name='подписчик')
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE,
                                related_name='followers', verbose_name='на кого подписан')
@@ -54,7 +60,7 @@ class AnimalFollower(models.Model):
 
 class OwnerPost(models.Model):
     """пост в блоге пользователя"""
-    autor = models.ForeignKey(Owner, on_delete=models.CASCADE, verbose_name='автор поста')
+    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='автор поста')
     title = models.CharField(max_length=105, blank=True, verbose_name='заголовок')
     text_of_post = models.TextField(max_length=2000, verbose_name='текст поста')
     is_published = models.BooleanField(default=True)
@@ -74,7 +80,7 @@ class PostImage(models.Model):
     """изображение к посту"""
     img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
     post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')
-    owner = models.ForeignKey(Owner, on_delete=models.CASCADE, verbose_name='владелец фото')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец фото')
     animals_on_img = models.ManyToManyField(Animal, blank=True, verbose_name='питомцы на фото')
 
 

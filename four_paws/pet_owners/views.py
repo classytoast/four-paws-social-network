@@ -3,4 +3,4 @@ from django.views.generic import ListView
 
 
 def index(request):
-    return render(request, 'four_paws/main_page.html')
+    return render(request, 'pet_owners/main_page.html')

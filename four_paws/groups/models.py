@@ -1,6 +1,7 @@
 from django.db import models
+from django.conf import settings
 
-from pet_owners.models import Owner, Animal
+from pet_owners.models import Animal
 
 
 class Group(models.Model):
@@ -20,7 +21,7 @@ class Group(models.Model):
 
 class GroupMember(models.Model):
     """Участник группы"""
-    member = models.ForeignKey(Owner, on_delete=models.CASCADE,
+    member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                related_name='group_subscriptions', verbose_name='участник')
     group = models.ForeignKey(Group, on_delete=models.CASCADE,
                               related_name='members', verbose_name='на что подписан')
