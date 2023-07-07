@@ -1,10 +1,49 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{Title}}</title>
+    <title>{{title}}</title>
+    <link type="text/css" href="{% static 'pet_owners/css/styles.css' %}" rel="stylesheet" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="shortcut icon" href="{% static 'pet_owners/images/main.ico' %}" type="image/x-icon"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+<table class="table-page" border=0 cellpadding="0" cellspacing="0">
+<tr>
+    <td valign="top" class="left-chapters">
+        <ul id="leftchapters">
+            {% for el_menu in left_menu %}
+               <li><a href="{% url el_menu.url_name %}">{{el_menu.title}}</a></li>
+            {% endfor %}
+        </ul>
+    </td>
+    <td valign="top" class="content">
 
+        <div class="content-text">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </td>
+    <td valign="top" class="right-chapters">
+        <table border=0 cellpadding="0" cellspacing="0">
+            <tr class="settings_button"><td>
+                <a href="#">
+                    <img src="/static/pet_owners/images/settings_img.png" width="60">
+                </a>
+            </td></tr>
+            <tr><td>
+                <ul id="rightchapters">
+                    {% for sub in subscriptions %}
+                       <li><a href="{{ sub.get_absolute_url }}">{{sub.animal}}</a></li>
+                    {% endfor %}
+                </ul>
+            </td></tr>
+        </table>
+    </td>
+</tr>
+</table>
 </body>
 </html>
