@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.urls import reverse
 
 
 class AnimalCategory(models.Model):
@@ -24,6 +25,10 @@ class Owner(AbstractUser):
     instagram = models.URLField(blank=True, verbose_name='инстаграм', null=True)
     vkontakte = models.URLField(blank=True, verbose_name='вконтакте', null=True)
     youtube = models.URLField(blank=True, verbose_name='ютуб', null=True)
+
+    def get_absolute_url(self):
+        """создание ссылки на страницу профиля"""
+        return reverse('profile_home', kwargs={'id': self.pk})
 
 
 class Animal(models.Model):
