@@ -24,7 +24,23 @@ class OwnerAdmin(UserAdmin):
     )
 
 
+class AnimalCategoryAdmin(admin.ModelAdmin):
+    list_display = ['category']
+    fields = ['category']
 
+
+class AnimalAdmin(admin.ModelAdmin):
+    list_display = ['name_of_animal', 'category_of_animal', 'pet_owner', 'sex']
+    fields = ['name_of_animal', 'category_of_animal', 'pet_owner', 'sex',
+              'animal_breed', 'date_of_animal_birth', 'animal_photo', 'about_pet']
+
+
+class AnimalFollowerAdmin(admin.ModelAdmin):
+    list_display = ['animal', 'follower', 'join_date']
+    fields = ['animal', 'follower']
 
 
 admin.site.register(Owner, OwnerAdmin)
+admin.site.register(AnimalCategory, AnimalCategoryAdmin)
+admin.site.register(Animal, AnimalAdmin)
+admin.site.register(AnimalFollower, AnimalFollowerAdmin)
