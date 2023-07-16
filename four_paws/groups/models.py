@@ -9,7 +9,7 @@ class Group(models.Model):
     name_of_group = models.CharField(max_length=150, verbose_name='название группы')
     about_group = models.TextField(max_length=2000, verbose_name='инф о группе')
     img_of_group = models.ImageField(upload_to="img_of_group/%Y/%m/%d/", verbose_name='лого группы')
-    date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата создания')
+    date_create = models.DateField(auto_now_add=True, verbose_name='дата создания')
 
     def __str__(self):
         return self.name_of_group
