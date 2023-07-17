@@ -40,7 +40,14 @@ class AnimalFollowerAdmin(admin.ModelAdmin):
     fields = ['animal', 'follower']
 
 
+class OwnerPostAdmin(admin.ModelAdmin):
+    list_display = ['title', 'autor', 'date_create', 'is_published']
+    fields = ['title', 'text_of_post', 'autor', 'animals',
+              'is_published', 'views', 'likes']
+
+
 admin.site.register(Owner, OwnerAdmin)
 admin.site.register(AnimalCategory, AnimalCategoryAdmin)
 admin.site.register(Animal, AnimalAdmin)
 admin.site.register(AnimalFollower, AnimalFollowerAdmin)
+admin.site.register(OwnerPost, OwnerPostAdmin)

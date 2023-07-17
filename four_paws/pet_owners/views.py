@@ -24,13 +24,14 @@ class ProfileHome(DataMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = Owner.objects.get(pk=self.kwargs['id'])
         if self.request.user.id == self.kwargs['id']:
-            title = "Мой профиль"
+            context['title'] = "Мой профиль"
         else:
-            title = f"Профиль {Owner.objects.get(pk=self.kwargs['id']).username}"
-        c_def = self.get_user_context(title=title)
-        context.update(c_def)
-        subs_and_animals = self.get_subscriptions_and_animals_of_owner(profile_id=self.kwargs['id'])
+            context['title'] = f"Профиль {user.username}"
+        left_menu = self.get_left_menu()
+        context.update(left_menu)
+        subs_and_animals = self.get_subscriptions_and_animals_of_owner(user)
         context.update(subs_and_animals)
         return context
 

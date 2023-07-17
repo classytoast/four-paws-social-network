@@ -55,7 +55,7 @@
                                     <!-- показываем кол-во подписчиков питомца -->
                                     <div class="subs_of_user">
                                         <a href="#">
-                                            <span>Подписчики: </span>{{foll_list.1}}
+                                            <span>Подписчики: </span>{{foll_list.count_folls}}
                                         </a>
                                     </div>
                                 </td>
@@ -67,25 +67,27 @@
                         </td></tr>
                         <!-- проверяем не является ли залогиненный пользователь владельцем питомца
                          и подписан ли он на него-->
-                        {% if request.user.id != profile.pk and foll_list.0 %}
+                        {% if request.user.id != profile.pk and foll_list.is_followed %}
                             <tr><td>
                                 <div class="unfollow_animal">
                                     <a href="{{animal.change_follower}}">Отписаться</a>
                                 </div>
                             </td></tr>
-                        {% else %}
+                        {% elif request.user.id != profile.pk %}
                             <tr><td>
                                 <div class="follow_animal">
                                     <a href="{{animal.change_follower}}">Подписаться</a>
                                 </div>
                             </td></tr>
                         {% endif %}
+                        {% if num_of_animals > 1 %}
                         <tr><td>
                             <!-- добавляем кнопку для выбора питомца, о котором будут посты ниже в ленте -->
                             <div class="select_button">
                                 <a href="#">ВЫБРАТЬ ДЛЯ ЛЕНТЫ</a>
                             </div>
                         </td></tr>
+                        {% endif %}
                     </table>
                 </td>
             {% endfor %}
@@ -108,7 +110,13 @@
         {% endif %}
     </td>
 </tr>
-<tr class="news_feed"></tr>
+<tr class="news_feed">
+    <td>
+        <div>test</div>
+        <div>test2</div>
+        <div>test3</div>
+    </td>
+</tr>
 </table>
 
 {% endblock %}
