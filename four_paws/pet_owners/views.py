@@ -33,6 +33,8 @@ class ProfileHome(DataMixin, ListView):
         context.update(left_menu)
         subs_and_animals = self.get_subscriptions_and_animals_of_owner(user)
         context.update(subs_and_animals)
+        owner_posts = self.get_owner_posts(user)
+        context.update(owner_posts)
         return context
 
 

@@ -86,15 +86,16 @@ class OwnerPost(models.Model):
                                      verbose_name='питомцы в посте')
     is_published = models.BooleanField(default=True)
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата создания поста')
-    views = models.FloatField(verbose_name='просмотры', default=0)
-    likes = models.FloatField(verbose_name='лайки', default=0)
+    views = models.IntegerField(verbose_name='просмотры', default=0)
+    likes = models.IntegerField(verbose_name='лайки', default=0)
 
     def __str__(self):
-        return f'{self.text_of_post}'[15]
+        return f'{self.text_of_post}'[:15]
 
     class Meta:
         verbose_name = 'Пост пользователя'
         verbose_name_plural = 'Посты пользователей'
+        ordering = ['-date_create']
 
 
 class PostImage(models.Model):
@@ -102,7 +103,6 @@ class PostImage(models.Model):
     img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
     post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец фото')
-    animals_on_img = models.ManyToManyField(Animal, blank=True, verbose_name='питомцы на фото')
 
 
 class PostComment(models.Model):

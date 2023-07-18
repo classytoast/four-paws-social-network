@@ -111,11 +111,48 @@
     </td>
 </tr>
 <tr class="news_feed">
-    <td>
-        <div>test</div>
-        <div>test2</div>
-        <div>test3</div>
-    </td>
+    <td><div class="all_posts">
+        {% for post in all_posts %}
+            <div class="post_cell">
+                <div class="post_info">
+                    <div class="title_and_text">
+                        <div class="post_title">
+                            {{post.title}}
+                        </div>
+                        <div class="post_text">
+                            {{post.text_of_post|truncatewords:50}}
+                        </div>
+                        <div class="post_datetime">
+                            {{post.date_create}}
+                        </div>
+                    </div>
+                    <div class="imgs_in_post">
+                        {% get_img_for_post post.title imgs_for_posts as img_post %}
+                        <img src="{{img_post.img.url}}" width=160>
+                    </div>
+                </div>
+                <div class="post_parameters">
+                    <div class="post_likes">
+                        <div class="img_like">
+                        <a href="#">
+                            <img src="/static/pet_owners/images/like.png" width="45">
+                        </a>
+                        </div>
+                        <div class="like_count">{{post.likes}}</div>
+                    </div>
+                    <div class="post_views">
+                        <div class="img_view">
+                            <img src="/static/pet_owners/images/view.png" width="45">
+                        </div>
+                        <div class="view_count">{{post.views}}</div>
+                    </div>
+                    <div class="post_comments">
+                        <a href="#">комментарии...(0)</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div></td>
 </tr>
 </table>
 

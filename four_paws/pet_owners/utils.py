@@ -54,3 +54,15 @@ class DataMixin:
         context['user_animals_followed'] = user_animals_followed
         return context
 
+    def get_owner_posts(self, user):
+        """Выгружает все посты пользователя"""
+        context = {}
+        all_posts = user.ownerpost_set.all()
+        context['all_posts'] = all_posts
+        imgs_for_posts = {}
+        for post in all_posts:
+            imgs_for_posts[f'{post.title}'] = post.images.first()
+        context['imgs_for_posts'] = imgs_for_posts
+        return context
+
+
