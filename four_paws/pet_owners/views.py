@@ -1,8 +1,6 @@
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.views import View
-from django.views.generic import ListView
-from django.urls import reverse
+from django.views.generic import ListView, DetailView
+from django.contrib.auth.decorators import login_required
 
 from .utils import DataMixin
 from .models import *
@@ -38,20 +36,58 @@ class ProfileHome(DataMixin, ListView):
         return context
 
 
+class ShowPost(DataMixin, DetailView):
+    """Страница отдельно взятого поста"""
+    model = OwnerPost
+    template_name = 'pet_owners/post_page.html'
+    context_object_name = 'post'
+    pk_url_kwarg = 'post_id'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.model.objects.get(pk=self.kwargs['post_id'])
+        user = Owner.objects.get(pk=post.autor.pk)
+        context['title'] = post.title
+        left_menu = self.get_left_menu()
+        context.update(left_menu)
+        owner_posts = self.get_owner_posts(user, all_images=True)
+        context.update(owner_posts)
+        self.add_one_view_for_post(post, user)
+        return context
+
+
 def add_or_del_follower_for_animal(request, animal_id):
     """Добавляет или удаляет подписчика питомцу"""
-    user = Owner.objects.get(pk=request.user.id)
-    animal = Animal.objects.get(pk=animal_id)
-    owner_id = animal.pet_owner.pk
-    try:
-        AnimalFollower.objects.get(follower=user,
-                                   animal=animal
-                                   ).delete()
-    except AnimalFollower.DoesNotExist:
-        AnimalFollower.objects.create(follower=user,
-                                      animal=animal
-                                      )
-    return redirect('profile_home', id=owner_id)
+    if request.user.is_authenticated:
+        user = Owner.objects.get(pk=request.user.id)
+        animal = Animal.objects.get(pk=animal_id)
+        owner_id = animal.pet_owner.pk
+        try:
+            AnimalFollower.objects.get(follower=user,
+                                       animal=animal
+                                       ).delete()
+        except AnimalFollower.DoesNotExist:
+            AnimalFollower.objects.create(follower=user,
+                                          animal=animal
+                                          )
+        return redirect('profile_home', id=owner_id)
+    else:
+        return redirect('login')
+
+
+def put_or_remove_like_for_post(request, post_id):
+    """Ставит или убирает лайк посту"""
+    if request.user.is_authenticated:
+        user = Owner.objects.get(pk=request.user.id)
+        post = OwnerPost.objects.get(pk=post_id)
+        if user in post.likes.all():
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+            post.views.add(user)
+        return redirect('profile_home', id=post.autor.pk)
+    else:
+        return redirect('login')
 
 
 def register(request):

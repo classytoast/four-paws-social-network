@@ -225,7 +225,10 @@ html, body {
     margin: 5px 0 5px 0;
     border: 3px solid rgba(120, 161, 161, 0.7);
 }
-
+.post_cell a {
+    color: #000000;
+    text-decoration: none;
+}
 .post_info {
     width: 100%;
     height: 85%;
@@ -310,3 +313,31 @@ html, body {
     text-decoration: none;
 }
 .post_comments a:hover { color: #706900; }
+
+.post_table {
+    width: 100%;
+    text-align: center;
+}
+.post_title_detail td {
+    font-size: 25px;
+    font-weight: bold;
+    height: 70px;
+    border-bottom: 1px solid rgba(126, 117, 255, 0.4);
+}
+.post_text_detail td {
+    font-size: 20px;
+    font-style: italic;
+    height: 70px;
+}
+.post_datetime_detail td, .post_autor_detail td {
+    text-align: left;
+    font-size: 16px;
+    height: 50px;
+    border-bottom: 1px solid rgba(126, 117, 255, 0.4);
+}
+.imgs_in_post_detail {
+    display: inline-block;
+    padding: 30px 0 30px 0;
+    vertical-align: middle;
+}
+.likes_views_post_detail { text-align: left; }

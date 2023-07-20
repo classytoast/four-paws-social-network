@@ -110,11 +110,13 @@
         {% endif %}
     </td>
 </tr>
+<!-- блок ленты с постами -->
 <tr class="news_feed">
     <td><div class="all_posts">
         {% for post in all_posts %}
+            {% get_data_for_post post.title data_for_post as post_data %}
             <div class="post_cell">
-                <div class="post_info">
+                <a href="{% url 'post' post.pk %}"><div class="post_info">
                     <div class="title_and_text">
                         <div class="post_title">
                             {{post.title}}
@@ -127,27 +129,13 @@
                         </div>
                     </div>
                     <div class="imgs_in_post">
-                        {% get_img_for_post post.title imgs_for_posts as img_post %}
-                        <img src="{{img_post.img.url}}" width=160>
+                        <img src="{{post_data.img.img.url}}" width=160>
                     </div>
-                </div>
+                </div></a>
                 <div class="post_parameters">
-                    <div class="post_likes">
-                        <div class="img_like">
-                        <a href="#">
-                            <img src="/static/pet_owners/images/like.png" width="45">
-                        </a>
-                        </div>
-                        <div class="like_count">{{post.likes}}</div>
-                    </div>
-                    <div class="post_views">
-                        <div class="img_view">
-                            <img src="/static/pet_owners/images/view.png" width="45">
-                        </div>
-                        <div class="view_count">{{post.views}}</div>
-                    </div>
+                    {% show_likes_and_views post post_data %}
                     <div class="post_comments">
-                        <a href="#">комментарии...(0)</a>
+                        <a href="{% url 'post' post.pk %}">комментарии...(0)</a>
                     </div>
                 </div>
             </div>

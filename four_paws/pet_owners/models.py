@@ -86,8 +86,8 @@ class OwnerPost(models.Model):
                                      verbose_name='питомцы в посте')
     is_published = models.BooleanField(default=True)
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата создания поста')
-    views = models.IntegerField(verbose_name='просмотры', default=0)
-    likes = models.IntegerField(verbose_name='лайки', default=0)
+    views = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='views', verbose_name='просмотры')
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes', verbose_name='лайки')
 
     def __str__(self):
         return f'{self.text_of_post}'[:15]
