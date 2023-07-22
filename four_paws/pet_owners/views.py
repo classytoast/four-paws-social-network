@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, DetailView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.decorators import login_required
 
+from .forms import RegisterUserForm
 from .utils import DataMixin
 from .models import *
 
@@ -90,8 +92,21 @@ def put_or_remove_like_for_post(request, post_id):
         return redirect('login')
 
 
-def register(request):
-    return render(request, 'pet_owners/register_page.html')
+class RegisterUser(DataMixin, CreateView):
+    form_class = RegisterUserForm
+    template_name = 'pet_owners/register_page.html'
+    success_url = reverse_lazy('login')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Регистрация"
+        left_menu = self.get_left_menu()
+        context.update(left_menu)
+        return context
+
+    def form_valid(self, form):
+        user = form.save()
+        return redirect('home')
 
 
 def login(request):

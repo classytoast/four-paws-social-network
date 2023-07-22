@@ -14,6 +14,6 @@ urlpatterns = [
          name='change_follower_for_animal'),
     path('change-like-for-post/<int:post_id>/', put_or_remove_like_for_post,
          name='like_for_post'),
-    path('register/', register, name='register'),
+    path('register/', RegisterUser.as_view(), name='register'),
     path('login/', login, name='login'),
 ]

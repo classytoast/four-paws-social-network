@@ -11,7 +11,11 @@
         <tr>
             <!-- аватарка владельца страницы -->
             <td class="avatar_zone">
-                <img src="{{profile.avatar.url}}" width=180>
+                {% if profile.avatar %}
+                    <img src="{{profile.avatar.url}}" width=180>
+                {% else %}
+                    <img src="/static/pet_owners/images/no_photo.jpg" width=180>
+                {% endif %}
             </td>
             <!-- информация о владельце страницы, которую он себе прописывал -->
             <td class="about_user_zone">

@@ -341,3 +341,28 @@ html, body {
     vertical-align: middle;
 }
 .likes_views_post_detail { text-align: left; }
+
+.register_page {
+    width: 100%;
+    text-align: center;
+}
+
+.form-input {
+    width: 300px;
+    font-size: 16px;
+}
+.form-label {
+    display: inline-block;
+    text-align: left;
+    min-width: 220px;
+    vertical-align: top;
+}
+.form-error ul {
+    list-style: none;
+    padding: 0;
+    color: #CC0000;
+}
+.form_button {
+    min-width: 200px;
+    font-size: 16px;
+}

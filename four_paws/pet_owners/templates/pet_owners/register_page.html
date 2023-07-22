@@ -2,6 +2,19 @@
 
 {% block content %}
 
-<h1>Страница регистрации</h1>
+<div class="register_page">
+    <h1>{{title}}</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+        <p><label class="form-label" for="{{ field.id_for_label }}">
+            {{field.label}}:{% if field.field.required %} * {% endif %}
+        </label>{{ field }}</p>
+        <div class="form-error">{{ field.errors }}</div>
+        {% endfor %}
+        <button class="form_button" type="submit">Регистрация</button>
+    </form>
+</div>
 
 {% endblock %}
