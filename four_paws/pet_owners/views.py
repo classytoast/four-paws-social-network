@@ -1,9 +1,11 @@
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import logout, login
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegisterUserForm
+from .forms import RegisterUserForm, LoginUserForm
 from .utils import DataMixin
 from .models import *
 
@@ -106,8 +108,26 @@ class RegisterUser(DataMixin, CreateView):
 
     def form_valid(self, form):
         user = form.save()
-        return redirect('home')
+        login(self.request, user)
+        return redirect('profile_home', id=user.pk)
 
 
-def login(request):
-    return render(request, 'pet_owners/login_page.html')
+class LoginUser(DataMixin, LoginView):
+    form_class = LoginUserForm
+    template_name = 'pet_owners/login_page.html'
+
+    def get_success_url(self):
+        return reverse_lazy('profile_home', kwargs={'id': self.request.user.id})
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Авторизация"
+        left_menu = self.get_left_menu()
+        context.update(left_menu)
+        return context
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
+

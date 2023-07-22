@@ -2,6 +2,20 @@
 
 {% block content %}
 
-<h1>Страница авторизации</h1>
+<div class="login_page">
+    <h1>{{title}}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-error">{{ form.non_field_errors }}</div>
+        {% for field in form %}
+            <p><label class="form-label" for="{{ field.id_for_label }}">
+                {{field.label}}
+            </label>{{ field }}</p>
+            <div class="form-error">{{ field.errors }}</div>
+            {% endfor %}
+            <button class="form_button" type="submit">Войти</button>
+    </form>
+</div>
 
 {% endblock %}

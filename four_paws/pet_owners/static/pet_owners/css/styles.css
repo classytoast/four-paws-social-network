@@ -75,7 +75,8 @@ html, body {
 	text-decoration: none;
 }
 
-.settings_button {text-align: center;}
+.settings_button { text-align: center; }
+.logout_button { text-align: center; }
 
 .content {
     background: #27234621;
@@ -342,7 +343,7 @@ html, body {
 }
 .likes_views_post_detail { text-align: left; }
 
-.register_page {
+.register_page, .login_page {
     width: 100%;
     text-align: center;
 }
