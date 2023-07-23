@@ -51,7 +51,7 @@
                                 <td valign="middle" class="animal_avatar">
                                     <img src="{{animal.animal_photo.url}}" width=130>
                                 </td>
-                                <td valign="middle" class="animal_parameters">
+                                <td valign="middle">
                                     <div>{{animal.name_of_animal}}</div>
                                     <div>{{animal.category_of_animal}}</div>
                                     <div>{{animal.animal_breed}}</div>
@@ -116,7 +116,17 @@
 </tr>
 <!-- блок ленты с постами -->
 <tr class="news_feed">
-    <td><div class="all_posts">
+    <td>
+        <!-- если владелец страницы - это аутентифицированный пользователь,
+         добавляем кнопку создания поста-->
+        {% if request.user.id == profile.pk %}
+            <div class="create_post_zone">
+                <div class="create_post_button">
+                    <a href="{% url 'create_post' %}">Добавить новый пост</a>
+                </div>
+            </div>
+        {% endif %}
+        <div class="all_posts">
         {% for post in all_posts %}
             {% get_data_for_post post.title data_for_post as post_data %}
             <div class="post_cell">

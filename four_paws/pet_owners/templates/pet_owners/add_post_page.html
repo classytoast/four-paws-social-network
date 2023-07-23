@@ -5,7 +5,7 @@
 <div class="form_block">
     <h1>{{title}}</h1>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post">
         {% csrf_token %}
         {% for field in form %}
         <p><label class="form-label" for="{{ field.id_for_label }}">
@@ -13,7 +13,12 @@
         </label>{{ field }}</p>
         <div class="form-error">{{ field.errors }}</div>
         {% endfor %}
-        <button class="form_button" type="submit">Регистрация</button>
+        <button class="form_button" type="submit" name="add_photos">
+            Добавить фото
+        </button>
+        <button class="form_button" type="submit" name="to_publish">
+            Запостить
+        </button>
     </form>
 </div>
 

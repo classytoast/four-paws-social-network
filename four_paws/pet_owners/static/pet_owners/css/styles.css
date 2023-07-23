@@ -212,8 +212,37 @@ html, body {
     background: #dce0e0;
 }
 
+.create_post_zone {
+    text-align: center;
+    width: 100%;
+    margin-top: 35px;
+}
+.create_post_button {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    height: 50px;
+    width: 300px;
+}
+.create_post_button a {
+    display: block;
+    background: rgba(26, 0, 255, 0.6);
+    height: 100%;
+    width: 100%;
+    line-height: 48px;
+    color: #ffffff;
+    font-style: italic;
+    text-decoration: none;
+    border: 2px solid #1ca3a3;
+    border-radius: 25px;
+}
+.create_post_button a:hover {
+    background: #9b8af2;
+    color: #706900;
+}
+
 .all_posts {
-    margin: 50px 0 0 292px;
+    margin: 30px 0 0 292px;
     text-align: center;
 }
 
@@ -343,7 +372,7 @@ html, body {
 }
 .likes_views_post_detail { text-align: left; }
 
-.register_page, .login_page {
+.form_block {
     width: 100%;
     text-align: center;
 }

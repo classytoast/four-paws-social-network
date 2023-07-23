@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegisterUserForm, LoginUserForm
+from .forms import *
 from .utils import DataMixin
 from .models import *
 
@@ -131,3 +131,51 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
+
+class CreatePostView(DataMixin, CreateView):
+    form_class = AddPostForm
+    template_name = 'pet_owners/add_post_page.html'
+
+    def get_form_kwargs(self, *args, **kwargs):
+        form_kwargs = super(CreatePostView, self).get_form_kwargs(*args, **kwargs)
+        form_kwargs['user_id'] = self.request.user.id
+        return form_kwargs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Добавление поста"
+        left_menu = self.get_left_menu()
+        context.update(left_menu)
+        return context
+
+    def form_valid(self, form):
+        form.instance.autor = self.request.user
+        post = form.save()
+        if 'add_photos' in self.request.POST:
+            return redirect('add-images-to-post', post_id=post.pk)
+        elif 'to_publish' in self.request.POST:
+            return redirect('profile_home', id=self.request.user.id)
+
+
+class AddImgsView(DataMixin, CreateView):
+    form_class = AddImageForm
+    template_name = 'pet_owners/add_images.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Добавление изображений"
+        left_menu = self.get_left_menu()
+        context.update(left_menu)
+        post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
+        context['added_images'] = post.images.all()
+        return context
+
+    def form_valid(self, form):
+        if form.instance.img:
+            form.instance.owner = self.request.user
+            form.instance.post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
+            form.save()
+        if 'add_more_photos' in self.request.POST:
+            return redirect('add-images-to-post', post_id=self.kwargs['post_id'])
+        elif 'to_publish' in self.request.POST:
+            return redirect('profile_home', id=self.request.user.id)

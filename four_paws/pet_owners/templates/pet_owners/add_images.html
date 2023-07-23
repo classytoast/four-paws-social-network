@@ -1,0 +1,36 @@
+{% extends 'pet_owners/base.html' %}
+
+{% block content %}
+
+<div class="form_block">
+    <h1>{{title}}</h1>
+    {% for img in added_images %}
+        <div class="imgs_in_post_detail">
+            <a href="{{img.img.url}}">
+                <img src="{{img.img.url}}" width=250>
+            </a>
+        </div>
+    {% endfor %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+        <p><label class="form-label" for="{{ field.id_for_label }}">
+            {{field.label}}: </label>{{ field }}</p>
+        <div class="form-error">{{ field.errors }}</div>
+        {% endfor %}
+        {% if added_images %}
+            <button class="form_button" type="submit" name="add_more_photos">
+                Добавить еще
+            </button>
+        {% else %}
+            <button class="form_button" type="submit" name="add_more_photos">
+                Добавить
+            </button>
+        {% endif %}
+        <button class="form_button" type="submit" name="to_publish">
+            Запостить
+        </button>
+    </form>
+</div>
+
+{% endblock %}
