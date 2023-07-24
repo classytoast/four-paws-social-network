@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
 from .utils import DataMixin
@@ -60,38 +61,34 @@ class ShowPost(DataMixin, DetailView):
         return context
 
 
+@login_required
 def add_or_del_follower_for_animal(request, animal_id):
     """Добавляет или удаляет подписчика питомцу"""
-    if request.user.is_authenticated:
-        user = Owner.objects.get(pk=request.user.id)
-        animal = Animal.objects.get(pk=animal_id)
-        owner_id = animal.pet_owner.pk
-        try:
-            AnimalFollower.objects.get(follower=user,
-                                       animal=animal
-                                       ).delete()
-        except AnimalFollower.DoesNotExist:
-            AnimalFollower.objects.create(follower=user,
-                                          animal=animal
-                                          )
-        return redirect('profile_home', id=owner_id)
-    else:
-        return redirect('login')
+    user = Owner.objects.get(pk=request.user.id)
+    animal = Animal.objects.get(pk=animal_id)
+    owner_id = animal.pet_owner.pk
+    try:
+        AnimalFollower.objects.get(follower=user,
+                                   animal=animal
+                                   ).delete()
+    except AnimalFollower.DoesNotExist:
+        AnimalFollower.objects.create(follower=user,
+                                      animal=animal
+                                      )
+    return redirect('profile_home', id=owner_id)
 
 
+@login_required
 def put_or_remove_like_for_post(request, post_id):
     """Ставит или убирает лайк посту"""
-    if request.user.is_authenticated:
-        user = Owner.objects.get(pk=request.user.id)
-        post = OwnerPost.objects.get(pk=post_id)
-        if user in post.likes.all():
-            post.likes.remove(user)
-        else:
-            post.likes.add(user)
-            post.views.add(user)
-        return redirect('profile_home', id=post.autor.pk)
+    user = Owner.objects.get(pk=request.user.id)
+    post = OwnerPost.objects.get(pk=post_id)
+    if user in post.likes.all():
+        post.likes.remove(user)
     else:
-        return redirect('login')
+        post.likes.add(user)
+        post.views.add(user)
+    return redirect('profile_home', id=post.autor.pk)
 
 
 class RegisterUser(DataMixin, CreateView):
@@ -132,7 +129,7 @@ def logout_user(request):
     return redirect('login')
 
 
-class CreatePostView(DataMixin, CreateView):
+class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'pet_owners/add_post_page.html'
 
@@ -157,7 +154,7 @@ class CreatePostView(DataMixin, CreateView):
             return redirect('profile_home', id=self.request.user.id)
 
 
-class AddImgsView(DataMixin, CreateView):
+class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddImageForm
     template_name = 'pet_owners/add_images.html'
 
@@ -172,22 +169,24 @@ class AddImgsView(DataMixin, CreateView):
 
     def form_valid(self, form):
         if form.instance.img:
-            form.instance.owner = self.request.user
-            form.instance.post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
-            form.save()
+            post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
+            if post.autor == self.request.user:
+                form.instance.owner = self.request.user
+                form.instance.post = post
+                form.save()
         if 'add_more_photos' in self.request.POST:
             return redirect('add-images-to-post', post_id=self.kwargs['post_id'])
         elif 'to_publish' in self.request.POST:
             return redirect('profile_home', id=self.request.user.id)
 
 
+@login_required
 def delete_post(request, post_id):
     """Функция удаления поста"""
-    if request.user.is_authenticated:
-        user = Owner.objects.get(pk=request.user.id)
-        post = OwnerPost.objects.get(pk=post_id)
-        post_imgs = post.images.all()
-        if post.autor == user:
-            post.delete()
-            post_imgs.delete()
+    user = Owner.objects.get(pk=request.user.id)
+    post = OwnerPost.objects.get(pk=post_id)
+    post_imgs = post.images.all()
+    if post.autor == user:
+        post.delete()
+        post_imgs.delete()
     return redirect('profile_home', id=request.user.id)
