@@ -249,7 +249,6 @@ html, body {
 .post_cell {
     width: 800px;
     height: 300px;
-    line-width: 0px;
     background: #95c2c2;
     border-radius: 15px;
     margin: 5px 0 5px 0;
@@ -272,11 +271,32 @@ html, body {
     height: 100%;
     font-size: 20px;
 }
-.post_title {
+.title_block {
     height: 20%;
     font-weight: bold;
     line-height: 50px;
     border-bottom: 1px solid rgba(120, 161, 161, 0.7);
+}
+.edit_delete_buttons {
+    display: inline-block;
+    width: 20%;
+    height: 50%;
+    text-align: left;
+}
+.edit_but, .del_but {display: inline-block;}
+.edit_but a, .del_but a {
+    display: block;
+    height: 50%;
+    width: 100%;
+}
+.del_but a:hover, .edit_but a:hover {
+    background: rgba(124, 173, 217, 0.8);
+}
+
+.post_title {
+    display: inline-block;
+    width: 78%;
+    height: 100%;
 }
 .post_text {
     width: 100%;

@@ -17,6 +17,8 @@ urlpatterns = [
     path('create-post/', CreatePostView.as_view(), name='create_post'),
     path('add-images-to-post/<int:post_id>', AddImgsView.as_view(),
          name='add-images-to-post'),
+    path('delete-post/<int:post_id>/', delete_post,
+         name='delete_post'),
     path('register/', RegisterUser.as_view(), name='register'),
     path('login/', LoginUser.as_view(), name='login'),
     path('logout/', logout_user, name='logout'),

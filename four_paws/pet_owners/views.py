@@ -179,3 +179,15 @@ class AddImgsView(DataMixin, CreateView):
             return redirect('add-images-to-post', post_id=self.kwargs['post_id'])
         elif 'to_publish' in self.request.POST:
             return redirect('profile_home', id=self.request.user.id)
+
+
+def delete_post(request, post_id):
+    """Функция удаления поста"""
+    if request.user.is_authenticated:
+        user = Owner.objects.get(pk=request.user.id)
+        post = OwnerPost.objects.get(pk=post_id)
+        post_imgs = post.images.all()
+        if post.autor == user:
+            post.delete()
+            post_imgs.delete()
+    return redirect('profile_home', id=request.user.id)

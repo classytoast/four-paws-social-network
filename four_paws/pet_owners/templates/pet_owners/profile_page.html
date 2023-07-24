@@ -130,14 +130,30 @@
         {% for post in all_posts %}
             {% get_data_for_post post.title data_for_post as post_data %}
             <div class="post_cell">
-                <a href="{% url 'post' post.pk %}"><div class="post_info">
+                <div class="post_info">
                     <div class="title_and_text">
-                        <div class="post_title">
-                            {{post.title}}
+                        <div class="title_block">
+                            <div class="edit_delete_buttons">
+                                {% if request.user.id == profile.pk %}
+                                <div class="del_but">
+                                    <a href="{% url 'delete_post' post.pk %}">
+                                    <img src="/static/pet_owners/images/delete_post.png" width="20">
+                                    </a>
+                                </div>
+                                <div class="edit_but">
+                                    <a href="#">
+                                    <img src="/static/pet_owners/images/edit_post.png" width="20">
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="post_title">
+                                {{post.title}}
+                            </div>
                         </div>
-                        <div class="post_text">
+                        <a href="{% url 'post' post.pk %}"><div class="post_text">
                             {{post.text_of_post|truncatewords:50}}
-                        </div>
+                        </div></a>
                         <div class="post_datetime">
                             {{post.date_create}}
                         </div>
@@ -145,7 +161,7 @@
                     <div class="imgs_in_post">
                         <img src="{{post_data.img.img.url}}" width=160>
                     </div>
-                </div></a>
+                </div>
                 <div class="post_parameters">
                     {% show_likes_and_views post post_data %}
                     <div class="post_comments">
