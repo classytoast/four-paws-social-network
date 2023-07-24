@@ -1,0 +1,28 @@
+{% extends 'pet_owners/base.html' %}
+
+{% block content %}
+
+<div class="form_block">
+    <h1>{{title}}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <p><label class="form-label" for="{{ field.id_for_label }}">
+            {{field.label}}:{% if field.field.required %} * {% endif %}
+        </label>{{ field }}</p>
+        <div class="form-error">{{ field.errors }}</div>
+        {% endfor %}
+        <button class="form_button" type="submit" name="cancel">
+            Отменить
+        </button>
+        <button class="form_button" type="submit" name="update_without_photos">
+            Сохранить
+        </button>
+        <button class="form_button" type="submit" name="update_with_photos">
+            Сохранить и изменить фото
+        </button>
+    </form>
+</div>
+
+{% endblock %}

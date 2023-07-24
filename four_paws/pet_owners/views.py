@@ -1,8 +1,9 @@
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout, login
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, DetailView, CreateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView,\
+    CreateView, UpdateView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -130,7 +131,7 @@ def logout_user(request):
 
 
 class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
-    form_class = AddPostForm
+    form_class = AddOrEditPostForm
     template_name = 'pet_owners/add_post_page.html'
 
     def get_form_kwargs(self, *args, **kwargs):
@@ -180,6 +181,36 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
             return redirect('profile_home', id=self.request.user.id)
 
 
+class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
+    form_class = AddOrEditPostForm
+    template_name = 'pet_owners/edit_post_page.html'
+
+    def get_queryset(self):
+        return OwnerPost.objects.filter(pk=self.kwargs['pk'])
+
+    def get_form_kwargs(self, *args, **kwargs):
+        form_kwargs = super(UpdatePostView, self).get_form_kwargs(*args, **kwargs)
+        form_kwargs['user_id'] = self.request.user.id
+        return form_kwargs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Редактирование поста"
+        left_menu = self.get_left_menu()
+        context.update(left_menu)
+        return context
+
+    def form_valid(self, form):
+        if form.instance.autor == self.request.user:
+            if 'cancel' in self.request.POST:
+                return redirect('profile_home', id=self.request.user.id)
+            post = form.save()
+            if 'update_without_photos' in self.request.POST:
+                return redirect('profile_home', id=self.request.user.id)
+            elif 'update_with_photos' in self.request.POST:
+                return redirect('add-images-to-post', post_id=post.pk)
+
+
 @login_required
 def delete_post(request, post_id):
     """Функция удаления поста"""
@@ -190,3 +221,14 @@ def delete_post(request, post_id):
         post.delete()
         post_imgs.delete()
     return redirect('profile_home', id=request.user.id)
+
+
+@login_required
+def delete_img(request, img_id):
+    """Функция удаления изображения"""
+    user = Owner.objects.get(pk=request.user.id)
+    image = PostImage.objects.get(pk=img_id)
+    post_id = image.post.pk
+    if image.owner == user:
+        image.delete()
+    return redirect('add-images-to-post', post_id=post_id)

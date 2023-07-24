@@ -286,7 +286,7 @@ html, body {
 .edit_but, .del_but {display: inline-block;}
 .edit_but a, .del_but a {
     display: block;
-    height: 50%;
+    height: 22px;
     width: 100%;
 }
 .del_but a:hover, .edit_but a:hover {
@@ -389,6 +389,18 @@ html, body {
     display: inline-block;
     padding: 30px 0 30px 0;
     vertical-align: middle;
+}
+.but_for_delete_img {
+    display: inline-block;
+    text-align: center;
+}
+.but_for_delete_img a {
+    display: block;
+    height: 35px;
+    width: 30px;
+}
+.but_for_delete_img a:hover {
+    background: rgba(124, 173, 217, 0.4);
 }
 .likes_views_post_detail { text-align: left; }
 

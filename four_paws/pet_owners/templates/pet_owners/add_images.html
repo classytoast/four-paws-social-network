@@ -6,9 +6,14 @@
     <h1>{{title}}</h1>
     {% for img in added_images %}
         <div class="imgs_in_post_detail">
-            <a href="{{img.img.url}}">
-                <img src="{{img.img.url}}" width=250>
-            </a>
+            <div><a href="{{img.img.url}}">
+                <img src="{{img.img.url}}" width=180>
+            </a></div>
+            <div class="but_for_delete_img">
+                <a href="{% url 'delete_image' img.pk %}">
+                    <img src="/static/pet_owners/images/button_delete.png" width=30>
+                </a>
+            </div>
         </div>
     {% endfor %}
     <form method="post" enctype="multipart/form-data">
@@ -18,15 +23,9 @@
             {{field.label}}: </label>{{ field }}</p>
         <div class="form-error">{{ field.errors }}</div>
         {% endfor %}
-        {% if added_images %}
-            <button class="form_button" type="submit" name="add_more_photos">
-                Добавить еще
-            </button>
-        {% else %}
-            <button class="form_button" type="submit" name="add_more_photos">
-                Добавить
-            </button>
-        {% endif %}
+        <button class="form_button" type="submit" name="add_more_photos">
+            Добавить еще
+        </button>
         <button class="form_button" type="submit" name="to_publish">
             Запостить
         </button>

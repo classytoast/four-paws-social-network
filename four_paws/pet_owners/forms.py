@@ -39,7 +39,7 @@ class LoginUserForm(AuthenticationForm):
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
 
 
-class AddPostForm(forms.ModelForm):
+class AddOrEditPostForm(forms.ModelForm):
     title = forms.CharField(label='Заголовок', required=False,
                             widget=forms.TextInput(attrs={'class': 'form-input'}))
     text_of_post = forms.CharField(label='Текст', required=False,
@@ -48,7 +48,7 @@ class AddPostForm(forms.ModelForm):
                                              queryset=None, widget=forms.CheckboxSelectMultiple)
 
     def __init__(self, user_id, *args, **kwargs):
-        super(AddPostForm, self).__init__(*args, **kwargs)
+        super(AddOrEditPostForm, self).__init__(*args, **kwargs)
         user = Owner.objects.get(pk=user_id)
         self.fields['animals'].queryset = Animal.objects.filter(pet_owner=user)
 

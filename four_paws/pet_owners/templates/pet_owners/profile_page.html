@@ -137,12 +137,12 @@
                                 {% if request.user.id == profile.pk %}
                                 <div class="del_but">
                                     <a href="{% url 'delete_post' post.pk %}">
-                                    <img src="/static/pet_owners/images/delete_post.png" width="20">
+                                    <img src="/static/pet_owners/images/button_delete.png" width="20">
                                     </a>
                                 </div>
                                 <div class="edit_but">
-                                    <a href="#">
-                                    <img src="/static/pet_owners/images/edit_post.png" width="20">
+                                    <a href="{% url 'edit_post' post.pk %}">
+                                    <img src="/static/pet_owners/images/button_edit.png" width="20">
                                     </a>
                                 </div>
                                 {% endif %}
