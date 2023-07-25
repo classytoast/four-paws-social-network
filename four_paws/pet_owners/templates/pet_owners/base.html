@@ -16,7 +16,15 @@
         <ul id="leftchapters">
             {% for el_menu in left_menu %}
                 {% if request.user.is_authenticated %}
-                    <li><a href="{% url el_menu.url_name.0 el_menu.url_name.1 %}">{{el_menu.title}}</a></li>
+                    {% if el_menu.url_name|length == 2 %}
+                        <li><a href="{% url el_menu.url_name.0 el_menu.url_name.1 %}">
+                            {{el_menu.title}}
+                        </a></li>
+                    {% else %}
+                        <li><a href="{% url el_menu.url_name.0 %}">
+                            {{el_menu.title}}
+                        </a></li>
+                    {% endif %}
                 {% else %}
                     <li><a href="{% url el_menu.url_name %}">{{el_menu.title}}</a></li>
                 {% endif %}

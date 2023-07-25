@@ -1,5 +1,6 @@
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout, login
+from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView,\
@@ -24,21 +25,50 @@ class ProfileHome(DataMixin, ListView):
     all_animals = False
 
     def get_queryset(self):
-        return Owner.objects.get(pk=self.kwargs['id'])
+        self.queryset = Owner.objects.get(pk=self.kwargs['id'])
+        return self.queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user = Owner.objects.get(pk=self.kwargs['id'])
+        animals = user.animal_set.annotate(foll_count=Count('followers')).order_by('-foll_count')
+        context['num_of_animals'] = animals.count()
+        if self.all_animals:
+            context['all_animals'] = True
+            context['animals'] = animals
+        else:
+            context['all_animals'] = False
+            context['animals'] = animals[:4]
         if self.request.user.id == self.kwargs['id']:
             context['title'] = "Мой профиль"
         else:
             context['title'] = f"Профиль {user.username}"
-        left_menu = self.get_left_menu()
-        context.update(left_menu)
-        subs_and_animals = self.get_subscriptions_and_animals_of_owner(user)
-        context.update(subs_and_animals)
-        owner_posts = self.get_owner_posts(user)
-        context.update(owner_posts)
+        context.update(self.get_left_menu())
+        subscriptions = user.subscriptions.all()
+        context['num_of_subs'] = subscriptions.count()
+        context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
+        context.update(self.get_owner_posts(user))
+        return context
+
+
+class AnimalsHome(DataMixin, ListView):
+    """Страница питомцев юзера"""
+    model = Animal
+    template_name = 'pet_owners/animals_page.html'
+    context_object_name = 'animals'
+
+    def get_queryset(self):
+        self.queryset = Animal.objects.filter(
+            pet_owner__pk=self.request.user.id).annotate(
+            foll_count=Count('followers')).order_by('-foll_count')
+        return self.queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        animals = self.queryset
+        context['title'] = "Мои питомцы"
+        context.update(self.get_left_menu())
+        context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
         return context
 
 
@@ -54,10 +84,8 @@ class ShowPost(DataMixin, DetailView):
         post = self.model.objects.get(pk=self.kwargs['post_id'])
         user = Owner.objects.get(pk=post.autor.pk)
         context['title'] = post.title
-        left_menu = self.get_left_menu()
-        context.update(left_menu)
-        owner_posts = self.get_owner_posts(user, all_images=True)
-        context.update(owner_posts)
+        context.update(self.get_left_menu())
+        context.update(self.get_owner_posts(user, all_images=True))
         self.add_one_view_for_post(post, user)
         return context
 
@@ -100,8 +128,7 @@ class RegisterUser(DataMixin, CreateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Регистрация"
-        left_menu = self.get_left_menu()
-        context.update(left_menu)
+        context.update(self.get_left_menu())
         return context
 
     def form_valid(self, form):
@@ -120,8 +147,7 @@ class LoginUser(DataMixin, LoginView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Авторизация"
-        left_menu = self.get_left_menu()
-        context.update(left_menu)
+        context.update(self.get_left_menu())
         return context
 
 
@@ -142,8 +168,7 @@ class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Добавление поста"
-        left_menu = self.get_left_menu()
-        context.update(left_menu)
+        context.update(self.get_left_menu())
         return context
 
     def form_valid(self, form):
@@ -162,8 +187,7 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Добавление изображений"
-        left_menu = self.get_left_menu()
-        context.update(left_menu)
+        context.update(self.get_left_menu())
         post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
         context['added_images'] = post.images.all()
         return context
@@ -196,8 +220,7 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Редактирование поста"
-        left_menu = self.get_left_menu()
-        context.update(left_menu)
+        context.update(self.get_left_menu())
         return context
 
     def form_valid(self, form):

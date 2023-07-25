@@ -1,0 +1,76 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+
+<table border=0 cellpadding="0" cellspacing="0">
+<!-- блок информации о питомцах -->
+<tr class="animals_info">
+    <td width="1350">
+        {% if animals %} <!-- проверка на то, имеются ли питомцы у пользователя -->
+            <table cellpadding="0" cellspacing="7">
+            <tr>
+            <!-- проходим циклом по питомцам и загружаем на страницу -->
+            {% for animal in animals %}
+                <!-- через тег загружаем данные о подписчиках из словаря -->
+                {% create_foll_list animal.name_of_animal user_animals_followed as foll_list %}
+                <!-- показываем "ячейку" с данными для каждого питомца -->
+                <td class="animal_cell">
+                    <table cellpadding="0" cellspacing="0">
+                        <tr><td>
+                            <!-- загружаем аватарку и прописываем "параметры" питомца -->
+                            <table class="avatar_and_parameters"><tr>
+                                <td valign="middle" class="animal_avatar">
+                                    <img src="{{animal.animal_photo.url}}" width=130>
+                                </td>
+                                <td valign="middle">
+                                    <div>{{animal.name_of_animal}}</div>
+                                    <div>{{animal.category_of_animal}}</div>
+                                    <div>{{animal.animal_breed}}</div>
+                                    <div>{{animal.date_of_animal_birth}}</div>
+                                    <!-- показываем кол-во подписчиков питомца -->
+                                    <div class="subs_of_user">
+                                        <a href="#">
+                                            <span>Подписчики: </span>{{foll_list.count_folls}}
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr></table>
+                        </td></tr>
+                        <!-- показываем биографию питомца -->
+                        <tr><td class="about_animal_zone">
+                            <div>{{animal.about_pet}}</div>
+                            <div class="edit_delete_buttons">
+                                <div class="del_but">
+                                    <a href="#">
+                                    <img src="/static/pet_owners/images/button_delete.png" width="20">
+                                    </a>
+                                </div>
+                                <div class="edit_but">
+                                    <a href="#">
+                                    <img src="/static/pet_owners/images/button_edit.png" width="20">
+                                    </a>
+                                </div>
+                            </div>
+                        </td></tr>
+                    </table>
+                </td>
+            {% endfor %}
+            <!-- в конце списка добавляем кнопку для добавления нового питомца -->
+            <td class="add_new_pet">
+                <a href="#">Добавить питомца</a>
+            </td>
+            </tr>
+            </table>
+        {% else %}
+            <!-- если у пользователя нет питомцев, показываем инфу об этом -->
+            <div class="if_no_animals">
+                <h1>У вас нет добавленных питомцев</h1>
+                <a href="#">давайте добавим :)</a>
+            </div>
+        {% endif %}
+    </td>
+</tr>
+</table>
+
+{% endblock %}

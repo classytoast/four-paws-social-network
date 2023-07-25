@@ -92,8 +92,6 @@ html, body {
 	font-family: Yandex Sans Display Light;
 }
 
-.profile_table { table-layout: fixed; }
-
 .avatar_zone {
     width: 70px;
 }
@@ -138,7 +136,7 @@ html, body {
     object-fit: cover;
     height: 130px;
 }
-.about_animal {
+.about_animal, about_animal_zone {
     height: 160px;
 }
 
@@ -190,11 +188,11 @@ html, body {
     color: #e2e60b;
 }
 
-.other_animals a {
+.other_animals a, .add_new_pet a {
     color: #095c5c;
     text-decoration: none;
 }
-.other_animals a:hover { color: #706900; }
+.other_animals a:hover, .add_new_pet a:hover { color: #706900; }
 
 .if_no_animals {
     width: 100%;

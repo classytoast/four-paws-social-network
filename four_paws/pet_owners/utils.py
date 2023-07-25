@@ -11,7 +11,7 @@ class DataMixin:
         if self.request.user.is_authenticated:
             context['left_menu'] = [
                 {'title': "Мой профиль", 'url_name': ['profile_home', self.request.user.id]},
-                {'title': "Мои питомцы", 'url_name': ['profile_home', self.request.user.id]},
+                {'title': "Мои питомцы", 'url_name': ['all_animals_page']},
                 {'title': "Подписки", 'url_name': ['profile_home', self.request.user.id]},
                 {'title': "Подписчики", 'url_name': ['profile_home', self.request.user.id]},
                 {'title': "Группы", 'url_name': ['profile_home', self.request.user.id]},
@@ -23,21 +23,8 @@ class DataMixin:
             ]
         return context
 
-    def get_subscriptions_and_animals_of_owner(self, user):
-        """Выдает количество подписок юзера, его питомцев
-        и их подписчиков
-        """
-        context = {}
-        subscriptions = user.subscriptions.all()
-        context['num_of_subs'] = subscriptions.count()
-        animals = user.animal_set.annotate(foll_count=Count('followers')).order_by('-foll_count')
-        context['num_of_animals'] = animals.count()
-        if self.all_animals:
-            context['all_animals'] = True
-            context['animals'] = animals
-        else:
-            context['all_animals'] = False
-            context['animals'] = animals[:4]
+    def get_animals_followers_of_owner(self, animals):
+        """Выдает подписчиков питомцев юзера"""
         user_animals_followed = {}
         for animal in animals:
             animal_folls = animal.followers.all()
@@ -51,8 +38,7 @@ class DataMixin:
                 user_animals_followed[f'{animal.name_of_animal}'] = {"is_followed": False,
                                                                      "count_folls": count_folls
                                                                      }
-        context['user_animals_followed'] = user_animals_followed
-        return context
+        return user_animals_followed
 
     def get_owner_posts(self, user, all_images=False):
         """Выгружает все посты пользователя"""
