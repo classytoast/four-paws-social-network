@@ -3,8 +3,8 @@ from django.contrib.auth import logout, login
 from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView,\
-    CreateView, UpdateView
+from django.views.generic import ListView, DetailView, \
+    CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -93,28 +93,31 @@ class UpdateAnimal(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'pet_owners/edit_animal_page.html'
 
     def get_queryset(self):
-        return OwnerPost.objects.filter(pk=self.kwargs['pk'])
-
-    def get_form_kwargs(self, *args, **kwargs):
-        form_kwargs = super(UpdatePostView, self).get_form_kwargs(*args, **kwargs)
-        form_kwargs['user_id'] = self.request.user.id
-        return form_kwargs
+        return Animal.objects.filter(pk=self.kwargs['pk'])
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Редактирование поста"
+        context['title'] = "Редактирование данных питомца"
         context.update(self.get_left_menu())
         return context
 
     def form_valid(self, form):
-        if form.instance.autor == self.request.user:
-            if 'cancel' in self.request.POST:
-                return redirect('profile_home', id=self.request.user.id)
-            post = form.save()
-            if 'update_without_photos' in self.request.POST:
-                return redirect('profile_home', id=self.request.user.id)
-            elif 'update_with_photos' in self.request.POST:
-                return redirect('add-images-to-post', post_id=post.pk)
+        if form.instance.pet_owner == self.request.user:
+            if 'update' in self.request.POST:
+                form.save()
+            return redirect('all_animals_page')
+
+
+class DeleteAnimal(LoginRequiredMixin, DataMixin, DeleteView):
+    model = Animal
+    template_name = 'pet_owners/delete_animal_page.html'
+    success_url = reverse_lazy('all_animals_page')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Удаление питомца"
+        context.update(self.get_left_menu())
+        return context
 
 
 class ShowPost(DataMixin, DetailView):

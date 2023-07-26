@@ -43,12 +43,12 @@
                             <div>{{animal.about_pet}}</div>
                             <div class="edit_delete_buttons">
                                 <div class="del_but">
-                                    <a href="#">
+                                    <a href="{% url 'delete_animal' animal.pk %}">
                                     <img src="/static/pet_owners/images/button_delete.png" width="20">
                                     </a>
                                 </div>
                                 <div class="edit_but">
-                                    <a href="#">
+                                    <a href="{% url 'edit_animal' animal.pk %}">
                                     <img src="/static/pet_owners/images/button_edit.png" width="20">
                                     </a>
                                 </div>
@@ -67,7 +67,7 @@
             <!-- если у пользователя нет питомцев, показываем инфу об этом -->
             <div class="if_no_animals">
                 <h1>У вас нет добавленных питомцев</h1>
-                <a href="#">давайте добавим :)</a>
+                <a href="{% url 'create_animal' %}">давайте добавим :)</a>
             </div>
         {% endif %}
     </td>

@@ -48,7 +48,7 @@ class AddOrEditAnimalForm(forms.ModelForm):
                                                 queryset=AnimalCategory.objects.all(),
                                                 widget=forms.Select(attrs={'class': 'form-input'}))
     date_of_animal_birth = forms.DateField(label='Дата рождения', required=False,
-                                           input_formats=['%d/%m/%Y'],
+                                           input_formats=['%d.%m.%Y'],
                                            widget=forms.DateInput(attrs={'class': 'form-input'}))
     about_pet = forms.CharField(label='О питомце', required=False,
                                 widget=forms.Textarea(attrs={'class': 'form-input'}))
