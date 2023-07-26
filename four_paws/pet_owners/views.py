@@ -90,7 +90,7 @@ class CreateAnimal(LoginRequiredMixin, DataMixin, CreateView):
 
 class UpdateAnimal(LoginRequiredMixin, DataMixin, UpdateView):
     form_class = AddOrEditAnimalForm
-    template_name = 'pet_owners/edit_post_page.html'
+    template_name = 'pet_owners/edit_animal_page.html'
 
     def get_queryset(self):
         return OwnerPost.objects.filter(pk=self.kwargs['pk'])
