@@ -10,6 +10,7 @@ urlpatterns = [
     path('profile/<int:id>/all-animals/', ProfileHome.as_view(all_animals=True),
          name='profile_with_all_animals'),
     path('my-animals/', AnimalsHome.as_view(), name='all_animals_page'),
+    path('create-animal/', CreateAnimal.as_view(), name='create_animal'),
     path('post/<int:post_id>/', ShowPost.as_view(), name='post'),
     path('change-follower/<int:animal_id>/', add_or_del_follower_for_animal,
          name='change_follower_for_animal'),

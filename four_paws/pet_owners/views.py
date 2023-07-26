@@ -51,7 +51,7 @@ class ProfileHome(DataMixin, ListView):
         return context
 
 
-class AnimalsHome(DataMixin, ListView):
+class AnimalsHome(LoginRequiredMixin, DataMixin, ListView):
     """Страница питомцев юзера"""
     model = Animal
     template_name = 'pet_owners/animals_page.html'
@@ -70,6 +70,51 @@ class AnimalsHome(DataMixin, ListView):
         context.update(self.get_left_menu())
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
         return context
+
+
+class CreateAnimal(LoginRequiredMixin, DataMixin, CreateView):
+    form_class = AddOrEditAnimalForm
+    template_name = 'pet_owners/add_animal_page.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Добавление питомца"
+        context.update(self.get_left_menu())
+        return context
+
+    def form_valid(self, form):
+        form.instance.pet_owner = self.request.user
+        form.save()
+        return redirect('all_animals_page')
+
+
+class UpdateAnimal(LoginRequiredMixin, DataMixin, UpdateView):
+    form_class = AddOrEditAnimalForm
+    template_name = 'pet_owners/edit_post_page.html'
+
+    def get_queryset(self):
+        return OwnerPost.objects.filter(pk=self.kwargs['pk'])
+
+    def get_form_kwargs(self, *args, **kwargs):
+        form_kwargs = super(UpdatePostView, self).get_form_kwargs(*args, **kwargs)
+        form_kwargs['user_id'] = self.request.user.id
+        return form_kwargs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Редактирование поста"
+        context.update(self.get_left_menu())
+        return context
+
+    def form_valid(self, form):
+        if form.instance.autor == self.request.user:
+            if 'cancel' in self.request.POST:
+                return redirect('profile_home', id=self.request.user.id)
+            post = form.save()
+            if 'update_without_photos' in self.request.POST:
+                return redirect('profile_home', id=self.request.user.id)
+            elif 'update_with_photos' in self.request.POST:
+                return redirect('add-images-to-post', post_id=post.pk)
 
 
 class ShowPost(DataMixin, DetailView):

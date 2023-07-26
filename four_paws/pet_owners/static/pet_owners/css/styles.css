@@ -172,13 +172,12 @@ html, body {
 .select_button {
     background: rgba(26, 0, 255, 0.4);
     text-align: center;
-    vertical-align: middle;
     height: 35px;
 }
 .select_button a {
     display: block;
     height: 100%;
-    width: 100%;
+    width: 280px;
     line-height: 35px;
     color: #ffffff;
     text-decoration: none;
@@ -414,7 +413,7 @@ html, body {
 .form-label {
     display: inline-block;
     text-align: left;
-    min-width: 220px;
+    min-width: 260px;
     vertical-align: top;
 }
 .form-error ul {
