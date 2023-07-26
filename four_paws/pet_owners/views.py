@@ -13,8 +13,11 @@ from .utils import DataMixin
 from .models import *
 
 
+@login_required
 def index(request):
-    return render(request, 'pet_owners/main_page.html')
+    """При входе на сайт, пользователя сразу перенаправляет
+    на его страницу, если он залогинен"""
+    return redirect('profile_home', id=request.user.id)
 
 
 class ProfileHome(DataMixin, ListView):
