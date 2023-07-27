@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pet_owners.apps.PetOwnersConfig',
     'groups.apps.GroupsConfig',
+    'animals.apps.AnimalsConfig',
 ]
 
 MIDDLEWARE = [

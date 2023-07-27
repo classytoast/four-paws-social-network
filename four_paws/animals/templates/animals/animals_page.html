@@ -28,7 +28,9 @@
                                     <div>{{animal.name_of_animal}}</div>
                                     <div>{{animal.category_of_animal}}</div>
                                     <div>{{animal.animal_breed}}</div>
-                                    <div>{{animal.date_of_animal_birth}}</div>
+                                    {% if animal.date_of_animal_birth %}
+                                        <div>{{animal.date_of_animal_birth}}</div>
+                                    {% endif %}
                                     <!-- показываем кол-во подписчиков питомца -->
                                     <div class="subs_of_user">
                                         <a href="#">

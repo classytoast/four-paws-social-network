@@ -9,17 +9,12 @@ urlpatterns = [
          name='profile_home'),
     path('profile/<int:id>/all-animals/', ProfileHome.as_view(all_animals=True),
          name='profile_with_all_animals'),
-
-    path('my-animals/', AnimalsHome.as_view(), name='all_animals_page'),
-    path('create-animal/', CreateAnimal.as_view(), name='create_animal'),
-    path('animal/<int:pk>/edit/', UpdateAnimal.as_view(), name='edit_animal'),
-    path('animal/<int:pk>/delete/', DeleteAnimal.as_view(), name='delete_animal'),
-
-    path('post/<int:post_id>/', ShowPost.as_view(), name='post'),
     path('change-follower/<int:animal_id>/', add_or_del_follower_for_animal,
          name='change_follower_for_animal'),
     path('change-like-for-post/<int:post_id>/', put_or_remove_like_for_post,
          name='like_for_post'),
+
+    path('post/<int:post_id>/', ShowPost.as_view(), name='post'),
     path('create-post/', CreatePostView.as_view(), name='create_post'),
     path('post/<int:pk>/edit/', UpdatePostView.as_view(), name='edit_post'),
     path('add-images-to-post/<int:post_id>/', AddImgsView.as_view(),

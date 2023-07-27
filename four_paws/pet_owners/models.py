@@ -47,7 +47,7 @@ class Animal(models.Model):
     pet_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец')
     category_of_animal = models.ForeignKey(AnimalCategory, on_delete=models.PROTECT, verbose_name='вид')
     animal_breed = models.CharField(max_length=100, blank=True, verbose_name='порода питомца')
-    date_of_animal_birth = models.DateField(verbose_name='дата рождения питомца')
+    date_of_animal_birth = models.DateField(verbose_name='дата рождения питомца', blank=True, null=True)
     sex = models.CharField(max_length=7, choices=GENDER, verbose_name='пол', null=True)
     animal_photo = models.ImageField(upload_to="animals_photos/%Y/%m/%d/", verbose_name='фото питомца')
     about_pet = models.TextField(max_length=520, verbose_name='о питомце')
