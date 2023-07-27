@@ -75,8 +75,14 @@ html, body {
 	text-decoration: none;
 }
 
-.settings_button { text-align: center; }
-.logout_button { text-align: center; }
+.settings_button, .logout_button { text-align: center; }
+.settings_button a, .logout_button a {
+    display: block;
+    height: 100%;
+    width: 100%;
+    transition: all .2s linear;
+}
+.settings_button a:hover, .logout_button a:hover { background: #209980; }
 
 .content {
     background: #27234621;

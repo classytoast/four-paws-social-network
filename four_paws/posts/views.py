@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
-from django.views.generic import DetailView, CreateView, UpdateView
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -104,16 +105,22 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
                 return redirect('add-images-to-post', post_id=post.pk)
 
 
-@login_required
-def delete_post(request, post_id):
-    """Функция удаления поста"""
-    user = Owner.objects.get(pk=request.user.id)
-    post = OwnerPost.objects.get(pk=post_id)
-    post_imgs = post.images.all()
-    if post.autor == user:
-        post.delete()
-        post_imgs.delete()
-    return redirect('profile_home', id=request.user.id)
+class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):
+    model = OwnerPost
+    template_name = 'posts/delete_post_page.html'
+
+    def get_success_url(self):
+        return reverse_lazy('profile_home', kwargs={'id': self.request.user.id})
+
+    def get_queryset(self):
+        qs = super(DeletePost, self).get_queryset()
+        return qs.filter(autor=self.request.user)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Удаление поста"
+        context.update(self.get_left_menu())
+        return context
 
 
 @login_required
