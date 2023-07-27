@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'pet_owners.apps.PetOwnersConfig',
     'groups.apps.GroupsConfig',
     'animals.apps.AnimalsConfig',
+    'posts.apps.PostsConfig',
 ]
 
 MIDDLEWARE = [
