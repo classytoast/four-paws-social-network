@@ -10,7 +10,7 @@ class DataMixin:
             context['left_menu'] = [
                 {'title': "Мой профиль", 'url_name': ['profile_home', self.request.user.id]},
                 {'title': "Мои питомцы", 'url_name': ['all_animals_page']},
-                {'title': "Подписки", 'url_name': ['profile_home', self.request.user.id]},
+                {'title': "Подписки", 'url_name': ['owner_subscriptions', self.request.user.id]},
                 {'title': "Подписчики", 'url_name': ['profile_home', self.request.user.id]},
                 {'title': "Группы", 'url_name': ['profile_home', self.request.user.id]},
             ]

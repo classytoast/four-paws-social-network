@@ -31,8 +31,8 @@ class ProfileHome(DataMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = Owner.objects.get(pk=self.kwargs['id'])
-        animals = user.animal_set.annotate(foll_count=Count('followers')).order_by('-foll_count')
+        owner = self.queryset
+        animals = owner.animal_set.annotate(foll_count=Count('followers')).order_by('-foll_count')
         context['num_of_animals'] = animals.count()
         if self.all_animals:
             context['all_animals'] = True
@@ -43,12 +43,12 @@ class ProfileHome(DataMixin, ListView):
         if self.request.user.id == self.kwargs['id']:
             context['title'] = "Мой профиль"
         else:
-            context['title'] = f"Профиль {user.username}"
+            context['title'] = f"Профиль {owner.username}"
         context.update(self.get_left_menu())
-        subscriptions = user.subscriptions.all()
+        subscriptions = owner.subscriptions.all()
         context['num_of_subs'] = subscriptions.count()
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
-        context.update(self.get_owner_posts(user))
+        context.update(self.get_owner_posts(owner))
         return context
 
 
@@ -80,6 +80,30 @@ def put_or_remove_like_for_post(request, post_id):
         post.likes.add(user)
         post.views.add(user)
     return redirect('profile_home', id=post.autor.pk)
+
+
+class OwnerSubscriptions(DataMixin, ListView):
+    """Страница подписок юзера"""
+    model = Owner
+    template_name = 'pet_owners/subscriptions_page.html'
+    context_object_name = 'profile'
+
+    def get_queryset(self):
+        self.queryset = Owner.objects.get(pk=self.kwargs['id'])
+        return self.queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        owner = self.queryset
+        animals = Animal.objects.filter(followers__follower=owner)
+        context['subscriptions'] = animals
+        if self.request.user.id == self.kwargs['id']:
+            context['title'] = "Мои подписки"
+        else:
+            context['title'] = f"Подписки {owner.username}"
+        context.update(self.get_left_menu())
+        context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
+        return context
 
 
 class RegisterUser(DataMixin, CreateView):

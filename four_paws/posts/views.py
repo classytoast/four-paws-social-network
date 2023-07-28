@@ -81,7 +81,8 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'posts/edit_post_page.html'
 
     def get_queryset(self):
-        return OwnerPost.objects.filter(pk=self.kwargs['pk'])
+        return OwnerPost.objects.filter(pk=self.kwargs['pk'],
+                                        autor=self.request.user)
 
     def get_form_kwargs(self, *args, **kwargs):
         form_kwargs = super(UpdatePostView, self).get_form_kwargs(*args, **kwargs)
@@ -95,14 +96,13 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        if form.instance.autor == self.request.user:
-            if 'cancel' in self.request.POST:
-                return redirect('profile_home', id=self.request.user.id)
-            post = form.save()
-            if 'update_without_photos' in self.request.POST:
-                return redirect('profile_home', id=self.request.user.id)
-            elif 'update_with_photos' in self.request.POST:
-                return redirect('add-images-to-post', post_id=post.pk)
+        if 'cancel' in self.request.POST:
+            return redirect('profile_home', id=self.request.user.id)
+        post = form.save()
+        if 'update_without_photos' in self.request.POST:
+            return redirect('profile_home', id=self.request.user.id)
+        elif 'update_with_photos' in self.request.POST:
+            return redirect('add-images-to-post', post_id=post.pk)
 
 
 class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):

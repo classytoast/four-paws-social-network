@@ -24,7 +24,9 @@
                 <tr class="user_bio"><td><p>{{profile.about_myself}}</p></td></tr>
                 <!-- показывает количество подписок у владельца страницы -->
                 <tr class="subs_of_user"><td>
-                    <a href="#"><span>Подписки: </span>{{num_of_subs}}</a>
+                    <a href="{% url 'owner_subscriptions' profile.pk %}">
+                        <span>Подписки: </span>{{num_of_subs}}
+                    </a>
                 </td></tr>
                 </table>
             </td>
@@ -86,14 +88,12 @@
                                 </div>
                             </td></tr>
                         {% endif %}
-                        {% if num_of_animals > 1 %}
                         <tr><td>
                             <!-- добавляем кнопку для выбора питомца, о котором будут посты ниже в ленте -->
                             <div class="select_button">
-                                <a href="#">ВЫБРАТЬ ДЛЯ ЛЕНТЫ</a>
+                                <a href="#">Посмотреть ленту</a>
                             </div>
                         </td></tr>
-                        {% endif %}
                     </table>
                 </td>
             {% endfor %}

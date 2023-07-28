@@ -1,0 +1,44 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+
+<div class="subs_block">
+    <h1>Подписки {{profile.username}}</h1>
+
+    <div class="subs_cells">
+        {% for sub in subscriptions %}
+            {% create_foll_list sub.name_of_animal user_animals_followed as foll_list %}
+            <div class="subs_cell">
+                <div class="sub_avatar">
+                    <img src="{{sub.animal_photo.url}}" height=120>
+                </div>
+                <div class="sub_info">
+                    <div>{{sub.name_of_animal}}</div>
+                    <div>{{sub.category_of_animal}}</div>
+                    <div class="subs_of_user">
+                        <a href="#">
+                            <span>Подписчики: </span>{{foll_list.count_folls}}
+                        </a>
+                    </div>
+                </div>
+                <div class="sub_buttons">
+                    {% if foll_list.is_followed %}
+                        <div class="unfollow_animal">
+                            <a href="{{animal.change_follower}}">Отписаться</a>
+                        </div>
+                    {% else %}
+                        <div class="follow_animal">
+                            <a href="{{animal.change_follower}}">Подписаться</a>
+                        </div>
+                    {% endif %}
+                    <div class="select_button">
+                        <a href="#">Посмотреть ленту</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

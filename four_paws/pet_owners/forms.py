@@ -19,6 +19,8 @@ class RegisterUserForm(UserCreationForm):
                                widget=forms.TextInput(attrs={'class': 'form-input'}))
     date_of_birth = forms.DateField(label='Дата рождения', required=False, input_formats=['%d/%m/%Y'],
                                     widget=forms.DateInput(attrs={'class': 'form-input'}))
+    avatar = forms.ImageField(label='Аватар', required=False,
+                                    widget=forms.FileInput(attrs={'class': 'form-input'}))
     about_myself = forms.CharField(label='О себе', required=False,
                                    widget=forms.Textarea(attrs={'class': 'form-input'}))
     instagram = forms.CharField(label='Инстаграмм', required=False,
