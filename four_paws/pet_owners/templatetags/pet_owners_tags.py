@@ -24,3 +24,8 @@ def show_likes_and_views(post, post_data):
 @register.inclusion_tag('pet_owners/form_fields.html')
 def show_form_fields(form):
     return {'form': form}
+
+
+@register.inclusion_tag('pet_owners/all_posts.html')
+def show_all_posts(posts, data_for_post):
+    return {"posts": posts, "data_for_post": data_for_post}

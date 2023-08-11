@@ -22,7 +22,8 @@ class ShowPost(DataMixin, DetailView):
         user = Owner.objects.get(pk=post.autor.pk)
         context['title'] = post.title
         context.update(self.get_left_menu())
-        context.update(self.get_owner_posts(user, all_images=True))
+        all_posts = user.ownerpost_set.all()
+        context['data_for_post'] = self.get_data_for_post(all_posts, all_images=True)
         self.add_one_view_for_post(post, user)
         return context
 

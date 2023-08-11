@@ -123,7 +123,7 @@ html, body {
     text-align: center;
 }
 
-.subs_block {
+.subs_block, .an_posts_block {
     text-align: center;
 }
 .subs_cells {
@@ -468,4 +468,14 @@ html, body {
 .form_button {
     min-width: 200px;
     font-size: 16px;
+}
+
+.an_posts_title {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 70px;
+}
+.an_posts_title_txt, .an_posts_avatar {
+    display: inline-block;
+    vertical-align: top;
 }

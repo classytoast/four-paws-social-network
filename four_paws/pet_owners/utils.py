@@ -38,15 +38,12 @@ class DataMixin:
                                                                      }
         return user_animals_followed
 
-    def get_owner_posts(self, user, all_images=False):
-        """Выгружает все посты пользователя"""
-        context = {}
-        all_posts = user.ownerpost_set.all()
-        context['all_posts'] = all_posts
+    def get_data_for_post(self, posts, all_images=False):
+        """Выгружает данные для переданных постов"""
         data_for_post = {}
-        for post in all_posts:
-            if self.request.user.is_authenticated and \
-                    Owner.objects.get(pk=self.request.user.id) in post.likes.all():
+        auth_user = Owner.objects.get(pk=self.request.user.id)
+        for post in posts:
+            if self.request.user.is_authenticated and auth_user in post.likes.all():
                 is_liked = True
             else:
                 is_liked = False
@@ -60,8 +57,7 @@ class DataMixin:
                     'img': post.images.first(),
                     'is_liked': is_liked
                 }
-        context['data_for_post'] = data_for_post
-        return context
+        return data_for_post
 
     def add_one_view_for_post(self, post, user):
         """Добавляет просмотр посту"""

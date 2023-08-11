@@ -48,7 +48,9 @@ class ProfileHome(DataMixin, ListView):
         subscriptions = owner.subscriptions.all()
         context['num_of_subs'] = subscriptions.count()
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
-        context.update(self.get_owner_posts(owner))
+        all_posts = owner.ownerpost_set.all()
+        context['all_posts'] = all_posts
+        context['data_for_post'] = self.get_data_for_post(all_posts)
         return context
 
 

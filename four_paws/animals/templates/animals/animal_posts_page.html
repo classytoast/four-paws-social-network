@@ -1,0 +1,19 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+
+<div class="an_posts_block">
+    <div class="an_posts_title">
+        <div class="an_posts_title_txt">
+            <h1>Посты питомца {{animal.name_of_animal}}</h1>
+        </div>
+        <div class="an_posts_avatar">
+            <img src="{{animal.animal_photo.url}}" height=120>
+        </div>
+    </div>
+
+    {% show_all_posts posts data_for_post %}
+</div>
+
+{% endblock %}
