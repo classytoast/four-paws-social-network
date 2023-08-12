@@ -7,6 +7,7 @@
     <h1>Подписки {{profile.username}}</h1>
 
     <div class="subs_cells">
+        {% if subscriptions %}
         {% for sub in subscriptions %}
             {% create_foll_list sub.name_of_animal user_animals_followed as foll_list %}
             <div class="subs_cell">
@@ -23,14 +24,16 @@
                     </div>
                 </div>
                 <div class="sub_buttons">
-                    {% if foll_list.is_followed %}
-                        <div class="unfollow_animal">
-                            <a href="{{animal.change_follower}}">Отписаться</a>
-                        </div>
-                    {% else %}
-                        <div class="follow_animal">
-                            <a href="{{animal.change_follower}}">Подписаться</a>
-                        </div>
+                    {% if sub.pet_owner != auth_user %}
+                        {% if foll_list.is_followed %}
+                            <div class="unfollow_animal">
+                                <a href="{{animal.change_follower}}">Отписаться</a>
+                            </div>
+                        {% else %}
+                            <div class="follow_animal">
+                                <a href="{{animal.change_follower}}">Подписаться</a>
+                            </div>
+                        {% endif %}
                     {% endif %}
                     <div class="select_button">
                         <a href="{% url 'animal_posts' sub.pk %}">Посмотреть ленту</a>
@@ -38,6 +41,9 @@
                 </div>
             </div>
         {% endfor %}
+        {% else %}
+            <h2>У пользователя нет активных подписок</h2>
+        {% endif %}
     </div>
 </div>
 

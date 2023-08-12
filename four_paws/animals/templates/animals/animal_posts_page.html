@@ -12,8 +12,18 @@
             <img src="{{animal.animal_photo.url}}" height=120>
         </div>
     </div>
-
-    {% show_all_posts posts data_for_post %}
+    {% if posts %}
+        {% show_all_posts posts data_for_post %}
+    {% else %}
+        <h2>Про питомца нет постов</h2>
+        {% if animal.pet_owner == request.user %}
+            <div class="create_post_zone">
+                <div class="create_post_button">
+                    <a href="{% url 'create_post' %}">Добавьте пост</a>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
 </div>
 
 {% endblock %}

@@ -97,6 +97,7 @@ class OwnerSubscriptions(DataMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         owner = self.queryset
+        context['auth_user'] = Owner.objects.get(pk=self.request.user.id)
         animals = Animal.objects.filter(followers__follower=owner)
         context['subscriptions'] = animals
         if self.request.user.id == self.kwargs['id']:
