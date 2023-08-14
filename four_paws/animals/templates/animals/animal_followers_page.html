@@ -1,0 +1,29 @@
+{% extends 'pet_owners/base.html' %}
+
+
+{% block content %}
+
+<div class="foll_block">
+    <h1>{{title}}</h1>
+
+    <div class="foll_cells">
+        {% if followers %}
+        {% for foll in followers %}
+            <div class="foll_cell">
+                <div class="foll_avatar">
+                    <img src="{{foll.avatar.url}}" height=120>
+                </div>
+                <div class="foll_name">
+                    <a href="{{ foll.get_absolute_url }}">
+                        {{foll.username}}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+        {% else %}
+            <h2>У питомца нет активных подписчиков</h2>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

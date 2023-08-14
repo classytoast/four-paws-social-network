@@ -33,7 +33,7 @@
                                     {% endif %}
                                     <!-- показываем кол-во подписчиков питомца -->
                                     <div class="subs_of_user">
-                                        <a href="#">
+                                        <a href="{% url 'animal_followers' animal.pk %}">
                                             <span>Подписчики: </span>{{foll_list.count_folls}}
                                         </a>
                                     </div>

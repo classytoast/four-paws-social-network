@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
 from pet_owners.utils import DataMixin
-from pet_owners.models import Animal, OwnerPost
+from pet_owners.models import Animal, Owner, OwnerPost, AnimalFollower
 
 
 class AnimalsHome(LoginRequiredMixin, DataMixin, ListView):
@@ -49,6 +49,25 @@ class AnimalPosts(DataMixin, ListView):
         context['title'] = f"Посты {animal.name_of_animal}"
         context.update(self.get_left_menu())
         context['data_for_post'] = self.get_data_for_post(posts)
+        return context
+
+
+class AnimalFollowers(DataMixin, ListView):
+    """Страница подписчиков выбранного питомца"""
+    model = Animal
+    template_name = 'animals/animal_followers_page.html'
+    context_object_name = 'animal'
+
+    def get_queryset(self):
+        self.queryset = Animal.objects.get(pk=self.kwargs['pk'])
+        return self.queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        animal = self.queryset
+        context['followers'] = Owner.objects.filter(subscriptions__animal=animal)
+        context['title'] = f"Подписчики питомца: {animal.name_of_animal}"
+        context.update(self.get_left_menu())
         return context
 
 

@@ -18,7 +18,7 @@
                     <div>{{sub.name_of_animal}}</div>
                     <div>{{sub.category_of_animal}}</div>
                     <div class="subs_of_user">
-                        <a href="#">
+                        <a href="{% url 'animal_followers' sub.pk %}">
                             <span>Подписчики: </span>{{foll_list.count_folls}}
                         </a>
                     </div>

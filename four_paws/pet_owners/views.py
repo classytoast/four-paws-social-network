@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout, login
 from django.db.models import Count
@@ -18,7 +19,7 @@ def index(request):
     return redirect('profile_home', id=request.user.id)
 
 
-class ProfileHome(DataMixin, ListView):
+class ProfileHome(LoginRequiredMixin, DataMixin, ListView):
     """Страница профиля"""
     model = Owner
     template_name = 'pet_owners/profile_page.html'

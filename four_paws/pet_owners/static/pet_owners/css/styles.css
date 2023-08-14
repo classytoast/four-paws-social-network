@@ -113,20 +113,20 @@ html, body {
 }
 .user_bio { font-style: italic; }
 
-.subs_of_user a {
+.subs_of_user a, .foll_name a {
     color: #095c5c;
     text-decoration: none;
 }
-.subs_of_user a:hover { color: #706900; }
+.subs_of_user a:hover, .foll_name a:hover { color: #706900; }
 
 .animals_info {
     text-align: center;
 }
 
-.subs_block, .an_posts_block {
+.subs_block, .an_posts_block, .foll_block {
     text-align: center;
 }
-.subs_cells {
+.subs_cells, .foll_cells {
     width: 100%;
     text-align: center;
 }
@@ -141,7 +141,7 @@ html, body {
     border: 3px solid rgba(26, 196, 162, 0.5);
     border-radius: 25px;
 }
-.sub_avatar {
+.sub_avatar, .foll_avatar {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
@@ -156,9 +156,21 @@ html, body {
     vertical-align: middle;
     width: 40%;
 }
-.sub_buttons {
+.sub_buttons, .foll_name {
     display: inline-block;
     vertical-align: middle;
+}
+
+.foll_cell {
+    background: rgba(26, 196, 196, 0.2);
+    width: 400px;
+    height: 140px;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    margin: 7px 0 7px 0;
+    border: 3px solid rgba(168, 62, 230, 0.5);
+    border-radius: 25px;
 }
 
 .animal_cell {
