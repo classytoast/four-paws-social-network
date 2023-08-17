@@ -72,6 +72,7 @@ class AnimalFollowers(DataMixin, ListView):
 
 
 class CreateAnimal(LoginRequiredMixin, DataMixin, CreateView):
+    """Страница создания питомца"""
     form_class = AddOrEditAnimalForm
     template_name = 'animals/add_animal_page.html'
 
@@ -88,6 +89,7 @@ class CreateAnimal(LoginRequiredMixin, DataMixin, CreateView):
 
 
 class UpdateAnimal(LoginRequiredMixin, DataMixin, UpdateView):
+    """Страница редактирования данных о питомце"""
     form_class = AddOrEditAnimalForm
     template_name = 'animals/edit_animal_page.html'
 
@@ -108,6 +110,7 @@ class UpdateAnimal(LoginRequiredMixin, DataMixin, UpdateView):
 
 
 class DeleteAnimal(LoginRequiredMixin, DataMixin, DeleteView):
+    """Страница удаления питомца"""
     model = Animal
     template_name = 'animals/delete_animal_page.html'
     success_url = reverse_lazy('all_animals_page')

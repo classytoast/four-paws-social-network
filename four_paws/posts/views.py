@@ -29,6 +29,7 @@ class ShowPost(DataMixin, DetailView):
 
 
 class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
+    """Страница создания поста"""
     form_class = AddOrEditPostForm
     template_name = 'posts/add_post_page.html'
 
@@ -53,6 +54,7 @@ class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
 
 
 class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
+    """Страница добавления изображений к посту"""
     form_class = AddImageForm
     template_name = 'posts/add_images.html'
 
@@ -78,6 +80,7 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
 
 
 class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
+    """Страница редактирования поста"""
     form_class = AddOrEditPostForm
     template_name = 'posts/edit_post_page.html'
 
@@ -107,6 +110,7 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
 
 
 class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):
+    """Страница удаления поста"""
     model = OwnerPost
     template_name = 'posts/delete_post_page.html'
 

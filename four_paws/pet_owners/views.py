@@ -111,6 +111,7 @@ class OwnerSubscriptions(DataMixin, ListView):
 
 
 class RegisterUser(DataMixin, CreateView):
+    """Cтраница регистрации пользователей"""
     form_class = RegisterUserForm
     template_name = 'pet_owners/register_page.html'
     success_url = reverse_lazy('login')
@@ -128,6 +129,7 @@ class RegisterUser(DataMixin, CreateView):
 
 
 class LoginUser(DataMixin, LoginView):
+    """Страница авторизации пользователей"""
     form_class = LoginUserForm
     template_name = 'pet_owners/login_page.html'
 
@@ -142,5 +144,6 @@ class LoginUser(DataMixin, LoginView):
 
 
 def logout_user(request):
+    """Выход из учетной записи"""
     logout(request)
     return redirect('login')
