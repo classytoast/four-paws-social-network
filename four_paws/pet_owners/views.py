@@ -4,7 +4,7 @@ from django.contrib.auth import logout, login
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView
 from django.contrib.auth.decorators import login_required
 
 from .forms import *
@@ -147,3 +147,21 @@ def logout_user(request):
     """Выход из учетной записи"""
     logout(request)
     return redirect('login')
+
+
+class UpdateOwner(LoginRequiredMixin, DataMixin, UpdateView):
+    """Страница редактирования данных о пользователе"""
+    form_class = UpdateUserForm
+    template_name = 'pet_owners/edit_owner_page.html'
+
+    def get_queryset(self):
+        return Owner.objects.filter(pk=self.request.user.id)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Редактирование профиля"
+        context.update(self.get_left_menu())
+        return context
+
+    def form_valid(self, form):
+        return redirect('profile_home', id=self.request.user.id)

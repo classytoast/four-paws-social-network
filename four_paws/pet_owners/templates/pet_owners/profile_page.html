@@ -21,6 +21,14 @@
             <td class="about_user_zone">
                 <table class="about_user">
                 <tr class="username"><td><p>{{profile.username}}</p></td></tr>
+                {% if profile.full_name_is_hidden is False %}
+                    <tr class="extra_data"><td><p>
+                        {{profile.last_name}}, {{profile.first_name}}
+                    </p></td></tr>
+                {% endif %}
+                {% if profile.date_of_birth_is_hidden is False %}
+                    <tr class="extra_data"><td><p>{{profile.date_of_birth}}</p></td></tr>
+                {% endif %}
                 <tr class="user_bio"><td><p>{{profile.about_myself}}</p></td></tr>
                 <!-- показывает количество подписок у владельца страницы -->
                 <tr class="subs_of_user"><td>

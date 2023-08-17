@@ -1,0 +1,32 @@
+{% extends 'pet_owners/base.html' %}
+
+{% block content %}
+
+<div class="settings_page">
+    <div class="selecting_settings">
+        <h2>Пользовательские настройки</h2>
+        <div class="setting_el_active">
+            <a href="#">Редактирование профиля</a>
+        </div>
+        <div class="setting_el">
+            <a href="#">Настройки приватности</a>
+        </div>
+        <div class="setting_el">
+            <a href="#">Изменить пароль</a>
+        </div>
+    </div>
+    <div class="form_block_set">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+            <p><label class="form-label" for="{{ field.id_for_label }}">
+                {{field.label}}:{% if field.field.required %} * {% endif %}
+            </label>{{ field }}</p>
+            <div class="form-error">{{ field.errors }}</div>
+            {% endfor %}
+            <button class="form_button" type="submit">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -15,6 +15,8 @@ urlpatterns = [
          name='like_for_post'),
     path('profile/<int:id>/subscriptions/', OwnerSubscriptions.as_view(),
          name='owner_subscriptions'),
+    path('personal-settings/<int:pk>/profile-settings/', UpdateOwner.as_view(),
+         name='profile-settings'),
     path('register/', RegisterUser.as_view(), name='register'),
     path('login/', LoginUser.as_view(), name='login'),
     path('logout/', logout_user, name='logout'),

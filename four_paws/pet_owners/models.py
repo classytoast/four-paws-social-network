@@ -25,6 +25,8 @@ class Owner(AbstractUser):
     instagram = models.URLField(blank=True, verbose_name='инстаграм', null=True)
     vkontakte = models.URLField(blank=True, verbose_name='вконтакте', null=True)
     youtube = models.URLField(blank=True, verbose_name='ютуб', null=True)
+    full_name_is_hidden = models.BooleanField(default=True)
+    date_of_birth_is_hidden = models.BooleanField(default=True)
 
     def get_absolute_url(self):
         """создание ссылки на страницу профиля"""
@@ -112,3 +114,6 @@ class PostComment(models.Model):
     post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='comments', verbose_name='пост')
     likes = models.FloatField(verbose_name='лайки')
     is_hidden = models.BooleanField(default=False, verbose_name='скрыт')
+
+
+
