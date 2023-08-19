@@ -17,6 +17,8 @@ urlpatterns = [
          name='owner_subscriptions'),
     path('personal-settings/<int:pk>/profile-settings/', UpdateOwner.as_view(),
          name='profile-settings'),
+    path('personal-settings/<int:pk>/privacy-settings/', PrivacySettingsView.as_view(),
+         name='privacy-settings'),
     path('register/', RegisterUser.as_view(), name='register'),
     path('login/', LoginUser.as_view(), name='login'),
     path('logout/', logout_user, name='logout'),

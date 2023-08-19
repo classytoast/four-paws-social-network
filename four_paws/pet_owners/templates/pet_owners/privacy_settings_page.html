@@ -5,12 +5,12 @@
 <div class="settings_page">
     <div class="selecting_settings">
         <h2>Пользовательские настройки</h2>
-        <div class="setting_el_active">
+        <div class="setting_el">
             <a href="{% url 'profile-settings' request.user.id %}">
                 Редактирование профиля
             </a>
         </div>
-        <div class="setting_el">
+        <div class="setting_el_active">
             <a href="{% url 'privacy-settings' request.user.id %}">
                 Настройки приватности
             </a>
@@ -22,6 +22,7 @@
         </div>
     </div>
     <div class="form_block_set">
+        <h3>Отметьте какую доп информацию о себе вы хотите скрыть</h3>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {% for field in form %}

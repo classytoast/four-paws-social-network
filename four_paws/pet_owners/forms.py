@@ -50,7 +50,7 @@ class UpdateUserForm(forms.ModelForm):
                                widget=forms.TextInput(attrs={'class': 'form-input'}))
     last_name = forms.CharField(label='Фамилия', required=False,
                                widget=forms.TextInput(attrs={'class': 'form-input'}))
-    date_of_birth = forms.DateField(label='Дата рождения', required=False, input_formats=['%d/%m/%Y'],
+    date_of_birth = forms.DateField(label='Дата рождения', required=False, input_formats=['%d.%m.%Y'],
                                     widget=forms.DateInput(attrs={'class': 'form-input'}))
     avatar = forms.ImageField(label='Аватар', required=False,
                                     widget=forms.FileInput(attrs={'class': 'form-input'}))
@@ -67,4 +67,15 @@ class UpdateUserForm(forms.ModelForm):
         model = Owner
         fields = ('username', 'email', 'first_name', 'last_name', 'avatar',
                   'date_of_birth', 'about_myself', 'instagram', 'vkontakte', 'youtube')
+
+
+class PrivacySettingsForm(forms.ModelForm):
+    full_name_is_hidden = forms.BooleanField(label='Имя и фамилия', required=False,
+                               widget=forms.CheckboxInput(attrs={'class': 'form-input'}))
+    date_of_birth_is_hidden = forms.BooleanField(label='Дата рождения', required=False,
+                             widget=forms.CheckboxInput(attrs={'class': 'form-input'}))
+
+    class Meta:
+        model = Owner
+        fields = ('full_name_is_hidden', 'date_of_birth_is_hidden')
 

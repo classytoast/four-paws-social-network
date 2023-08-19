@@ -164,4 +164,24 @@ class UpdateOwner(LoginRequiredMixin, DataMixin, UpdateView):
         return context
 
     def form_valid(self, form):
+        form.save()
+        return redirect('profile_home', id=self.request.user.id)
+
+
+class PrivacySettingsView(LoginRequiredMixin, DataMixin, UpdateView):
+    """Страница настроек приватности"""
+    form_class = PrivacySettingsForm
+    template_name = 'pet_owners/privacy_settings_page.html'
+
+    def get_queryset(self):
+        return Owner.objects.filter(pk=self.request.user.id)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Настройки приватности"
+        context.update(self.get_left_menu())
+        return context
+
+    def form_valid(self, form):
+        form.save()
         return redirect('profile_home', id=self.request.user.id)
