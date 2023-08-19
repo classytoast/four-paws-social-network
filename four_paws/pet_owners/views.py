@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.contrib.auth import logout, login
 from django.db.models import Count
 from django.shortcuts import redirect
@@ -185,3 +185,19 @@ class PrivacySettingsView(LoginRequiredMixin, DataMixin, UpdateView):
     def form_valid(self, form):
         form.save()
         return redirect('profile_home', id=self.request.user.id)
+
+
+class ChangePasswordView(LoginRequiredMixin, DataMixin, PasswordChangeView):
+    """Страница изменения пароля"""
+    form_class = NewPasswordForm
+    template_name = 'pet_owners/change_password_page.html'
+
+    def get_success_url(self):
+        return reverse_lazy('profile_home', kwargs={'id': self.request.user.id})
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Изменение пароля"
+        context.update(self.get_left_menu())
+        return context
+

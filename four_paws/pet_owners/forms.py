@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 
 from .models import Owner
 
@@ -78,4 +78,24 @@ class PrivacySettingsForm(forms.ModelForm):
     class Meta:
         model = Owner
         fields = ('full_name_is_hidden', 'date_of_birth_is_hidden')
+
+
+class NewPasswordForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label='Cтарый пароль',
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password",
+                                          "autofocus": True,
+                                          'class': 'form-input'})
+    )
+    new_password1 = forms.CharField(
+        label='Новый пароль',
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password",
+                                          'class': 'form-input'})
+    )
+    new_password2 = forms.CharField(
+        label='Повторите новый пароль',
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password",
+                                          'class': 'form-input'})
+    )
+
 

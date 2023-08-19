@@ -19,6 +19,8 @@ urlpatterns = [
          name='profile-settings'),
     path('personal-settings/<int:pk>/privacy-settings/', PrivacySettingsView.as_view(),
          name='privacy-settings'),
+    path('personal-settings/change-password/', ChangePasswordView.as_view(),
+         name='change-password'),
     path('register/', RegisterUser.as_view(), name='register'),
     path('login/', LoginUser.as_view(), name='login'),
     path('logout/', logout_user, name='logout'),

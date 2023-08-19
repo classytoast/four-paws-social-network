@@ -475,7 +475,7 @@ html, body {
 .form-label {
     display: inline-block;
     text-align: left;
-    min-width: 260px;
+    min-width: 275px;
     vertical-align: top;
 }
 .form-error ul {
