@@ -52,6 +52,7 @@ class ProfileHome(LoginRequiredMixin, DataMixin, ListView):
         all_posts = owner.ownerpost_set.all()
         context['all_posts'] = all_posts
         context['data_for_post'] = self.get_data_for_post(all_posts)
+        context['name_page_for_likes'] = 'owner_posts'
         return context
 
 
@@ -73,16 +74,20 @@ def add_or_del_follower_for_animal(request, animal_id):
 
 
 @login_required
-def put_or_remove_like_for_post(request, post_id):
+def put_or_remove_like_for_post(request, post_id, from_page):
     """Ставит или убирает лайк посту"""
     user = Owner.objects.get(pk=request.user.id)
     post = OwnerPost.objects.get(pk=post_id)
+    print('sffsdfsd', from_page)
     if user in post.likes.all():
         post.likes.remove(user)
     else:
         post.likes.add(user)
         post.views.add(user)
-    return redirect('profile_home', id=post.autor.pk)
+    if from_page == 'post_detail':
+        return redirect('post', post_id=post_id)
+    elif from_page == 'owner_posts':
+        return redirect('profile_home', id=post.autor.pk)
 
 
 class OwnerSubscriptions(DataMixin, ListView):

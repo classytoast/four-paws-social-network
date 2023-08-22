@@ -19,12 +19,12 @@ class ShowPost(DataMixin, DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         post = self.model.objects.get(pk=self.kwargs['post_id'])
-        user = Owner.objects.get(pk=post.autor.pk)
+        owner = Owner.objects.get(pk=post.autor.pk)
         context['title'] = post.title
         context.update(self.get_left_menu())
-        all_posts = user.ownerpost_set.all()
-        context['data_for_post'] = self.get_data_for_post(all_posts, all_images=True)
-        self.add_one_view_for_post(post, user)
+        context['data_for_post'] = self.get_data_for_post([post], all_images=True)
+        self.add_one_view_for_post(post, owner)
+        context['name_page_for_likes'] = 'post_detail'
         return context
 
 

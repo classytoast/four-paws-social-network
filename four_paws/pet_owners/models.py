@@ -113,7 +113,6 @@ class PostComment(models.Model):
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата')
     post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='comments', verbose_name='пост')
     likes = models.FloatField(verbose_name='лайки')
-    is_hidden = models.BooleanField(default=False, verbose_name='скрыт')
 
 
 

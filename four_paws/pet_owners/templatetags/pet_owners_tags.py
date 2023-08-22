@@ -17,8 +17,9 @@ def get_data_for_post(post_title, post_data):
 
 
 @register.inclusion_tag('pet_owners/likes_and_views_for_posts.html')
-def show_likes_and_views(post, post_data):
-    return {"post": post, "post_data": post_data}
+def show_likes_and_views(post, post_data, name_page_for_likes):
+    return {"post": post, "post_data": post_data,
+            "name_page_for_likes": name_page_for_likes}
 
 
 @register.inclusion_tag('pet_owners/form_fields.html')
@@ -27,5 +28,6 @@ def show_form_fields(form):
 
 
 @register.inclusion_tag('pet_owners/all_posts.html')
-def show_all_posts(posts, data_for_post):
-    return {"posts": posts, "data_for_post": data_for_post}
+def show_all_posts(posts, data_for_post, name_page_for_likes):
+    return {"posts": posts, "data_for_post": data_for_post,
+            "name_page_for_likes": name_page_for_likes}
