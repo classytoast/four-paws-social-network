@@ -48,7 +48,7 @@ class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
         form.instance.autor = self.request.user
         post = form.save()
         if 'add_photos' in self.request.POST:
-            return redirect('add-images-to-post', post_id=post.pk)
+            return redirect('add_images_to_post', post_id=post.pk)
         elif 'to_publish' in self.request.POST:
             return redirect('profile_home', id=self.request.user.id)
 
@@ -74,7 +74,7 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
                 form.instance.post = post
                 form.save()
         if 'add_more_photos' in self.request.POST:
-            return redirect('add-images-to-post', post_id=self.kwargs['post_id'])
+            return redirect('add_images_to_post', post_id=self.kwargs['post_id'])
         elif 'to_publish' in self.request.POST:
             return redirect('profile_home', id=self.request.user.id)
 
@@ -106,7 +106,7 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
         if 'update_without_photos' in self.request.POST:
             return redirect('profile_home', id=self.request.user.id)
         elif 'update_with_photos' in self.request.POST:
-            return redirect('add-images-to-post', post_id=post.pk)
+            return redirect('add_images_to_post', post_id=post.pk)
 
 
 class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):
@@ -136,5 +136,22 @@ def delete_img(request, img_id):
     post_id = image.post.pk
     if image.owner == user:
         image.delete()
-    return redirect('add-images-to-post', post_id=post_id)
+    return redirect('add_images_to_post', post_id=post_id)
+
+
+class CreateComment(LoginRequiredMixin, DataMixin, CreateView):
+    """Страница создания поста"""
+    form_class = AddOrEditCommentForm
+    template_name = 'posts/add_comment_page.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Добавление комментария"
+        context.update(self.get_left_menu())
+        return context
+
+    def form_valid(self, form):
+        form.instance.post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
+        form.save()
+        return redirect('post', post_id=self.kwargs['post_id'])
 

@@ -271,7 +271,7 @@ html, body {
     background: #dce0e0;
 }
 
-.create_post_zone {
+.create_post_zone, .create_comment_zone {
     text-align: center;
     width: 100%;
     margin-top: 35px;
@@ -298,6 +298,30 @@ html, body {
 .create_post_button a:hover {
     background: #9b8af2;
     color: #706900;
+}
+.comments_title { text-align: center; }
+.create_comment_button {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    height: 45px;
+    width: 250px;
+}
+.create_comment_button a {
+    display: block;
+    background: rgba(31, 0, 115, 0.6);
+    height: 100%;
+    width: 100%;
+    line-height: 45px;
+    color: #f2f2f2;
+    font-style: italic;
+    text-decoration: none;
+    border: 2px solid #1ca3a3;
+    border-radius: 20px;
+}
+.create_comment_button a:hover {
+    background: #006a75;
+    color: #c7c7c7;
 }
 
 .all_posts {

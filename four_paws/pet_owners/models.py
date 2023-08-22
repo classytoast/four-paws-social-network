@@ -112,7 +112,7 @@ class PostComment(models.Model):
     comment = models.TextField(max_length=550, verbose_name='комментарий')
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата')
     post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='comments', verbose_name='пост')
-    likes = models.FloatField(verbose_name='лайки')
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comments_likes', verbose_name='лайки')
 
 
 

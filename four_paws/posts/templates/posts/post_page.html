@@ -33,4 +33,11 @@
     <td>Автор: {{post.autor}}</td>
 </table>
 
+<div class="comments_title"><h4>Комментарии:</h4></div>
+<div class="create_comment_zone">
+    <div class="create_comment_button">
+        <a href="{% url 'add_comment' post.pk %}">Добавить комментарий</a>
+    </div>
+</div>
+
 {% endblock %}
