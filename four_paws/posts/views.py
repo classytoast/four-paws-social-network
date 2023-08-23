@@ -157,3 +157,41 @@ class CreateComment(LoginRequiredMixin, DataMixin, CreateView):
         form.save()
         return redirect('post', post_id=self.kwargs['post_id'])
 
+
+class UpdateComment(LoginRequiredMixin, DataMixin, UpdateView):
+    """Страница редактирования данных о питомце"""
+    form_class = AddOrEditCommentForm
+    template_name = 'posts/edit_comment_page.html'
+
+    def get_queryset(self):
+        return PostComment.objects.filter(pk=self.kwargs['pk'])
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Редактирование комментария"
+        context.update(self.get_left_menu())
+        return context
+
+    def form_valid(self, form):
+        if 'update' in self.request.POST:
+            form.save()
+        return redirect('post', post_id=self.kwargs['post_id'])
+
+
+class DeleteComment(LoginRequiredMixin, DataMixin, DeleteView):
+    """Страница удаления комментария"""
+    model = PostComment
+    template_name = 'posts/delete_comment_page.html'
+
+    def get_success_url(self):
+        return reverse_lazy('post', kwargs={'post_id': self.kwargs['post_id']})
+
+    def get_queryset(self):
+        qs = super(DeleteComment, self).get_queryset()
+        return qs.filter(author=self.request.user)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Удаление комментария"
+        context.update(self.get_left_menu())
+        return context

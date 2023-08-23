@@ -78,13 +78,12 @@ def put_or_remove_like_for_post(request, post_id, from_page):
     """Ставит или убирает лайк посту"""
     user = Owner.objects.get(pk=request.user.id)
     post = OwnerPost.objects.get(pk=post_id)
-    print('sffsdfsd', from_page)
     if user in post.likes.all():
         post.likes.remove(user)
     else:
         post.likes.add(user)
         post.views.add(user)
-    if from_page == 'post_detail':
+    if from_page == 'post_detail' or from_page == 'animal_posts':
         return redirect('post', post_id=post_id)
     elif from_page == 'owner_posts':
         return redirect('profile_home', id=post.autor.pk)

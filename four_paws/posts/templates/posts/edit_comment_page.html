@@ -1,0 +1,20 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+
+<div class="form_block">
+    <h1>{{title}}</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% show_form_fields form %}
+        <button class="form_button" type="submit" name="cancel">
+            Отменить
+        </button>
+        <button class="form_button" type="submit" name="update">
+            Сохранить
+        </button>
+    </form>
+</div>
+
+{% endblock %}

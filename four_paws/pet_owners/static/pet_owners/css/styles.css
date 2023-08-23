@@ -570,9 +570,9 @@ html, body {
 .some_comment {
     background: rgba(0, 96, 130, 0.5);
     width: 850px;
-    height: 150px;
+    min-height: 150px;
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: top;
     text-align: center;
     margin: 7px 0 7px 0;
     border: 3px solid #005ca1;
@@ -581,6 +581,8 @@ html, body {
 .author_info {
     display: inline-block;
     width: 18%;
+    vertical-align: top;
+    margin: 5px 0 5px 0;
     border-right: 1px solid #00255c;
 }
 .author_info a {
@@ -595,12 +597,12 @@ html, body {
     text-align: left;
 }
 .comment_text {
-    height: 80%;
+    min-height: 110px;
     font-style: italic;
     border-bottom: 1px solid #00255c;
 }
 .comment_extra_data{
-    height: 35px;
+    height: 30px;
 }
 .date_of_comment {
     display: inline-block;
@@ -609,4 +611,10 @@ html, body {
 }
 .likes_of_comment {
     display: inline-block;
+}
+.edit_delete_buttons_comm {
+    display: inline-block;
+    width: 100%;
+    height: 5px;
+    text-align: right;
 }

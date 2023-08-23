@@ -1,0 +1,17 @@
+{% extends 'pet_owners/base.html' %}
+
+{% block content %}
+
+<div class="form_block">
+    <h1>{{title}}</h1>
+
+    <form method="post">{% csrf_token %}
+        <p>Вы уверены что хотите удалить комментарий?</p>
+        <p>(это действие нельзя будет отменить)</p>
+        <button class="form_button" type="submit" name="delete">
+            Удалить
+        </button>
+    </form>
+</div>
+
+{% endblock %}

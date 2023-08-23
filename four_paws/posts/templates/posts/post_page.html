@@ -51,6 +51,20 @@
                 </a>
             </div>
             <div class="comment_info">
+                <div class="edit_delete_buttons_comm">
+                    {% if request.user == comm.author %}
+                    <div class="del_but">
+                        <a href="{% url 'delete_comment' post.pk comm.pk %}">
+                        <img src="/static/pet_owners/images/button_delete.png" width="20">
+                        </a>
+                    </div>
+                    <div class="edit_but">
+                        <a href="{% url 'edit_comment' post.pk comm.pk %}">
+                        <img src="/static/pet_owners/images/button_edit.png" width="20">
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
                 <div class="comment_text">
                     {{comm.comment}}
                 </div>

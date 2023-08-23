@@ -49,6 +49,7 @@ class AnimalPosts(DataMixin, ListView):
         context['title'] = f"Посты {animal.name_of_animal}"
         context.update(self.get_left_menu())
         context['data_for_post'] = self.get_data_for_post(posts)
+        context['name_page_for_likes'] = 'animal_posts'
         return context
 
 
@@ -94,8 +95,7 @@ class UpdateAnimal(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'animals/edit_animal_page.html'
 
     def get_queryset(self):
-        return Animal.objects.filter(pk=self.kwargs['pk'],
-                                     pet_owner=self.request.user)
+        return Animal.objects.filter(pk=self.kwargs['pk'])
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

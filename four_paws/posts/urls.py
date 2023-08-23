@@ -13,4 +13,8 @@ urlpatterns = [
     path('<int:img_id>/delete-img/', delete_img, name='delete_image'),
     path('<int:post_id>/add-comment/', CreateComment.as_view(),
          name='add_comment'),
+    path('<int:post_id>/<int:pk>/delete-comment/', DeleteComment.as_view(),
+         name='delete_comment'),
+    path('<int:post_id>/<int:pk>/edit-comment/', UpdateComment.as_view(),
+         name='edit_comment'),
 ]

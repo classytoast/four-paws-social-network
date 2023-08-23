@@ -13,7 +13,7 @@
         </div>
     </div>
     {% if posts %}
-        {% show_all_posts posts data_for_post %}
+        {% show_all_posts posts data_for_post name_page_for_likes %}
     {% else %}
         <h2>Про питомца нет постов</h2>
         {% if animal.pet_owner == request.user %}
