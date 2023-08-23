@@ -51,9 +51,15 @@ class PostImageAdmin(admin.ModelAdmin):
     fields = ['post', 'owner', 'img']
 
 
+class OwnerCommentAdmin(admin.ModelAdmin):
+    list_display = ['author', 'comment']
+    fields = ['author', 'comment', 'post', 'likes']
+
+
 admin.site.register(Owner, OwnerAdmin)
 admin.site.register(AnimalCategory, AnimalCategoryAdmin)
 admin.site.register(Animal, AnimalAdmin)
 admin.site.register(AnimalFollower, AnimalFollowerAdmin)
 admin.site.register(OwnerPost, OwnerPostAdmin)
 admin.site.register(PostImage, PostImageAdmin)
+admin.site.register(PostComment, OwnerCommentAdmin)

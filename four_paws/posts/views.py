@@ -25,6 +25,7 @@ class ShowPost(DataMixin, DetailView):
         context['data_for_post'] = self.get_data_for_post([post], all_images=True)
         self.add_one_view_for_post(post, owner)
         context['name_page_for_likes'] = 'post_detail'
+        context['comments'] = PostComment.objects.filter(post=post)
         return context
 
 
@@ -151,6 +152,7 @@ class CreateComment(LoginRequiredMixin, DataMixin, CreateView):
         return context
 
     def form_valid(self, form):
+        form.instance.author = self.request.user
         form.instance.post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
         form.save()
         return redirect('post', post_id=self.kwargs['post_id'])

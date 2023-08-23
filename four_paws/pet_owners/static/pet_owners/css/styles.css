@@ -147,7 +147,7 @@ html, body {
     border: 3px solid rgba(26, 196, 162, 0.5);
     border-radius: 25px;
 }
-.sub_avatar, .foll_avatar {
+.sub_avatar, .foll_avatar, .author_avatar {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
@@ -560,4 +560,53 @@ html, body {
 .form_block_set {
     background: #bdbdbd;
     padding: 30px 0 30px 0;
+}
+
+.all_comments {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+.some_comment {
+    background: rgba(0, 96, 130, 0.5);
+    width: 850px;
+    height: 150px;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    margin: 7px 0 7px 0;
+    border: 3px solid #005ca1;
+    border-radius: 20px;
+}
+.author_info {
+    display: inline-block;
+    width: 18%;
+    border-right: 1px solid #00255c;
+}
+.author_info a {
+    color: #043333;
+    text-decoration: none;
+}
+.author_info a:hover { color: #706900; }
+.comment_info {
+    display: inline-block;
+    width: 77%;
+    height: 100%;
+    text-align: left;
+}
+.comment_text {
+    height: 80%;
+    font-style: italic;
+    border-bottom: 1px solid #00255c;
+}
+.comment_extra_data{
+    height: 35px;
+}
+.date_of_comment {
+    display: inline-block;
+    width: 90%;
+    font-size: 16px;
+}
+.likes_of_comment {
+    display: inline-block;
 }

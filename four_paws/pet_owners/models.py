@@ -109,6 +109,8 @@ class PostImage(models.Model):
 
 class PostComment(models.Model):
     """комментарий к посту"""
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comments',
+                               on_delete=models.CASCADE, verbose_name='автор поста', null=True)
     comment = models.TextField(max_length=550, verbose_name='комментарий')
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата')
     post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='comments', verbose_name='пост')

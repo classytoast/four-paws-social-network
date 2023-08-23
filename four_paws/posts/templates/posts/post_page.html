@@ -39,5 +39,32 @@
         <a href="{% url 'add_comment' post.pk %}">Добавить комментарий</a>
     </div>
 </div>
+<div class="all_comments">
+    {% for comm in comments %}
+        <div class="some_comment">
+            <div class="author_info">
+                <a href="{{ comm.author.get_absolute_url }}">
+                    <div class="author_avatar">
+                        <img src="{{comm.author.avatar.url}}" height=120>
+                    </div>
+                    <div>{{comm.author.username}}</div>
+                </a>
+            </div>
+            <div class="comment_info">
+                <div class="comment_text">
+                    {{comm.comment}}
+                </div>
+                <div class="comment_extra_data">
+                    <div class="date_of_comment">
+                        {{comm.date_create}}
+                    </div>
+                    <div class="likes_of_comment">
+                        Л
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 {% endblock %}
