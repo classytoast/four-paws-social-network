@@ -31,3 +31,9 @@ def show_form_fields(form):
 def show_all_posts(posts, data_for_post, name_page_for_likes):
     return {"posts": posts, "data_for_post": data_for_post,
             "name_page_for_likes": name_page_for_likes}
+
+
+@register.simple_tag
+def show_likes_for_comment(comment_pk, comment_likes):
+    """достает данные о лайках из словаря для нужного комментария"""
+    return comment_likes[str(comment_pk)]

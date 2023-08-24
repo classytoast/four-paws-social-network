@@ -26,7 +26,7 @@
                         </div>
                     </div>
                     <a href="{% url 'post' post.pk %}"><div class="post_text">
-                        {{post.text_of_post|truncatewords:50}}
+                        {{post.text_of_post|truncatewords:35}}
                     </div></a>
                     <div class="post_datetime">
                         {{post.date_create}}

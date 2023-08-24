@@ -25,7 +25,9 @@ class ShowPost(DataMixin, DetailView):
         context['data_for_post'] = self.get_data_for_post([post], all_images=True)
         self.add_one_view_for_post(post, owner)
         context['name_page_for_likes'] = 'post_detail'
-        context['comments'] = PostComment.objects.filter(post=post)
+        comments = PostComment.objects.filter(post=post)
+        context['comments'] = comments
+        context['likes_for_comments'] = self.get_likes_for_comments(comments)
         return context
 
 
@@ -195,3 +197,15 @@ class DeleteComment(LoginRequiredMixin, DataMixin, DeleteView):
         context['title'] = "Удаление комментария"
         context.update(self.get_left_menu())
         return context
+
+
+@login_required
+def put_or_remove_like_for_comment(request, post_id, comment_id):
+    """Ставит или убирает лайк комментарию"""
+    user = Owner.objects.get(pk=request.user.id)
+    comment = PostComment.objects.get(pk=comment_id)
+    if user in comment.likes.all():
+        comment.likes.remove(user)
+    else:
+        comment.likes.add(user)
+    return redirect('post', post_id=post_id)

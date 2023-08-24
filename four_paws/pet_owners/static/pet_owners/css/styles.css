@@ -407,6 +407,7 @@ html, body {
 .post_likes {
     display: inline-block;
     width: 10%;
+    max-width: 80px;
     height: 100%;
     font-size: 0;
 
@@ -414,6 +415,7 @@ html, body {
 .post_views {
     display: inline-block;
     width: 10%;
+    max-width: 80px;
     height: 100%;
     vertical-align: top;
     margin-left: 50px;
@@ -607,6 +609,7 @@ html, body {
 .date_of_comment {
     display: inline-block;
     width: 90%;
+    vertical-align: top;
     font-size: 16px;
 }
 .likes_of_comment {

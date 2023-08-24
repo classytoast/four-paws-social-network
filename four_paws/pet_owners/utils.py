@@ -64,4 +64,14 @@ class DataMixin:
         if self.request.user.is_authenticated and user not in post.likes.all():
             post.views.add(user)
 
+    def get_likes_for_comments(self, comments):
+        """Выгружает данные о лайках для переданных комментариев"""
+        likes_for_comment = {}
+        auth_user = Owner.objects.get(pk=self.request.user.id)
+        for comment in comments:
+            if self.request.user.is_authenticated and auth_user in comment.likes.all():
+                likes_for_comment[f'{comment.pk}'] = True
+            else:
+                likes_for_comment[f'{comment.pk}'] = False
+        return likes_for_comment
 
