@@ -75,14 +75,15 @@ html, body {
 	text-decoration: none;
 }
 
-.settings_button, .logout_button { text-align: center; }
-.settings_button a, .logout_button a {
+.settings_button, .logout_button, .right_sub_button { text-align: center; }
+.settings_button a, .logout_button a, .right_sub_button a {
     display: block;
     height: 100%;
     width: 100%;
     transition: all .2s linear;
 }
 .settings_button a:hover, .logout_button a:hover { background: #209980; }
+.right_sub_button .sub_avatar { border: 3px solid rgba(126, 117, 255, 0.8); }
 
 .content {
     background: #27234621;

@@ -27,6 +27,7 @@ class AnimalsHome(LoginRequiredMixin, DataMixin, ListView):
         animals = self.queryset
         context['title'] = "Мои питомцы"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
         return context
 
@@ -48,7 +49,9 @@ class AnimalPosts(DataMixin, ListView):
         posts = self.queryset
         context['title'] = f"Посты {animal.name_of_animal}"
         context.update(self.get_left_menu())
-        context['data_for_post'] = self.get_data_for_post(posts)
+        auth_user = Owner.objects.get(pk=self.request.user.id)
+        context.update(self.get_right_menu(auth_user))
+        context['data_for_post'] = self.get_data_for_post(posts, auth_user)
         context['name_page_for_likes'] = 'animal_posts'
         return context
 
@@ -69,6 +72,7 @@ class AnimalFollowers(DataMixin, ListView):
         context['followers'] = Owner.objects.filter(subscriptions__animal=animal)
         context['title'] = f"Подписчики питомца: {animal.name_of_animal}"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
 
@@ -81,6 +85,7 @@ class CreateAnimal(LoginRequiredMixin, DataMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Добавление питомца"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
     def form_valid(self, form):
@@ -101,6 +106,7 @@ class UpdateAnimal(LoginRequiredMixin, DataMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Редактирование данных питомца"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
     def form_valid(self, form):
@@ -123,4 +129,5 @@ class DeleteAnimal(LoginRequiredMixin, DataMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Удаление питомца"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context

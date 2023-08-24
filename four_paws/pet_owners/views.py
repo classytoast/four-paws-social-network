@@ -46,12 +46,14 @@ class ProfileHome(LoginRequiredMixin, DataMixin, ListView):
         else:
             context['title'] = f"Профиль {owner.username}"
         context.update(self.get_left_menu())
+        auth_user = Owner.objects.get(pk=self.request.user.id)
+        context.update(self.get_right_menu(auth_user))
         subscriptions = owner.subscriptions.all()
         context['num_of_subs'] = subscriptions.count()
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
         all_posts = owner.ownerpost_set.all()
         context['all_posts'] = all_posts
-        context['data_for_post'] = self.get_data_for_post(all_posts)
+        context['data_for_post'] = self.get_data_for_post(all_posts, auth_user)
         context['name_page_for_likes'] = 'owner_posts'
         return context
 
@@ -102,7 +104,8 @@ class OwnerSubscriptions(DataMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         owner = self.queryset
-        context['auth_user'] = Owner.objects.get(pk=self.request.user.id)
+        auth_user = Owner.objects.get(pk=self.request.user.id)
+        context['auth_user'] = auth_user
         animals = Animal.objects.filter(followers__follower=owner)
         context['subscriptions'] = animals
         if self.request.user.id == self.kwargs['id']:
@@ -110,6 +113,7 @@ class OwnerSubscriptions(DataMixin, ListView):
         else:
             context['title'] = f"Подписки {owner.username}"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu(auth_user))
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
         return context
 
@@ -159,12 +163,14 @@ class UpdateOwner(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'pet_owners/edit_owner_page.html'
 
     def get_queryset(self):
-        return Owner.objects.filter(pk=self.request.user.id)
+        self.queryset = Owner.objects.filter(pk=self.request.user.id)
+        return self.queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Редактирование профиля"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu(self.queryset[0]))
         return context
 
     def form_valid(self, form):
@@ -178,12 +184,14 @@ class PrivacySettingsView(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'pet_owners/privacy_settings_page.html'
 
     def get_queryset(self):
-        return Owner.objects.filter(pk=self.request.user.id)
+        self.queryset = Owner.objects.filter(pk=self.request.user.id)
+        return self.queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Настройки приватности"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu(self.queryset[0]))
         return context
 
     def form_valid(self, form):
@@ -203,5 +211,6 @@ class ChangePasswordView(LoginRequiredMixin, DataMixin, PasswordChangeView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Изменение пароля"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 

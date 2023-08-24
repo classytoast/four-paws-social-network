@@ -22,7 +22,9 @@ class ShowPost(DataMixin, DetailView):
         owner = Owner.objects.get(pk=post.autor.pk)
         context['title'] = post.title
         context.update(self.get_left_menu())
-        context['data_for_post'] = self.get_data_for_post([post], all_images=True)
+        auth_user = Owner.objects.get(pk=self.request.user.id)
+        context.update(self.get_right_menu(auth_user))
+        context['data_for_post'] = self.get_data_for_post([post], auth_user, all_images=True)
         self.add_one_view_for_post(post, owner)
         context['name_page_for_likes'] = 'post_detail'
         comments = PostComment.objects.filter(post=post)
@@ -45,6 +47,7 @@ class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Добавление поста"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
     def form_valid(self, form):
@@ -65,6 +68,7 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Добавление изображений"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
         context['added_images'] = post.images.all()
         return context
@@ -100,6 +104,7 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Редактирование поста"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
     def form_valid(self, form):
@@ -128,6 +133,7 @@ class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Удаление поста"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
 
@@ -151,6 +157,7 @@ class CreateComment(LoginRequiredMixin, DataMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Добавление комментария"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
     def form_valid(self, form):
@@ -172,6 +179,7 @@ class UpdateComment(LoginRequiredMixin, DataMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Редактирование комментария"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
     def form_valid(self, form):
@@ -196,6 +204,7 @@ class DeleteComment(LoginRequiredMixin, DataMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Удаление комментария"
         context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
         return context
 
 

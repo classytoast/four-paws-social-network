@@ -5,6 +5,7 @@ class DataMixin:
     """Общий класс для всех вьюшек"""
 
     def get_left_menu(self):
+        """Создает список ссылок для левой панели меню"""
         context = {}
         if self.request.user.is_authenticated:
             context['left_menu'] = [
@@ -19,6 +20,15 @@ class DataMixin:
                 {'title': "Регистрация", 'url_name': 'register'},
                 {'title': "Войти", 'url_name': 'login'},
             ]
+        return context
+
+    def get_right_menu(self, auth_user=None):
+        """Создает список ссылок для правой панели меню"""
+        context = {}
+        if auth_user is None:
+            auth_user = Owner.objects.get(pk=self.request.user.id)
+        animals = Animal.objects.filter(followers__follower=auth_user)[:7]
+        context['animals_for_right_menu'] = animals
         return context
 
     def get_animals_followers_of_owner(self, animals):
@@ -38,10 +48,9 @@ class DataMixin:
                                                                      }
         return user_animals_followed
 
-    def get_data_for_post(self, posts, all_images=False):
+    def get_data_for_post(self, posts, auth_user, all_images=False):
         """Выгружает данные для переданных постов"""
         data_for_post = {}
-        auth_user = Owner.objects.get(pk=self.request.user.id)
         for post in posts:
             if self.request.user.is_authenticated and auth_user in post.likes.all():
                 is_liked = True
