@@ -203,19 +203,19 @@ html, body {
     height: 160px;
 }
 
-.follow_animal {
+.follow_animal, .follow_group {
     background: rgba(5, 230, 20, 0.8);
     text-align: center;
     vertical-align: middle;
     height: 35px;
 }
-.unfollow_animal {
+.unfollow_animal, .unfollow_group {
     background: rgba(121, 171, 118, 0.8);
     text-align: center;
     vertical-align: middle;
     height: 35px;
 }
-.follow_animal a, .unfollow_animal a {
+.follow_animal a, .unfollow_animal a, .follow_group a, .unfollow_group a {
     display: block;
     height: 100%;
     width: 100%;
@@ -224,11 +224,11 @@ html, body {
     text-decoration: none;
     transition: all .2s linear;
 }
-.follow_animal a:hover {
+.follow_animal a:hover, .follow_group a:hover {
     background: rgba(107, 95, 217, 0.2);
     color: #e2e60b;
 }
-.unfollow_animal a:hover {
+.unfollow_animal a:hover, .unfollow_group a:hover {
     background: rgba(107, 95, 217, 0.2);
     color: #e2e60b;
 }
@@ -645,3 +645,53 @@ html, body {
     text-decoration: none;
 }
 .no_groups a:hover { color: #706900; }
+.group_cell {
+    background: rgba(144, 176, 176, 0.5);
+    width: 65%;
+    height: 160px;
+    display: inline-block;
+    text-align: center;
+    margin: 7px 0 7px 0;
+    border: 1px solid #878c8c;
+    border-radius: 15px;
+}
+.group_logo_block {
+    display: inline-block;
+    position: relative;
+    width: 25%;
+    height: 146px;
+    margin: 7px 0 7px 0;
+    border-right: 1px solid #00255c;
+}
+.group_logo_block img {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+.group_link {color: #000000;}
+.group_name_txt {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 20px;
+    width: 48%;
+    height: 100%;
+}
+.group_name {
+    height: 30%;
+    line-height: 40px;
+    font-weight: bold;
+}
+.about_group {
+    min-height: 65%;
+    font-style: italic;
+}
+.group_extra_data {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 40px;
+    line-height: 30px;
+    width: 25%;
+}

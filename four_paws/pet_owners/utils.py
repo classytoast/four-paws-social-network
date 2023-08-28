@@ -1,4 +1,5 @@
 from .models import *
+from groups.models import GroupMember
 
 
 class DataMixin:
@@ -38,7 +39,7 @@ class DataMixin:
             animal_folls = animal.followers.all()
             count_folls = animal_folls.count()
             try:
-                animal_folls.get(follower__id=self.request.user.id)
+                animal_folls.get(follower=self.request.user)
                 user_animals_followed[f'{animal.name_of_animal}'] = {"is_followed": True,
                                                                      "count_folls": count_folls
                                                                      }
@@ -67,6 +68,23 @@ class DataMixin:
                     'is_liked': is_liked
                 }
         return data_for_post
+
+    def get_groups_followers(self, groups):
+        """Выдает подписчиков групп юзера"""
+        user_groups_followed = {}
+        for group in groups:
+            group_folls = group.members.all()
+            count_folls = group_folls.count()
+            try:
+                group_folls.get(member=self.request.user)
+                user_groups_followed[f'{group.name_of_group}'] = {"is_followed": True,
+                                                                  "count_folls": count_folls
+                                                                  }
+            except GroupMember.DoesNotExist:
+                user_groups_followed[f'{group.name_of_animal}'] = {"is_followed": False,
+                                                                   "count_folls": count_folls
+                                                                   }
+        return user_groups_followed
 
     def add_one_view_for_post(self, post, user):
         """Добавляет просмотр посту"""
