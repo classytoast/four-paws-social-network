@@ -1,0 +1,29 @@
+{% extends 'pet_owners/base.html' %}
+
+{% block content %}
+
+<div class="my_groups_block">
+    <h1>{{title}}</h1>
+    {% if groups %}
+        <div class="all_groups">
+            {% for group in groups %}
+                <div class="group_cell">
+                    Group_cell
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no_groups">
+            <h2>Вы пока не подписаны не на одну из групп</h2>
+            <div class="about_groups">
+                Группы позволяют Вам состоять в сообществах, интересы которых схожи с вашими.
+                Тематики групп разнообразны, от любимых пород питомцев и того как за ними ухаживать,
+                до групп с мемами и новостями из мира домашних животных :)
+            </div>
+            <div><a href="#">Найдите</a> для себя подходящую группу</div>
+            <div>Или <a href="#">создайте</a>  свою!</div>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

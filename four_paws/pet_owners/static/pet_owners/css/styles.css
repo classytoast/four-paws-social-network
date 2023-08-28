@@ -155,7 +155,7 @@ html, body {
     max-height: 120px;
     max-width: 120px;
     margin-top: 10px;
-    border-radius: 120px;
+    border-radius: 50%;
     overflow: hidden;
 }
 .sub_info {
@@ -622,3 +622,26 @@ html, body {
     height: 5px;
     text-align: right;
 }
+
+.my_groups_block {
+    width: 100%;
+    text-align: center;
+}
+.about_groups {
+    display: inline-block;
+    margin: 20px 0 20px 0;
+    width: 65%;
+}
+.no_groups {
+    margin-top: 80px;
+    font-style: italic;
+}
+.no_groups a {
+    font-style: italic;
+    font-size: 20px;
+}
+.no_groups a {
+    color: #095c5c;
+    text-decoration: none;
+}
+.no_groups a:hover { color: #706900; }

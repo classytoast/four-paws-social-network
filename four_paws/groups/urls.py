@@ -4,5 +4,5 @@ from .views import *
 
 
 urlpatterns = [
-    path('', index, name='groups_home'),
+    path('my-groups/', GroupsHome.as_view(), name='my_groups'),
 ]
