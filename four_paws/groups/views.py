@@ -1,6 +1,6 @@
 from django.db.models import Count
-from django.shortcuts import render
-from django.views.generic import ListView
+from django.shortcuts import render, redirect
+from django.views.generic import ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
@@ -27,3 +27,26 @@ class GroupsHome(LoginRequiredMixin, DataMixin, ListView):
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         return context
+
+
+class CreateGroup(LoginRequiredMixin, DataMixin, CreateView):
+    """Страница создания группы"""
+    form_class = AddOrEditGroupForm
+    template_name = 'groups/create_group_page.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Создание группы"
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        return context
+
+    def form_valid(self, form):
+        group = form.save()
+        GroupMember.objects.create(
+            member=self.request.user,
+            group=group,
+            is_owner=True,
+            is_admin=True
+        )
+        return redirect('my_groups')

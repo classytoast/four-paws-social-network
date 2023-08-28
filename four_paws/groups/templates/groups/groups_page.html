@@ -8,7 +8,14 @@
         <div class="all_groups">
             {% for group in groups %}
                 <div class="group_cell">
-                    Group_cell
+                    <div class="group_logo">
+                        <img src="{{group.img_of_group.url}}" width=240>
+                    </div>
+                    <div class="group_name_txt">
+                        <div class="group_name">{{group.name_of_group}}</div>
+                        <div class="about_group">{{group.about_group}}</div>
+                    </div>
+                    <div class="group_extra_data"></div>
                 </div>
             {% endfor %}
         </div>
@@ -21,7 +28,7 @@
                 до групп с мемами и новостями из мира домашних животных :)
             </div>
             <div><a href="#">Найдите</a> для себя подходящую группу</div>
-            <div>Или <a href="#">создайте</a>  свою!</div>
+            <div>Или <a href="{% url 'create_group' %}">создайте</a>  свою!</div>
         </div>
     {% endif %}
 </div>
