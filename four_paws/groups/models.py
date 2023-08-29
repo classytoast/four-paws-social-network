@@ -37,8 +37,8 @@ class GroupPost(models.Model):
     text_of_post = models.TextField(max_length=2000, verbose_name='текст поста')
     is_published = models.BooleanField(default=True)
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата создания поста')
-    views = models.FloatField(verbose_name='просмотры')
-    likes = models.FloatField(verbose_name='лайки')
+    views = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='grp_views', verbose_name='просмотры')
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='grp_likes', verbose_name='лайки')
 
     def __str__(self):
         return f'{self.text_of_post}'[15]
@@ -53,7 +53,6 @@ class GroupPostImage(models.Model):
     img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
     post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='группа')
-    animals_on_img = models.ManyToManyField(Animal, blank=True, verbose_name='питомцы на фото')
 
 
 class GroupPostComment(models.Model):

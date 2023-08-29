@@ -13,10 +13,10 @@
                     <div class="group_logo_block">
                         <img src="{{group.img_of_group.url}}" width=180>
                     </div>
-                    <a href="#" class="group_link">
+                    <a href="{% url 'show_group' group.pk %}" class="group_link">
                         <div class="group_name_txt">
                             <div class="group_name">{{group.name_of_group}}</div>
-                            <div class="about_group">{{group.about_group}}</div>
+                            <div class="about_group">{{group.about_group|truncatewords:35}}</div>
                         </div>
                     </a>
                     <div class="group_extra_data">
@@ -27,9 +27,13 @@
                         </div>
                         <div class="group_follow_btn">
                                 {% if foll_list.is_followed %}
+                                    {% if foll_list.is_admin %}
+                                        Вы администратор
+                                    {% else %}
                                     <div class="unfollow_group">
                                         <a href="{% url 'change_follower_for_group' group.pk %}">Отписаться</a>
                                     </div>
+                                    {% endif %}
                                 {% else %}
                                     <div class="follow_group">
                                         <a href="{% url 'change_follower_for_group' group.pk %}">Подписаться</a>

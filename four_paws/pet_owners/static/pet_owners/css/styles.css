@@ -695,3 +695,56 @@ html, body {
     line-height: 30px;
     width: 25%;
 }
+
+.group_block {
+    text-align: center;
+    width: 100%;
+}
+.group_title {
+    display: inline-block;
+    width: 90%;
+    border-bottom: 2px solid rgba(5, 161, 161, 0.3);
+}
+.group_info {
+    display: inline-block;
+    width: 90%;
+    font-style: italic;
+    border-bottom: 2px solid rgba(5, 161, 161, 0.3);
+}
+.all_about_group_block {
+    display: inline-block;
+    width: 60%;
+    text-align: left;
+}
+.all_about_group {
+    display: inline-block;
+    width: 50%;
+}
+.group_members_block {
+    display: inline-block;
+    background: #e3e8e8de;
+    width: 20%;
+}
+.group_settings_zone {
+    text-align: center;
+    width: 100%;
+    margin: 15px 0 15px 0;
+}
+.group_settings_btn {
+    display: inline-block;
+    text-align: center;
+    height: 35px;
+    width: 280px;
+}
+.group_settings_btn a {
+    display: block;
+    background: rgba(2, 54, 125, 0.8);
+    height: 100%;
+    width: 100%;
+    line-height: 35px;
+    color: #ffffff;
+    text-decoration: none;
+    border: 2px solid #1ca3a3;
+    border-radius: 15px;
+}
+.group_settings_btn a:hover {background: rgba(0, 24, 92, 0.8);}

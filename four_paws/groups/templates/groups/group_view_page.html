@@ -1,0 +1,58 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+<div class="group_block">
+    {% create_foll_list group.name_of_group user_groups_followed as foll_list %}
+    <div class="group_title"><h1>{{group.name_of_group}}</h1><img src="{{group.img_of_group.url}}" width=300></div>
+    <div class="group_info">
+        <div class="all_about_group_block">
+            <div class="all_about_group">{{group.about_group}}</div>
+        </div>
+        <div class="group_members_block">
+            <div class="group_members">
+                <div class="nine_member">
+
+                </div>
+                <div class="subs_of_user">
+                    <a href="#">
+                        Подписчики: {{foll_list.count_folls}}
+                    </a>
+                </div>
+            </div>
+            {% if foll_list.is_followed %}
+                <!-- если аутентифицированный пользователь - это владелец группы,
+                 добавляем кнопку управления группой-->
+                {% if foll_list.is_admin %}
+                    <div class="group_settings_zone">
+                        <div class="group_settings_btn">
+                            <a href="#">Управление группой</a>
+                        </div>
+                    </div>
+                {% else %}
+                <div class="unfollow_group">
+                    <a href="{% url 'change_follower_for_group' group.pk %}">Отписаться</a>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="follow_group">
+                    <a href="{% url 'change_follower_for_group' group.pk %}">Подписаться</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="group_posts_block">
+        <!-- если аутентифицированный пользователь - это владелец группы,
+         добавляем кнопку создания поста-->
+        {% if foll_list.is_admin %}
+            <div class="create_post_zone">
+                <div class="create_post_button">
+                    <a href="{% url 'create_group_post' group.pk %}">Добавить новый пост</a>
+                </div>
+            </div>
+        {% endif %}
+        {% show_all_posts all_posts data_for_post name_page_for_likes %}
+    </div>
+</div>
+
+{% endblock %}

@@ -62,15 +62,20 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
     context_object_name = 'group'
 
     def get_queryset(self):
-        self.queryset = Group.objects.get(pk=self.kwargs['id'])
+        self.queryset = Group.objects.get(pk=self.kwargs['group_id'])
         return self.queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         group = self.queryset
         context['title'] = f"{group.name_of_group}"
+        posts = GroupPost.objects.filter(group=group)
+        auth_user = Owner.objects.get(pk=self.request.user.id)
+        context['data_for_post'] = self.get_data_for_post(posts, auth_user)
+        context['name_page_for_likes'] = 'group_view'
         context.update(self.get_left_menu())
-        context.update(self.get_right_menu())
+        context.update(self.get_right_menu(auth_user))
+        context['user_groups_followed'] = self.get_groups_followers([group])
         return context
 
 
@@ -86,3 +91,53 @@ def add_or_del_follower_for_group(request, group_id):
         GroupMember.objects.create(member=user,
                                    group=group)
     return redirect('my_groups')
+
+
+class CreateGroupPostView(LoginRequiredMixin, DataMixin, CreateView):
+    """Страница создания поста в группу"""
+    form_class = AddOrEditPostForm
+    template_name = 'groups/add_group_post_page.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Добавление поста в группу"
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        return context
+
+    def form_valid(self, form):
+        form.instance.group = self.kwargs['group_id']
+        post = form.save()
+        if 'add_photos' in self.request.POST:
+            return redirect('add_images_to_group_post',
+                            group_id=self.kwargs['group_id'],
+                            post_id=post.pk)
+        elif 'to_publish' in self.request.POST:
+            return redirect('show_group', group_id=self.kwargs['group_id'])
+
+
+class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):
+    """Страница добавления изображений к посту"""
+    form_class = AddGroupImageForm
+    template_name = 'groups/add_group_images.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Добавление изображений"
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        post = GroupPost.objects.get(pk=self.kwargs['post_id'])
+        context['added_images'] = post.images.all()
+        return context
+
+    def form_valid(self, form):
+        if form.instance.img:
+            post = GroupPost.objects.get(pk=self.kwargs['post_id'])
+            if post.autor == self.request.user:
+                form.instance.owner = self.request.user
+                form.instance.post = post
+                form.save()
+        if 'add_more_photos' in self.request.POST:
+            return redirect('add_images_to_group_post', post_id=post.pk)
+        elif 'to_publish' in self.request.POST:
+            return redirect('show_group', group_id=self.kwargs['group_id'])

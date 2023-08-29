@@ -76,10 +76,14 @@ class DataMixin:
             group_folls = group.members.all()
             count_folls = group_folls.count()
             try:
-                group_folls.get(member=self.request.user)
+                member = GroupMember.objects.get(member=self.request.user, group=group)
                 user_groups_followed[f'{group.name_of_group}'] = {"is_followed": True,
                                                                   "count_folls": count_folls
                                                                   }
+                if member.is_admin:
+                    user_groups_followed[f'{group.name_of_group}']['is_admin'] = True
+                else:
+                    user_groups_followed[f'{group.name_of_group}']['is_admin'] = False
             except GroupMember.DoesNotExist:
                 user_groups_followed[f'{group.name_of_animal}'] = {"is_followed": False,
                                                                    "count_folls": count_folls
