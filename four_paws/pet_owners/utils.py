@@ -49,7 +49,8 @@ class DataMixin:
                                                                      }
         return user_animals_followed
 
-    def get_data_for_post(self, posts, auth_user, all_images=False):
+    def get_data_for_post(self, posts, auth_user,
+                          all_images=False, post_is_in_group=False):
         """Выгружает данные для переданных постов"""
         data_for_post = {}
         for post in posts:
@@ -58,15 +59,26 @@ class DataMixin:
             else:
                 is_liked = False
             if all_images:
-                data_for_post[f'{post.title}'] = {
-                    'img': post.images.all(),
-                    'is_liked': is_liked
-                }
+                img = post.images.all()
             else:
-                data_for_post[f'{post.title}'] = {
-                    'img': post.images.first(),
-                    'is_liked': is_liked
-                }
+                img = post.images.first()
+            if not post_is_in_group:
+                if post.autor == self.request.user:
+                    is_admin = True
+                else:
+                    is_admin = False
+            else:
+                if post_is_in_group['is_admin']:
+                    is_admin = True
+                else:
+                    is_admin = False
+
+            data_for_post[f'{post.title}'] = {
+                'img': img,
+                'is_liked': is_liked,
+                'is_admin': is_admin
+            }
+
         return data_for_post
 
     def get_groups_followers(self, groups):
@@ -78,16 +90,15 @@ class DataMixin:
             try:
                 member = GroupMember.objects.get(member=self.request.user, group=group)
                 user_groups_followed[f'{group.name_of_group}'] = {"is_followed": True,
-                                                                  "count_folls": count_folls
-                                                                  }
+                                                                  "count_folls": count_folls}
                 if member.is_admin:
                     user_groups_followed[f'{group.name_of_group}']['is_admin'] = True
                 else:
                     user_groups_followed[f'{group.name_of_group}']['is_admin'] = False
             except GroupMember.DoesNotExist:
-                user_groups_followed[f'{group.name_of_animal}'] = {"is_followed": False,
-                                                                   "count_folls": count_folls
-                                                                   }
+                user_groups_followed[f'{group.name_of_group}'] = {"is_followed": False,
+                                                                  "count_folls": count_folls,
+                                                                  "is_admin": False}
         return user_groups_followed
 
     def add_one_view_for_post(self, post, user):

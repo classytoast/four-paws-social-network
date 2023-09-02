@@ -8,7 +8,7 @@
                 <div class="title_and_text">
                     <div class="title_block">
                         <div class="edit_delete_buttons">
-                            {% if request.user.id == profile.pk %}
+                            {% if post_data.is_admin %}
                             <div class="del_but">
                                 <a href="{% url 'delete_post' post.pk %}">
                                 <img src="/static/pet_owners/images/button_delete.png" width="20">

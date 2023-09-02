@@ -91,8 +91,7 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'posts/edit_post_page.html'
 
     def get_queryset(self):
-        return OwnerPost.objects.filter(pk=self.kwargs['pk'],
-                                        autor=self.request.user)
+        return OwnerPost.objects.filter(pk=self.kwargs['pk'])
 
     def get_form_kwargs(self, *args, **kwargs):
         form_kwargs = super(UpdatePostView, self).get_form_kwargs(*args, **kwargs)

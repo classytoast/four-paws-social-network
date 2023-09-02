@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, CreateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from pet_owners.models import Owner
@@ -72,10 +73,16 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
         all_posts = GroupPost.objects.filter(group=group)
         context['all_posts'] = all_posts
         auth_user = Owner.objects.get(pk=self.request.user.id)
-        context['data_for_post'] = self.get_data_for_post(all_posts, auth_user)
+        context['user_groups_followed'] = self.get_groups_followers([group])
+        context['data_for_post'] = self.get_data_for_post(
+            all_posts,
+            auth_user,
+            post_is_in_group={
+                "is_admin": context['user_groups_followed'][group.name_of_group]['is_admin']
+            }
+        )
         context.update(self.get_left_menu())
         context.update(self.get_right_menu(auth_user))
-        context['user_groups_followed'] = self.get_groups_followers([group])
         return context
 
 
@@ -83,7 +90,7 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
 def add_or_del_follower_for_group(request, group_id):
     """Добавляет или удаляет участника в группу"""
     user = Owner.objects.get(pk=request.user.id)
-    group = Animal.objects.get(pk=group_id)
+    group = Group.objects.get(pk=group_id)
     try:
         GroupMember.objects.get(member=user,
                                 group=group).delete()
@@ -119,7 +126,7 @@ class CreateGroupPostView(LoginRequiredMixin, DataMixin, CreateView):
 class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):
     """Страница добавления изображений к посту"""
     form_class = AddGroupImageForm
-    template_name = 'groups/add_group_images.html'
+    template_name = 'posts/add_images.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -133,12 +140,62 @@ class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):
     def form_valid(self, form):
         if form.instance.img:
             post = GroupPost.objects.get(pk=self.kwargs['post_id'])
-            if post.autor == self.request.user:
-                form.instance.owner = self.request.user
-                form.instance.post = post
-                form.save()
+            form.instance.group = post.group
+            form.instance.post = post
+            form.save()
         if 'add_more_photos' in self.request.POST:
             return redirect('add_images_to_group_post', post_id=post.pk)
         elif 'to_publish' in self.request.POST:
             return redirect('show_group', group_id=self.kwargs['group_id'])
 
+
+class UpdateGroupPostView(LoginRequiredMixin, DataMixin, UpdateView):
+    """Страница редактирования поста в группе"""
+    form_class = AddOrEditPostForm
+    template_name = 'posts/edit_post_page.html'
+
+    def get_queryset(self):
+        return GroupPost.objects.filter(pk=self.kwargs['pk'])
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Редактирование поста в группе"
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        return context
+
+    def form_valid(self, form):
+        if 'cancel' in self.request.POST:
+            return redirect('show_group', group_id=self.kwargs['group_id'])
+        post = form.save()
+        if 'update_without_photos' in self.request.POST:
+            return redirect('show_group', group_id=self.kwargs['group_id'])
+        elif 'update_with_photos' in self.request.POST:
+            return redirect('add_images_to_group_post',
+                            group_id=self.kwargs['group_id'],
+                            post_id=post.pk)
+
+
+class DeleteGroupPost(LoginRequiredMixin, DataMixin, DeleteView):
+    """Страница удаления поста в группе"""
+    model = GroupPost
+    template_name = 'posts/delete_post_page.html'
+
+    def get_success_url(self):
+        return reverse_lazy('show_group', kwargs={'group_id': self.kwargs['group_id']})
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Удаление поста в группе"
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        return context
+
+
+@login_required
+def delete_img_for_group_post(request, img_id):
+    """Функция удаления изображения"""
+    image = GroupPostImage.objects.get(pk=img_id)
+    post = image.post
+    image.delete()
+    return redirect('add_images_to_group_post', post_id=post.pk)

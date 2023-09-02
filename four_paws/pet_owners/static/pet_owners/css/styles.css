@@ -748,3 +748,4 @@ html, body {
     border-radius: 15px;
 }
 .group_settings_btn a:hover {background: rgba(0, 24, 92, 0.8);}
+.group_posts_block { background: #dce0e0; }
