@@ -41,7 +41,7 @@ class GroupPost(models.Model):
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='grp_likes', verbose_name='лайки')
 
     def __str__(self):
-        return f'{self.text_of_post}'[15]
+        return f'{self.text_of_post}'[:15]
 
     class Meta:
         verbose_name = 'Пост пользователя'

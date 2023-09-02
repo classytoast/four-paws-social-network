@@ -69,10 +69,10 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
         context = super().get_context_data(**kwargs)
         group = self.queryset
         context['title'] = f"{group.name_of_group}"
-        posts = GroupPost.objects.filter(group=group)
+        all_posts = GroupPost.objects.filter(group=group)
+        context['all_posts'] = all_posts
         auth_user = Owner.objects.get(pk=self.request.user.id)
-        context['data_for_post'] = self.get_data_for_post(posts, auth_user)
-        context['name_page_for_likes'] = 'group_view'
+        context['data_for_post'] = self.get_data_for_post(all_posts, auth_user)
         context.update(self.get_left_menu())
         context.update(self.get_right_menu(auth_user))
         context['user_groups_followed'] = self.get_groups_followers([group])
@@ -106,7 +106,7 @@ class CreateGroupPostView(LoginRequiredMixin, DataMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        form.instance.group = self.kwargs['group_id']
+        form.instance.group = Group.objects.get(pk=self.kwargs['group_id'])
         post = form.save()
         if 'add_photos' in self.request.POST:
             return redirect('add_images_to_group_post',
@@ -141,3 +141,4 @@ class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):
             return redirect('add_images_to_group_post', post_id=post.pk)
         elif 'to_publish' in self.request.POST:
             return redirect('show_group', group_id=self.kwargs['group_id'])
+

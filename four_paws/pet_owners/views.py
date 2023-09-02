@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .utils import DataMixin
 from .models import *
+from groups.models import GroupPost
 
 
 @login_required
@@ -54,7 +55,6 @@ class ProfileHome(LoginRequiredMixin, DataMixin, ListView):
         all_posts = owner.ownerpost_set.all()
         context['all_posts'] = all_posts
         context['data_for_post'] = self.get_data_for_post(all_posts, auth_user)
-        context['name_page_for_likes'] = 'owner_posts'
         return context
 
 
@@ -76,19 +76,26 @@ def add_or_del_follower_for_animal(request, animal_id):
 
 
 @login_required
-def put_or_remove_like_for_post(request, post_id, from_page):
+def put_or_remove_like_for_post(request, post_id, from_page, object_id):
     """Ставит или убирает лайк посту"""
     user = Owner.objects.get(pk=request.user.id)
-    post = OwnerPost.objects.get(pk=post_id)
+    if from_page == 'group_posts':
+        post = GroupPost.objects.get(pk=post_id)
+    else:
+        post = OwnerPost.objects.get(pk=post_id)
     if user in post.likes.all():
         post.likes.remove(user)
     else:
         post.likes.add(user)
         post.views.add(user)
-    if from_page == 'post_detail' or from_page == 'animal_posts':
+    if from_page == 'post_detail':
         return redirect('post', post_id=post_id)
     elif from_page == 'owner_posts':
-        return redirect('profile_home', id=post.autor.pk)
+        return redirect('profile_home', id=object_id)
+    elif from_page == 'animal_posts':
+        return redirect('animal_posts', pk=object_id)
+    elif from_page == 'group_posts':
+        return redirect('show_group', group_id=object_id)
 
 
 class OwnerSubscriptions(DataMixin, ListView):

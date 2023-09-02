@@ -1,6 +1,6 @@
 <div class="post_likes">
     <div class="img_like">
-    <a href="{% url 'like_for_post' post.pk name_page_for_likes %}">
+    <a href="{% url 'like_for_post' post.pk name_page_for_likes object_id %}">
         {% if post_data.is_liked %}
             <img src="/static/pet_owners/images/active_like.png" width="45">
         {% else %}

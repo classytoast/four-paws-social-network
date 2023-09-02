@@ -52,7 +52,6 @@ class AnimalPosts(DataMixin, ListView):
         auth_user = Owner.objects.get(pk=self.request.user.id)
         context.update(self.get_right_menu(auth_user))
         context['data_for_post'] = self.get_data_for_post(posts, auth_user)
-        context['name_page_for_likes'] = 'animal_posts'
         return context
 
 

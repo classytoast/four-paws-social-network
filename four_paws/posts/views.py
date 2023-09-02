@@ -26,7 +26,6 @@ class ShowPost(DataMixin, DetailView):
         context.update(self.get_right_menu(auth_user))
         context['data_for_post'] = self.get_data_for_post([post], auth_user, all_images=True)
         self.add_one_view_for_post(post, owner)
-        context['name_page_for_likes'] = 'post_detail'
         comments = PostComment.objects.filter(post=post)
         context['comments'] = comments
         context['likes_for_comments'] = self.get_likes_for_comments(comments)

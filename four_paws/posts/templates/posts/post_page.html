@@ -27,7 +27,7 @@
 {% endif %}
 <tr class="likes_views_post_detail">
     <td>
-        {% show_likes_and_views post post_data name_page_for_likes %}
+        {% show_likes_and_views post post_data 'post_detail' post.pk %}
     </td>
 <tr class="post_autor_detail">
     <td>Автор: {{post.autor}}</td>

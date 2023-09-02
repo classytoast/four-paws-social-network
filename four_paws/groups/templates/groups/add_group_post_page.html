@@ -1,0 +1,20 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+
+<div class="form_block">
+    <h1>{{title}}</h1>
+
+    <form method="post">
+        {% show_form_fields form %}
+        <button class="form_button" type="submit" name="add_photos">
+            Добавить фото
+        </button>
+        <button class="form_button" type="submit" name="to_publish">
+            Запостить в группу
+        </button>
+    </form>
+</div>
+
+{% endblock %}
