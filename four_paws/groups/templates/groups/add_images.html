@@ -1,0 +1,31 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+
+<div class="form_block">
+    <h1>{{title}}</h1>
+    {% for img in added_images %}
+        <div class="imgs_in_post_detail">
+            <div><a href="{{img.img.url}}">
+                <img src="{{img.img.url}}" width=180>
+            </a></div>
+            <div class="but_for_delete_img">
+                <a href="{% url 'delete_image_in_gp' group_id img.pk %}">
+                    <img src="/static/pet_owners/images/button_delete.png" width=30>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+    <form method="post" enctype="multipart/form-data">
+        {% show_form_fields form %}
+        <button class="form_button" type="submit" name="add_more_photos">
+            Добавить еще
+        </button>
+        <button class="form_button" type="submit" name="to_publish">
+            Запостить
+        </button>
+    </form>
+</div>
+
+{% endblock %}

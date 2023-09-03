@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from pet_owners.models import Owner
@@ -100,6 +100,33 @@ def add_or_del_follower_for_group(request, group_id):
     return redirect('my_groups')
 
 
+class ShowGroupPost(DataMixin, DetailView):
+    """Страница отдельно взятого поста в группе"""
+    model = GroupPost
+    template_name = 'groups/group_post_page.html'
+    context_object_name = 'post'
+    pk_url_kwarg = 'post_id'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.model.objects.get(pk=self.kwargs['post_id'])
+        context['title'] = post.title
+        context.update(self.get_left_menu())
+        auth_user = Owner.objects.get(pk=self.request.user.id)
+        context.update(self.get_right_menu(auth_user))
+        context['data_for_post'] = self.get_data_for_post(
+            [post],
+            auth_user,
+            post_is_in_group={"is_admin": False},
+            all_images=True
+        )
+        self.add_one_view_for_post(post, auth_user)
+        comments = GroupPostComment.objects.filter(post=post)
+        context['comments'] = comments
+        context['likes_for_comments'] = self.get_likes_for_comments(comments, auth_user)
+        return context
+
+
 class CreateGroupPostView(LoginRequiredMixin, DataMixin, CreateView):
     """Страница создания поста в группу"""
     form_class = AddOrEditPostForm
@@ -126,7 +153,7 @@ class CreateGroupPostView(LoginRequiredMixin, DataMixin, CreateView):
 class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):
     """Страница добавления изображений к посту"""
     form_class = AddGroupImageForm
-    template_name = 'posts/add_images.html'
+    template_name = 'groups/add_images.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -134,6 +161,7 @@ class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         post = GroupPost.objects.get(pk=self.kwargs['post_id'])
+        context['group_id'] = self.kwargs['group_id']
         context['added_images'] = post.images.all()
         return context
 
@@ -144,7 +172,9 @@ class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):
             form.instance.post = post
             form.save()
         if 'add_more_photos' in self.request.POST:
-            return redirect('add_images_to_group_post', post_id=post.pk)
+            return redirect('add_images_to_group_post',
+                            group_id=self.kwargs['group_id'],
+                            post_id=self.kwargs['post_id'])
         elif 'to_publish' in self.request.POST:
             return redirect('show_group', group_id=self.kwargs['group_id'])
 
@@ -193,9 +223,9 @@ class DeleteGroupPost(LoginRequiredMixin, DataMixin, DeleteView):
 
 
 @login_required
-def delete_img_for_group_post(request, img_id):
+def delete_img_for_group_post(request, group_id, img_id):
     """Функция удаления изображения"""
     image = GroupPostImage.objects.get(pk=img_id)
     post = image.post
     image.delete()
-    return redirect('add_images_to_group_post', post_id=post.pk)
+    return redirect('add_images_to_group_post', group_id=group_id, post_id=post.pk)

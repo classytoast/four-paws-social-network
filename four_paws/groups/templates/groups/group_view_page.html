@@ -76,7 +76,7 @@
                                     {{post.title}}
                                 </div>
                             </div>
-                            <a href="{% url 'post' post.pk %}"><div class="post_text">
+                            <a href="{% url 'group_post' group.pk post.pk %}"><div class="post_text">
                                 {{post.text_of_post|truncatewords:35}}
                             </div></a>
                             <div class="post_datetime">
