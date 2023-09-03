@@ -1,11 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from pet_owners.models import Owner
 from .forms import *
 from .models import *
 from pet_owners.utils import DataMixin
@@ -72,7 +71,7 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
         context['title'] = f"{group.name_of_group}"
         all_posts = GroupPost.objects.filter(group=group)
         context['all_posts'] = all_posts
-        auth_user = Owner.objects.get(pk=self.request.user.id)
+        auth_user = self.request.user
         context['user_groups_followed'] = self.get_groups_followers([group])
         context['data_for_post'] = self.get_data_for_post(
             all_posts,
@@ -89,7 +88,7 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
 @login_required
 def add_or_del_follower_for_group(request, group_id):
     """Добавляет или удаляет участника в группу"""
-    user = Owner.objects.get(pk=request.user.id)
+    user = request.user
     group = Group.objects.get(pk=group_id)
     try:
         GroupMember.objects.get(member=user,
@@ -112,7 +111,7 @@ class ShowGroupPost(DataMixin, DetailView):
         post = self.model.objects.get(pk=self.kwargs['post_id'])
         context['title'] = post.title
         context.update(self.get_left_menu())
-        auth_user = Owner.objects.get(pk=self.request.user.id)
+        auth_user = self.request.user
         context.update(self.get_right_menu(auth_user))
         context['data_for_post'] = self.get_data_for_post(
             [post],

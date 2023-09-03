@@ -34,7 +34,7 @@
 <div class="comments_title"><h4>Комментарии:</h4></div>
 <div class="create_comment_zone">
     <div class="create_comment_button">
-        <a href="{% url 'add_comment' post.pk %}">Добавить комментарий</a>
+        <a href="{% url 'add_comment' post.pk 'for-group-post' %}">Добавить комментарий</a>
     </div>
 </div>
 <div class="all_comments">
@@ -52,12 +52,12 @@
                 <div class="edit_delete_buttons_comm">
                     {% if request.user == comm.author %}
                     <div class="del_but">
-                        <a href="{% url 'delete_comment' post.pk comm.pk %}">
+                        <a href="{% url 'delete_comment_in_group' post.pk comm.pk %}">
                         <img src="/static/pet_owners/images/button_delete.png" width="20">
                         </a>
                     </div>
                     <div class="edit_but">
-                        <a href="{% url 'edit_comment' post.pk comm.pk %}">
+                        <a href="{% url 'edit_comment' post.pk comm.pk 'for-group-post' %}">
                         <img src="/static/pet_owners/images/button_edit.png" width="20">
                         </a>
                     </div>
@@ -73,7 +73,7 @@
                     {% show_likes_for_comment comm.pk likes_for_comments as comment_like %}
                     <div class="likes_of_comment">
                         <div class="img_like">
-                        <a href="{% url 'like_for_comment' post.pk comm.pk %}">
+                        <a href="{% url 'like_for_comment' post.pk comm.pk 'for-group-post' %}">
                             {% if comment_like %}
                                 <img src="/static/pet_owners/images/active_like.png" width="35">
                             {% else %}

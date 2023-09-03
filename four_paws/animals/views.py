@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
 from pet_owners.utils import DataMixin
-from pet_owners.models import Animal, Owner, OwnerPost, AnimalFollower
+from pet_owners.models import Animal, Owner, OwnerPost
 
 
 class AnimalsHome(LoginRequiredMixin, DataMixin, ListView):
@@ -18,7 +18,7 @@ class AnimalsHome(LoginRequiredMixin, DataMixin, ListView):
 
     def get_queryset(self):
         self.queryset = Animal.objects.filter(
-            pet_owner__pk=self.request.user.id).annotate(
+            pet_owner=self.request.user).annotate(
             foll_count=Count('followers')).order_by('-foll_count')
         return self.queryset
 
@@ -49,7 +49,7 @@ class AnimalPosts(DataMixin, ListView):
         posts = self.queryset
         context['title'] = f"Посты {animal.name_of_animal}"
         context.update(self.get_left_menu())
-        auth_user = Owner.objects.get(pk=self.request.user.id)
+        auth_user = self.request.user
         context.update(self.get_right_menu(auth_user))
         context['data_for_post'] = self.get_data_for_post(posts, auth_user)
         return context

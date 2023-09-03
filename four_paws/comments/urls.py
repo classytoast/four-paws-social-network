@@ -4,12 +4,14 @@ from .views import *
 
 
 urlpatterns = [
-    path('<int:post_id>/add-comment/', CreateComment.as_view(),
+    path('<int:post_id>/add-comment/<str:which_post>/', CreateComment.as_view(),
          name='add_comment'),
     path('<int:post_id>/<int:pk>/delete-comment/', DeleteComment.as_view(),
          name='delete_comment'),
-    path('<int:post_id>/<int:pk>/edit-comment/', UpdateComment.as_view(),
+    path('<int:post_id>/<int:pk>/delete-comment-in-group/', DeleteGroupComment.as_view(),
+         name='delete_comment_in_group'),
+    path('<int:post_id>/<int:pk>/edit-comment/<str:which_post>/', UpdateComment.as_view(),
          name='edit_comment'),
-    path('<int:post_id>/change-like-for-comment/<int:comment_id>/',
+    path('<int:post_id>/change-like-for-comment/<int:comment_id>/<str:which_post>/',
          put_or_remove_like_for_comment, name='like_for_comment'),
 ]

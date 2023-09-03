@@ -1,4 +1,4 @@
-from .models import *
+from .models import Animal, AnimalFollower
 from groups.models import GroupMember
 
 
@@ -27,7 +27,7 @@ class DataMixin:
         """Создает список ссылок для правой панели меню"""
         context = {}
         if auth_user is None:
-            auth_user = Owner.objects.get(pk=self.request.user.id)
+            auth_user = self.request.user
         animals = Animal.objects.filter(followers__follower=auth_user)[:7]
         context['animals_for_right_menu'] = animals
         return context
@@ -110,7 +110,7 @@ class DataMixin:
         """Выгружает данные о лайках для переданных комментариев"""
         likes_for_comment = {}
         if not auth_user and self.request.user.is_authenticated:
-            auth_user = Owner.objects.get(pk=self.request.user.id)
+            auth_user = self.request.user
         for comment in comments:
             if self.request.user.is_authenticated and auth_user in comment.likes.all():
                 likes_for_comment[f'{comment.pk}'] = True

@@ -47,7 +47,7 @@ class ProfileHome(LoginRequiredMixin, DataMixin, ListView):
         else:
             context['title'] = f"Профиль {owner.username}"
         context.update(self.get_left_menu())
-        auth_user = Owner.objects.get(pk=self.request.user.id)
+        auth_user = self.request.user
         context.update(self.get_right_menu(auth_user))
         subscriptions = owner.subscriptions.all()
         context['num_of_subs'] = subscriptions.count()
@@ -61,7 +61,7 @@ class ProfileHome(LoginRequiredMixin, DataMixin, ListView):
 @login_required
 def add_or_del_follower_for_animal(request, animal_id):
     """Добавляет или удаляет подписчика питомцу"""
-    user = Owner.objects.get(pk=request.user.id)
+    user = request.user
     animal = Animal.objects.get(pk=animal_id)
     owner_id = animal.pet_owner.pk
     try:
@@ -78,7 +78,7 @@ def add_or_del_follower_for_animal(request, animal_id):
 @login_required
 def put_or_remove_like_for_post(request, post_id, from_page, object_id):
     """Ставит или убирает лайк посту"""
-    user = Owner.objects.get(pk=request.user.id)
+    user = request.user
     if from_page == 'group_posts':
         post = GroupPost.objects.get(pk=post_id)
     else:
@@ -111,7 +111,7 @@ class OwnerSubscriptions(DataMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         owner = self.queryset
-        auth_user = Owner.objects.get(pk=self.request.user.id)
+        auth_user = self.request.user
         context['auth_user'] = auth_user
         animals = Animal.objects.filter(followers__follower=owner)
         context['subscriptions'] = animals
