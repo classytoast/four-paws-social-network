@@ -1,6 +1,6 @@
 from django import forms
 
-from pet_owners.models import Owner, OwnerPost, Animal, PostImage, PostComment
+from pet_owners.models import Owner, OwnerPost, Animal, PostImage
 
 
 class AddOrEditPostForm(forms.ModelForm):
@@ -28,11 +28,3 @@ class AddImageForm(forms.ModelForm):
         model = PostImage
         fields = ('img',)
 
-
-class AddOrEditCommentForm(forms.ModelForm):
-    comment = forms.CharField(label='Текст комментария',
-                              widget=forms.Textarea(attrs={'class': 'form-input'}))
-
-    class Meta:
-        model = PostComment
-        fields = ('comment',)

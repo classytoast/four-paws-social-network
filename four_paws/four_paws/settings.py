@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'groups.apps.GroupsConfig',
     'animals.apps.AnimalsConfig',
     'posts.apps.PostsConfig',
+    'comments.apps.CommentsConfig',
 ]
 
 MIDDLEWARE = [
