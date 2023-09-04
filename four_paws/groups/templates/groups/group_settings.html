@@ -1,0 +1,56 @@
+{% extends 'pet_owners/base.html' %}
+
+{% block content %}
+
+<div class="settings_page">
+    <h2>{{title}}</h2>
+    {% if auth_user.is_admin %}
+    <div class="members_settings_zone">
+        {% for mem in members %}
+            <div class="members_row">
+                <div class="foll_avatar">
+                    <img src="{{mem.avatar.url}}" height=120>
+                </div>
+                <div class="member_name">
+                    <a href="{{ mem.get_absolute_url }}">
+                        {{mem.username}}
+                    </a>
+                </div>
+                <div class="mem_status_zone">
+                    {% if auth_user.is_owner and mem.is_admin %}
+                        <div class="mem_status_btn">
+                            Забрать админку
+                        </div>
+                    {% elif auth_user.is_owner %}
+                        <div class="mem_status_btn">
+                            Сделать админом
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mem_status_zone">
+                    {% if auth_user.is_owner %}
+                        <div class="mem_status_btn">
+                            {% if mem in group.banned %}Разбанить{% else %}Забанить{% endif %}
+                        </div>
+                    {% elif auth_user.is_admin and mem.is_admin == False %}
+                        <div class="mem_status_btn">
+                            {% if mem in group.banned %}Разбанить{% else %}Забанить{% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mem_status_zone">
+                    {% if auth_user.is_owner %}
+                        <div class="mem_status_btn">
+                            Сделать владельцем группы
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <h1>У вас нет доступа к этой странице</h1>
+    {% endif %}
+</div>
+
+{% endblock %}

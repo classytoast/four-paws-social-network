@@ -39,7 +39,9 @@
             <div class="post_parameters">
                 {% show_likes_and_views post post_data name_page_for_likes object_id %}
                 <div class="post_comments">
-                    <a href="{% url 'post' post.pk %}">комментарии...(0)</a>
+                    <a href="{% url 'post' post.pk %}">
+                        комментарии...({{post_data.comments_count}})
+                    </a>
                 </div>
             </div>
         </div>

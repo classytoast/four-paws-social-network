@@ -250,3 +250,25 @@ class GroupMembersView(DataMixin, ListView):
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         return context
+
+
+class GroupSettings(LoginRequiredMixin, DataMixin, ListView):
+    """Страница настроек для админов"""
+    model = Group
+    template_name = 'groups/group_settings.html'
+    context_object_name = 'group'
+
+    def get_queryset(self):
+        self.queryset = Group.objects.get(pk=self.kwargs['group_id'])
+        return self.queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        group = self.queryset
+        members = Owner.objects.filter(group_subscriptions__group=group)
+        context['members'] = members
+        context['auth_user'] = GroupMember.objects.get(member=self.request.user)
+        context['title'] = f"Управление группой: {group.name_of_group}"
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        return context

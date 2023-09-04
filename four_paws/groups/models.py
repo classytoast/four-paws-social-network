@@ -10,6 +10,8 @@ class Group(models.Model):
     about_group = models.TextField(max_length=2000, verbose_name='инф о группе')
     img_of_group = models.ImageField(upload_to="img_of_group/%Y/%m/%d/", verbose_name='лого группы')
     date_create = models.DateField(auto_now_add=True, verbose_name='дата создания')
+    banned = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                    related_name='banned_in_group', verbose_name='забаненные')
 
     def __str__(self):
         return self.name_of_group

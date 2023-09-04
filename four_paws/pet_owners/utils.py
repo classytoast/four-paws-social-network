@@ -1,5 +1,5 @@
-from .models import Animal, AnimalFollower
-from groups.models import GroupMember
+from .models import Animal, AnimalFollower, PostComment
+from groups.models import GroupMember, GroupPostComment
 
 
 class DataMixin:
@@ -63,11 +63,13 @@ class DataMixin:
             else:
                 img = post.images.first()
             if not post_is_in_group:
+                comments_count = PostComment.objects.filter(post=post).count()
                 if post.autor == self.request.user:
                     is_admin = True
                 else:
                     is_admin = False
             else:
+                comments_count = GroupPostComment.objects.filter(post=post).count()
                 if post_is_in_group['is_admin']:
                     is_admin = True
                 else:
@@ -76,7 +78,8 @@ class DataMixin:
             data_for_post[f'{post.title}'] = {
                 'img': img,
                 'is_liked': is_liked,
-                'is_admin': is_admin
+                'is_admin': is_admin,
+                'comments_count': comments_count
             }
 
         return data_for_post

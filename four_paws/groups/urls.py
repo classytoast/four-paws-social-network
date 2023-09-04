@@ -18,4 +18,5 @@ urlpatterns = [
     path('<int:group_id>/<int:pk>/delete-post/', DeleteGroupPost.as_view(), name='delete_group_post'),
     path('<int:group_id>/<int:img_id>/delete-img/', delete_img_for_group_post, name='delete_image_in_gp'),
     path('<int:group_id>/members/', GroupMembersView.as_view(), name='group_members'),
+    path('<int:group_id>/group_settings/', GroupSettings.as_view(), name='group_settings'),
 ]

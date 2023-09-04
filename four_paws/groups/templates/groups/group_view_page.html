@@ -38,7 +38,7 @@
                 {% if foll_list.is_admin %}
                     <div class="group_settings_zone">
                         <div class="group_settings_btn">
-                            <a href="#">Управление группой</a>
+                            <a href="{% url 'group_settings' group.pk %}">Управление группой</a>
                         </div>
                     </div>
                 {% else %}
@@ -102,7 +102,9 @@
                     <div class="post_parameters">
                         {% show_likes_and_views post post_data 'group_posts' group.pk %}
                         <div class="post_comments">
-                            <a href="{% url 'group_post' group.pk post.pk %}">комментарии...(0)</a>
+                            <a href="{% url 'group_post' group.pk post.pk %}">
+                                комментарии...({{post_data.comments_count}})
+                            </a>
                         </div>
                     </div>
                 </div>
