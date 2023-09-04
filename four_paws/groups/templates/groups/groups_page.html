@@ -21,7 +21,7 @@
                     </a>
                     <div class="group_extra_data">
                         <div class="subs_of_user">
-                            <a href="#">
+                            <a href="{% url 'group_members' group.pk %}">
                                 Подписчики: {{foll_list.count_folls}}
                             </a>
                         </div>

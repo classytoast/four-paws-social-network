@@ -16,6 +16,20 @@ def get_data_for_post(post_title, post_data):
     return post_data[post_title]
 
 
+@register.simple_tag
+def create_range(start, finish):
+    """Решает проблему с точкой для range в шаблоне"""
+    return range(start, finish)
+
+
+@register.simple_tag
+def get_object_on_index(array, index):
+    try:
+        return array[index]
+    except IndexError:
+        return None
+
+
 @register.inclusion_tag('pet_owners/likes_and_views_for_posts.html')
 def show_likes_and_views(post, post_data, name_page_for_likes, object_id):
     return {"post": post, "post_data": post_data,

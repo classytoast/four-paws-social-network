@@ -1,0 +1,27 @@
+{% extends 'pet_owners/base.html' %}
+
+
+{% block content %}
+
+<div class="foll_block">
+    <h1>{{title}}</h1>
+
+    <div class="foll_cells">
+        {% if members %}
+        {% for mem in members %}
+            <div class="foll_cell">
+                <div class="foll_avatar">
+                    <img src="{{mem.avatar.url}}" height=120>
+                </div>
+                <div class="foll_name">
+                    <a href="{{ mem.get_absolute_url }}">
+                        {{mem.username}}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

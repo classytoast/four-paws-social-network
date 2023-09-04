@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from pet_owners.models import Owner
 from .forms import *
 from .models import *
 from pet_owners.utils import DataMixin
@@ -70,6 +71,7 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
         group = self.queryset
         context['title'] = f"{group.name_of_group}"
         all_posts = GroupPost.objects.filter(group=group)
+        context['members'] = Owner.objects.filter(group_subscriptions__group=group)[:9]
         context['all_posts'] = all_posts
         auth_user = self.request.user
         context['user_groups_followed'] = self.get_groups_followers([group])
@@ -228,3 +230,23 @@ def delete_img_for_group_post(request, group_id, img_id):
     post = image.post
     image.delete()
     return redirect('add_images_to_group_post', group_id=group_id, post_id=post.pk)
+
+
+class GroupMembersView(DataMixin, ListView):
+    """Страница участников в выбранной группе"""
+    model = Group
+    template_name = 'groups/group_followers_page.html'
+    context_object_name = 'group'
+
+    def get_queryset(self):
+        self.queryset = Group.objects.get(pk=self.kwargs['group_id'])
+        return self.queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        group = self.queryset
+        context['members'] = Owner.objects.filter(group_subscriptions__group=group)
+        context['title'] = f"Участники группы: {group.name_of_group}"
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        return context
