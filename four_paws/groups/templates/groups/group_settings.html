@@ -3,48 +3,66 @@
 {% block content %}
 
 <div class="settings_page">
-    <h2>{{title}}</h2>
+    <div class="gp_st_title">
+        <h2>Управление группой: <a href="{% url 'show_group' group.pk %}">
+            {{group.name_of_group}}
+        </a></h2>
+    </div>
     {% if auth_user.is_admin %}
     <div class="members_settings_zone">
         {% for mem in members %}
             <div class="members_row">
-                <div class="foll_avatar">
-                    <img src="{{mem.avatar.url}}" height=120>
+                <div class="mem_avatar_zone">
+                    <div class="foll_avatar">
+                        <img src="{{mem.member.avatar.url}}" height=120>
+                    </div>
                 </div>
                 <div class="member_name">
-                    <a href="{{ mem.get_absolute_url }}">
-                        {{mem.username}}
+                    <a href="{{ mem.member.get_absolute_url }}">
+                        {{mem.member.username}}
                     </a>
                 </div>
+                {% if auth_user != mem and not mem.is_owner %}
                 <div class="mem_status_zone">
                     {% if auth_user.is_owner and mem.is_admin %}
                         <div class="mem_status_btn">
-                            Забрать админку
+                            <a href="{% url 'change_admin_to_group' group.pk mem.member.pk %}">
+                                Забрать админку
+                            </a>
                         </div>
                     {% elif auth_user.is_owner %}
                         <div class="mem_status_btn">
-                            Сделать админом
+                            <a href="{% url 'change_admin_to_group' group.pk mem.member.pk %}">
+                                Сделать админом
+                            </a>
                         </div>
                     {% endif %}
                 </div>
                 <div class="mem_status_zone">
                     {% if auth_user.is_owner %}
                         <div class="mem_status_btn">
-                            {% if mem in group.banned %}Разбанить{% else %}Забанить{% endif %}
+                            <a href="{% url 'change_ban' group.pk mem.member.pk %}">
+                            {% if mem.member in group_banned %}Разбанить{% else %}Забанить{% endif %}
+                            </a>
                         </div>
                     {% elif auth_user.is_admin and mem.is_admin == False %}
                         <div class="mem_status_btn">
-                            {% if mem in group.banned %}Разбанить{% else %}Забанить{% endif %}
+                            <a href="{% url 'change_ban' group.pk mem.member.pk %}">
+                            {% if mem.member in group_banned %}Разбанить{% else %}Забанить{% endif %}
+                            </a>
                         </div>
                     {% endif %}
                 </div>
                 <div class="mem_status_zone">
                     {% if auth_user.is_owner %}
                         <div class="mem_status_btn">
-                            Сделать владельцем группы
+                            <a href="{% url 'change_owner_to_group' group.pk mem.member.pk %}">Сделать владельцем группы</a>
                         </div>
                     {% endif %}
                 </div>
+                {% elif auth_user != mem and mem.is_owner %}
+                    <div class="mem_status_zone">Владелец группы</div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>

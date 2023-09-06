@@ -120,11 +120,11 @@ html, body {
 }
 .user_bio { font-style: italic; }
 
-.subs_of_user a, .foll_name a {
+.subs_of_user a, .foll_name a, .member_name a {
     color: #095c5c;
     text-decoration: none;
 }
-.subs_of_user a:hover, .foll_name a:hover { color: #706900; }
+.subs_of_user a:hover, .foll_name a:hover, .member_name a:hover { color: #706900; }
 
 .animals_info {
     text-align: center;
@@ -736,6 +736,17 @@ html, body {
     width: 30%;
     height: 70px;
 }
+
+.gp_st_title {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+.gp_st_title a {
+    text-decoration: none;
+    color: #095c5c;
+}
+.gp_st_title a:hover {color: #706900;}
 .group_settings_zone {
     text-align: center;
     width: 100%;
@@ -760,3 +771,36 @@ html, body {
 }
 .group_settings_btn a:hover {background: rgba(0, 24, 92, 0.8);}
 .group_posts_block { background: #dce0e0; }
+
+.members_row {
+    background: rgba(181, 181, 181, 0.8);
+    margin: 5px 0 5px 15px;
+}
+.mem_avatar_zone {
+    display: inline-block;
+    width: 150px;
+}
+.member_name, .mem_status_zone {
+    display: inline-block;
+    width: 200px;
+}
+.mem_status_zone {width: 300px;}
+.mem_status_btn {
+    display: inline-block;
+    text-align: center;
+    height: 50px;
+    width: 280px;
+    font-size: 17px;
+}
+.mem_status_btn a {
+    display: block;
+    background: rgba(2, 54, 125, 0.8);
+    height: 100%;
+    width: 100%;
+    line-height: 50px;
+    color: #ffffff;
+    text-decoration: none;
+    border: 2px solid #1ca3a3;
+    border-radius: 12px;
+}
+.mem_status_btn a:hover {background: rgba(0, 24, 92, 0.8);}

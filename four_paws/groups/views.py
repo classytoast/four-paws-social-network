@@ -265,10 +265,61 @@ class GroupSettings(LoginRequiredMixin, DataMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         group = self.queryset
-        members = Owner.objects.filter(group_subscriptions__group=group)
+        members = GroupMember.objects.filter(group=group).select_related('member')
         context['members'] = members
         context['auth_user'] = GroupMember.objects.get(member=self.request.user)
+        context['group_banned'] = group.banned.all()
         context['title'] = f"Управление группой: {group.name_of_group}"
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         return context
+
+
+@login_required
+def change_admin_to_group(request, group_id, admin_id):
+    """Добавляет или удаляет админа в группу"""
+    group = Group.objects.get(pk=group_id)
+
+    if GroupMember.objects.get(member=request.user, group=group).is_owner:
+        user = GroupMember.objects.get(member__pk=admin_id, group=group)
+        user.is_admin = False if user.is_admin else True
+        user.save()
+
+    return redirect('group_settings', group_id=group_id)
+
+
+@login_required
+def change_ban_to_user_in_group(request, group_id, user_id):
+    """Даёт бан пользователю или снимает его"""
+    group = Group.objects.get(pk=group_id)
+    user = Owner.objects.get(pk=user_id)
+    auth_user = GroupMember.objects.get(member=request.user, group=group)
+
+    if auth_user.is_admin:
+        user_member = GroupMember.objects.get(member=user, group=group)
+        if auth_user.is_owner or not user_member.is_admin:
+            if user in group.banned.all():
+                group.banned.remove(user)
+            else:
+                group.banned.add(user)
+                if user_member.is_admin:
+                    user_member.is_admin = False
+                    user_member.save()
+
+    return redirect('group_settings', group_id=group_id)
+
+
+@login_required
+def change_owner_to_group(request, group_id, owner_id):
+    """Меняет владельца группы"""
+    group = Group.objects.get(pk=group_id)
+    auth_user = GroupMember.objects.get(member=request.user, group=group)
+
+    if auth_user.is_owner:
+        new_owner = GroupMember.objects.get(member__pk=owner_id, group=group)
+        new_owner.is_owner = new_owner.is_admin = True
+        auth_user.is_owner = False
+        new_owner.save()
+        auth_user.save()
+
+    return redirect('group_settings', group_id=group_id)
