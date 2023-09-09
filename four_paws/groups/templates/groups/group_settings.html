@@ -8,7 +8,19 @@
             {{group.name_of_group}}
         </a></h2>
     </div>
-    {% if auth_user.is_admin %}
+    <div class="selecting_settings">
+        <div class="setting_el_active">
+            <a href="{% url 'group_settings' group.pk %}">
+                Права участников
+            </a>
+        </div>
+        <div class="setting_el">
+            <a href="{% url 'edit_group' group.pk %}">
+                Настройки группы
+            </a>
+        </div>
+    </div>
+{% if auth_user.is_admin %}
     <div class="members_settings_zone">
         {% for mem in members %}
             <div class="members_row">
@@ -22,7 +34,7 @@
                         {{mem.member.username}}
                     </a>
                 </div>
-                {% if auth_user != mem and not mem.is_owner %}
+                {% if not mem.is_owner %}
                 <div class="mem_status_zone">
                     {% if auth_user.is_owner and mem.is_admin %}
                         <div class="mem_status_btn">
@@ -34,6 +46,12 @@
                         <div class="mem_status_btn">
                             <a href="{% url 'change_admin_to_group' group.pk mem.member.pk %}">
                                 Сделать админом
+                            </a>
+                        </div>
+                    {% elif auth_user == mem %}
+                        <div class="mem_status_btn">
+                            <a href="{% url 'change_admin_to_group' group.pk mem.member.pk %}">
+                                Отказаться от админки
                             </a>
                         </div>
                     {% endif %}
@@ -66,9 +84,9 @@
             </div>
         {% endfor %}
     </div>
-    {% else %}
+{% else %}
     <h1>У вас нет доступа к этой странице</h1>
-    {% endif %}
+{% endif %}
 </div>
 
 {% endblock %}

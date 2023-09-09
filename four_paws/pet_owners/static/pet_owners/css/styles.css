@@ -774,7 +774,7 @@ html, body {
 
 .members_row {
     background: rgba(181, 181, 181, 0.8);
-    margin: 5px 0 5px 15px;
+    margin: 0 0 10px 15px;
 }
 .mem_avatar_zone {
     display: inline-block;

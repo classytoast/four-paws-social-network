@@ -275,6 +275,28 @@ class GroupSettings(LoginRequiredMixin, DataMixin, ListView):
         return context
 
 
+class EditGroupView(LoginRequiredMixin, DataMixin, UpdateView):
+    """Страница редактирования данных группы"""
+    form_class = AddOrEditGroupForm
+    template_name = 'groups/edit_group_page.html'
+
+    def get_queryset(self):
+        self.queryset = Group.objects.filter(pk=self.kwargs['pk'])
+        return self.queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Редактирование группы"
+        context['auth_user'] = GroupMember.objects.get(member=self.request.user)
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return redirect('show_group', group_id=self.kwargs['pk'])
+
+
 @login_required
 def change_admin_to_group(request, group_id, admin_id):
     """Добавляет или удаляет админа в группу"""

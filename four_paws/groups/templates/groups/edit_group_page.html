@@ -1,0 +1,41 @@
+{% extends 'pet_owners/base.html' %}
+
+{% block content %}
+
+<div class="settings_page">
+    <div class="gp_st_title">
+        <h2>Управление группой: <a href="{% url 'show_group' group.pk %}">
+            {{group.name_of_group}}
+        </a></h2>
+    </div>
+    <div class="selecting_settings">
+        <div class="setting_el">
+            <a href="{% url 'group_settings' group.pk %}">
+                Права участников
+            </a>
+        </div>
+        <div class="setting_el_active">
+            <a href="{% url 'edit_group' group.pk %}">
+                Настройки группы
+            </a>
+        </div>
+    </div>
+{% if auth_user.is_owner %}
+    <div class="form_block_set">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                <p><label class="form-label" for="{{ field.id_for_label }}">
+                {{field.label}}:{% if field.field.required %} * {% endif %}
+                </label>{{ field }}</p>
+                <div class="form-error">{{ field.errors }}</div>
+            {% endfor %}
+            <button class="form_button" type="submit">Сохранить</button>
+        </form>
+    </div>
+{% else %}
+  <h1>У вас нет доступа к этой странице</h1>
+{% endif %}
+</div>
+
+{% endblock %}
