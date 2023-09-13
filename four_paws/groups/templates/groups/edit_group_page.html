@@ -33,6 +33,11 @@
             <button class="form_button" type="submit">Сохранить</button>
         </form>
     </div>
+    <div class="del_group_zone">
+        <div class="del_group_btn">
+            <a href="{% url 'delete_group' group.pk %}">Удалить группу</a>
+        </div>
+    </div>
 {% else %}
   <h1>У вас нет доступа к этой странице</h1>
 {% endif %}

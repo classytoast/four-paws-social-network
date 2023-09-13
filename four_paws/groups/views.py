@@ -215,6 +215,13 @@ class DeleteGroupPost(LoginRequiredMixin, DataMixin, DeleteView):
     def get_success_url(self):
         return reverse_lazy('show_group', kwargs={'group_id': self.kwargs['group_id']})
 
+    def get_queryset(self):
+        qs = super(DeleteGroupPost, self).get_queryset()
+        if GroupMember.objects.get(member=self.request.user, group=self.kwargs['group_id']).is_admin:
+            return qs
+        else:
+            return None
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Удаление поста в группе"
@@ -267,7 +274,7 @@ class GroupSettings(LoginRequiredMixin, DataMixin, ListView):
         group = self.queryset
         members = GroupMember.objects.filter(group=group).select_related('member')
         context['members'] = members
-        context['auth_user'] = GroupMember.objects.get(member=self.request.user)
+        context['auth_user'] = members.get(member=self.request.user)
         context['group_banned'] = group.banned.all()
         context['title'] = f"Управление группой: {group.name_of_group}"
         context.update(self.get_left_menu())
@@ -287,7 +294,10 @@ class EditGroupView(LoginRequiredMixin, DataMixin, UpdateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Редактирование группы"
-        context['auth_user'] = GroupMember.objects.get(member=self.request.user)
+        context['auth_user'] = GroupMember.objects.get(
+            member=self.request.user,
+            group=self.queryset[0]
+        )
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         return context
@@ -297,15 +307,38 @@ class EditGroupView(LoginRequiredMixin, DataMixin, UpdateView):
         return redirect('show_group', group_id=self.kwargs['pk'])
 
 
+class DeleteGroup(LoginRequiredMixin, DataMixin, DeleteView):
+    """Страница удаления группы"""
+    model = Group
+    template_name = 'groups/delete_group_page.html'
+
+    def get_success_url(self):
+        return reverse_lazy('my_groups')
+
+    def get_queryset(self):
+        qs = super(DeleteGroup, self).get_queryset()
+        auth_user = GroupMember.objects.get(member=self.request.user, group=self.kwargs['pk'])
+
+        return qs if auth_user.is_owner else None
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Удаление группы"
+        context.update(self.get_left_menu())
+        context.update(self.get_right_menu())
+        return context
+
+
 @login_required
 def change_admin_to_group(request, group_id, admin_id):
     """Добавляет или удаляет админа в группу"""
     group = Group.objects.get(pk=group_id)
+    auth_user = GroupMember.objects.get(member=request.user, group=group)
+    user_change_status = GroupMember.objects.get(member__pk=admin_id, group=group)
 
-    if GroupMember.objects.get(member=request.user, group=group).is_owner:
-        user = GroupMember.objects.get(member__pk=admin_id, group=group)
-        user.is_admin = False if user.is_admin else True
-        user.save()
+    if auth_user.is_owner or (auth_user == user_change_status and user_change_status.is_admin):
+        user_change_status.is_admin = False if user_change_status.is_admin else True
+        user_change_status.save()
 
     return redirect('group_settings', group_id=group_id)
 

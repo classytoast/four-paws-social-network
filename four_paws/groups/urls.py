@@ -10,6 +10,7 @@ urlpatterns = [
          name='change_follower_for_group'),
     path('<int:group_id>/', GroupView.as_view(), name='show_group'),
     path('<int:pk>/edit-group/', EditGroupView.as_view(), name='edit_group'),
+    path('<int:pk>/delete-group/', DeleteGroup.as_view(), name='delete_group'),
     path('<int:group_id>/<int:post_id>/', ShowGroupPost.as_view(), name='group_post'),
     path('<int:group_id>/create-group-post/', CreateGroupPostView.as_view(),
          name='create_group_post'),

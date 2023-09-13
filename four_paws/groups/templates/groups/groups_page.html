@@ -44,6 +44,11 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="create_grp_zone">
+            <div class="create_grp_btn">
+                <a href="{% url 'create_group' %}">Создать группу</a>
+            </div>
+        </div>
     {% else %}
         <div class="no_groups">
             <h2>Вы пока не подписаны не на одну из групп</h2>
