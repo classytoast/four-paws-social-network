@@ -1,0 +1,48 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+
+<div class="searching_page">
+    <div class="selecting_settings">
+        <h2>{{title}}</h2>
+        <div class="searching_el">
+            <a href="{% url 'searching_animals' %}">
+                Питомцы
+            </a>
+        </div>
+        <div class="searching_el_active">
+            <a href="{% url 'searching_owners' %}">
+                Пользователи
+            </a>
+        </div>
+        <div class="searching_el">
+            <a href="#">
+                Группы
+            </a>
+        </div>
+    </div>
+
+    <div class="search_elements_block">
+        {% for owner in owners %}
+            <div class="foll_cell">
+                <div class="foll_avatar">
+                    {% if owner.avatar %}
+                        <img src="{{owner.avatar.url}}" height=120>
+                    {% else %}
+                        <img src="/static/pet_owners/images/no_photo.jpg" width=120>
+                    {% endif %}
+                </div>
+                <div class="user_url">
+                    <a href="{{ owner.get_absolute_url }}">
+                        {{owner.username}}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+</div>
+
+{% endblock %}

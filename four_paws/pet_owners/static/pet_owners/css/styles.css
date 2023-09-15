@@ -120,13 +120,13 @@ html, body {
 }
 .user_bio { font-style: italic; }
 
-.subs_of_user a, .foll_name a, .member_name a, .subs_of_an a {
+.subs_of_user a, .foll_name a, .member_name a, .subs_of_an a, .user_url a {
     color: #095c5c;
     text-decoration: none;
 }
 .subs_of_user a:hover, .foll_name a:hover, .member_name a:hover {color: #706900;}
 
-.subs_of_an a {color: #043030;}
+.subs_of_an a, .user_url a {color: #043030;}
 
 .animals_info {
     text-align: center;
@@ -165,7 +165,7 @@ html, body {
     vertical-align: middle;
     width: 40%;
 }
-.sub_buttons, .foll_name {
+.sub_buttons, .foll_name, .user_url {
     display: inline-block;
     vertical-align: middle;
 }
