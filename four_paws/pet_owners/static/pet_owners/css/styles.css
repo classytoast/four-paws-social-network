@@ -534,7 +534,7 @@ html, body {
     overflow: clip;
     background: #a1a1a1;
 }
-.searching_page {background: rgba(0, 102, 107, 0.5);}
+.searching_page {background: #6c7c87;}
 .selecting_settings {
     display: inline-block;
     width: 100%;
@@ -562,9 +562,9 @@ html, body {
 }
 .search_elements_block {
     text-align: center;
-    background: rgba(0, 164, 230, 0.5);
+    background: #99b2ba;
 }
-.searching_el_active {background: rgba(0, 164, 230, 0.5);}
+.searching_el_active {background: #99b2ba;}
 .form_block_set {
     background: #bdbdbd;
     padding: 30px 0 30px 0;

@@ -3,9 +3,27 @@
 
 {% block content %}
 
-<div class="my_groups_block">
-    <h1>{{title}}</h1>
-    {% if groups %}
+<div class="searching_page">
+    <div class="selecting_settings">
+        <h2>{{title}}</h2>
+        <div class="searching_el">
+            <a href="{% url 'searching_animals' %}">
+                Питомцы
+            </a>
+        </div>
+        <div class="searching_el">
+            <a href="{% url 'searching_owners' %}">
+                Пользователи
+            </a>
+        </div>
+        <div class="searching_el_active">
+            <a href="{% url 'searching_groups' %}">
+                Группы
+            </a>
+        </div>
+    </div>
+
+    <div class="search_elements_block">
         <div class="all_groups">
             {% for group in groups %}
                 {% create_foll_list group.name_of_group user_groups_followed as foll_list %}
@@ -44,23 +62,8 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="create_grp_zone">
-            <div class="create_grp_btn">
-                <a href="{% url 'create_group' %}">Создать группу</a>
-            </div>
-        </div>
-    {% else %}
-        <div class="no_groups">
-            <h2>Вы пока не подписаны не на одну из групп</h2>
-            <div class="about_groups">
-                Группы позволяют Вам состоять в сообществах, интересы которых схожи с вашими.
-                Тематики групп разнообразны, от любимых пород питомцев и того как за ними ухаживать,
-                до групп с мемами и новостями из мира домашних животных :)
-            </div>
-            <div><a href="{% url 'searching_groups' %}">Найдите</a> для себя подходящую группу</div>
-            <div>Или <a href="{% url 'create_group' %}">создайте</a>  свою!</div>
-        </div>
-    {% endif %}
+    </div>
+
 </div>
 
 {% endblock %}

@@ -11,7 +11,11 @@
         {% for foll in followers %}
             <div class="foll_cell">
                 <div class="foll_avatar">
-                    <img src="{{foll.avatar.url}}" height=120>
+                    {% if foll.avatar %}
+                        <img src="{{foll.avatar.url}}" height=120>
+                    {% else %}
+                        <img src="/static/pet_owners/images/no_photo.jpg" width=120>
+                    {% endif %}
                 </div>
                 <div class="foll_name">
                     <a href="{{ foll.get_absolute_url }}">
