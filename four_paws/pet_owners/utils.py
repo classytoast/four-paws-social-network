@@ -14,7 +14,7 @@ class DataMixin:
                 {'title': "Мои питомцы", 'url_name': ['all_animals_page']},
                 {'title': "Подписки", 'url_name': ['owner_subscriptions', self.request.user.id]},
                 {'title': "Группы", 'url_name': ['my_groups']},
-                {'title': "Найти...", 'url_name': ['profile_home', self.request.user.id]}
+                {'title': "Найти...", 'url_name': ['searching_animals']}
             ]
         else:
             context['left_menu'] = [

@@ -11,6 +11,7 @@ urlpatterns = [
     path('animals/', include('animals.urls')),
     path('posts/', include('posts.urls')),
     path('comments/', include('comments.urls')),
+    path('searching/', include('searching.urls')),
 ]
 
 if settings.DEBUG:

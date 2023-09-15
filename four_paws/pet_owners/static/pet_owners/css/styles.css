@@ -120,11 +120,13 @@ html, body {
 }
 .user_bio { font-style: italic; }
 
-.subs_of_user a, .foll_name a, .member_name a {
+.subs_of_user a, .foll_name a, .member_name a, .subs_of_an a {
     color: #095c5c;
     text-decoration: none;
 }
-.subs_of_user a:hover, .foll_name a:hover, .member_name a:hover { color: #706900; }
+.subs_of_user a:hover, .foll_name a:hover, .member_name a:hover {color: #706900;}
+
+.subs_of_an a {color: #043030;}
 
 .animals_info {
     text-align: center;
@@ -525,19 +527,20 @@ html, body {
     vertical-align: top;
 }
 
-.settings_page {
+.settings_page, .searching_page {
     display: block;
     width: 100%;
     height: 100%;
     overflow: clip;
     background: #a1a1a1;
 }
+.searching_page {background: rgba(0, 102, 107, 0.5);}
 .selecting_settings {
     display: inline-block;
     width: 100%;
     text-align: center;
 }
-.setting_el, .setting_el_active {
+.setting_el, .setting_el_active, .searching_el, .searching_el_active {
     display: inline-block;
     width: 300px;
     height: 40px;
@@ -546,19 +549,22 @@ html, body {
     font-size: 19px;
     margin: 0 12px 0 12px;
 }
-.setting_el_active {
-    background: #bdbdbd;
-}
-.setting_el a, .setting_el_active a {
+.setting_el_active {background: #bdbdbd;}
+.setting_el a, .setting_el_active a, .searching_el a, .searching_el_active a {
     display: block;
     height: 100%;
     width: 100%;
     line-height: 40px;
     color: #000000;
 }
-.setting_el a:hover, .setting_el_active a:hover {
+.setting_el a:hover, .setting_el_active a:hover, .searching_el a:hover, .searching_el_active a:hover {
     color: #706900;
 }
+.search_elements_block {
+    text-align: center;
+    background: rgba(0, 164, 230, 0.5);
+}
+.searching_el_active {background: rgba(0, 164, 230, 0.5);}
 .form_block_set {
     background: #bdbdbd;
     padding: 30px 0 30px 0;

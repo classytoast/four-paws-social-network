@@ -1,0 +1,64 @@
+{% extends 'pet_owners/base.html' %}
+{% load pet_owners_tags %}
+
+{% block content %}
+
+<div class="searching_page">
+    <div class="selecting_settings">
+        <h2>{{title}}</h2>
+        <div class="searching_el_active">
+            <a href="{% url 'searching_animals' %}">
+                Питомцы
+            </a>
+        </div>
+        <div class="searching_el">
+            <a href="#">
+                Пользователи
+            </a>
+        </div>
+        <div class="searching_el">
+            <a href="#">
+                Группы
+            </a>
+        </div>
+    </div>
+
+    <div class="search_elements_block">
+        <div class="subs_cells">
+            {% for animal in animals %}
+                {% create_foll_list animal.name_of_animal user_animals_followed as foll_list %}
+                <div class="subs_cell">
+                    <div class="sub_avatar">
+                        <img src="{{animal.animal_photo.url}}" height=120>
+                    </div>
+                    <div class="sub_info">
+                        <div>{{animal.name_of_animal}}</div>
+                        <div>{{animal.category_of_animal}}</div>
+                        <div class="subs_of_an">
+                            <a href="{% url 'animal_followers' animal.pk %}">
+                                <span>Подписчики: </span>{{foll_list.count_folls}}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sub_buttons">
+                        {% if animal.pet_owner != auth_user %}
+                            {% if foll_list.is_followed %}
+                                <div class="unfollow_animal">
+                                    <a href="{{animal.change_follower}}">Отписаться</a>
+                                </div>
+                            {% else %}
+                                <div class="follow_animal">
+                                    <a href="{{animal.change_follower}}">Подписаться</a>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        <div class="select_button">
+                            <a href="{% url 'animal_posts' animal.pk %}">Посмотреть ленту</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

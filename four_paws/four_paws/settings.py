@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'animals.apps.AnimalsConfig',
     'posts.apps.PostsConfig',
     'comments.apps.CommentsConfig',
+    'searching.apps.SearchingConfig',
 ]
 
 MIDDLEWARE = [
