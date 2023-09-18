@@ -4,22 +4,41 @@ from django.views.generic import ListView
 from groups.models import Group
 from pet_owners.models import Animal, Owner
 from pet_owners.utils import DataMixin
+from .forms import *
 
 
 class SearchAnimalsView(LoginRequiredMixin, DataMixin, ListView):
     """Страница поиска питомцев на сайте"""
     model = Animal
     template_name = 'searching/search_animals_page.html'
+    form_class = SearchAnimalsFilters
     context_object_name = 'animals'
 
     def get_queryset(self):
-        self.queryset = Animal.objects.all()
+        filters = self.request.GET
+        if filters.get('category_of_animal') or filters.get('sex'):
+            if filters.get('category_of_animal') and filters.get('sex'):
+                self.queryset = Animal.objects.filter(
+                    category_of_animal=filters.get('category_of_animal'),
+                    sex=filters.get('sex')
+                )
+            elif filters.get('category_of_animal'):
+                self.queryset = Animal.objects.filter(
+                    category_of_animal=filters.get('category_of_animal')
+                )
+            else:
+                self.queryset = Animal.objects.filter(
+                    sex=filters.get('sex')
+                )
+        else:
+            self.queryset = Animal.objects.all()
         return self.queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         animals = self.queryset
         context['title'] = "Поиск питомцев"
+        context['form'] = self.form_class(self.request.GET)
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)

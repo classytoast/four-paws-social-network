@@ -24,6 +24,12 @@
     </div>
 
     <div class="search_elements_block">
+        <div class="search_filters">
+            <form action="{% url 'searching_animals' %}" method="get">
+                {{ form.as_p }}
+                <input type="submit" value="Отфильтровать">
+            </form>
+        </div>
         <div class="subs_cells">
             {% for animal in animals %}
                 {% create_foll_list animal.name_of_animal user_animals_followed as foll_list %}
