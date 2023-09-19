@@ -1,7 +1,13 @@
 from django.db import models
 from django.conf import settings
 
-from pet_owners.models import Animal
+
+class GroupTopic(models.Model):
+    """Класс для тематик в группах"""
+    name = models.CharField(max_length=55, verbose_name='название')
+
+    def __str__(self):
+        return self.name
 
 
 class Group(models.Model):
@@ -12,6 +18,7 @@ class Group(models.Model):
     date_create = models.DateField(auto_now_add=True, verbose_name='дата создания')
     banned = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                     related_name='banned_in_group', verbose_name='забаненные')
+    topics = models.ManyToManyField(GroupTopic, blank=True, verbose_name='тематики')
 
     def __str__(self):
         return self.name_of_group

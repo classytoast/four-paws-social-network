@@ -1,5 +1,6 @@
 from django import forms
 
+from groups.models import GroupTopic
 from pet_owners.models import AnimalCategory, Animal, Owner
 
 blank_choice = (('', '---------'),)
@@ -21,4 +22,12 @@ class SearchAnimalsFilters(forms.ModelForm):
 class SearchUsersFilters(forms.Form):
     username = forms.CharField(label='По логину', required=False,
                                widget=forms.TextInput(attrs={'class': 'form-input'}))
+
+
+class SearchGroupsFilters(forms.Form):
+    name_of_group = forms.CharField(label='Название группы', required=False,
+                                    widget=forms.TextInput(attrs={'class': 'form-input'}))
+    topics = forms.ModelMultipleChoiceField(label='Темы',
+                                            queryset=GroupTopic.objects.all(), required=False,
+                                            widget=forms.CheckboxSelectMultiple)
 

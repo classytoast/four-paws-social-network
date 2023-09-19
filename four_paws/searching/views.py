@@ -74,16 +74,34 @@ class SearchGroupsView(LoginRequiredMixin, DataMixin, ListView):
     """Страница поиска групп на сайте"""
     model = Group
     template_name = 'searching/search_groups_page.html'
+    form_class = SearchGroupsFilters
     context_object_name = 'groups'
 
     def get_queryset(self):
-        self.queryset = Group.objects.all()
+        filters = self.request.GET
+        if filters.get('name_of_group') or filters.get('topics'):
+            if filters.get('name_of_group') and filters.get('topics'):
+                self.queryset = Group.objects.filter(
+                    name_of_group__icontains=filters.get('name_of_group'),
+                    topics=filters.get('topics')
+                )
+            elif filters.get('name_of_group'):
+                self.queryset = Group.objects.filter(
+                    name_of_group__icontains=filters.get('name_of_group')
+                )
+            else:
+                self.queryset = Group.objects.filter(
+                    topics=filters.get('topics')
+                )
+        else:
+            self.queryset = Group.objects.all()
         return self.queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         groups = self.queryset
         context['title'] = "Поиск групп"
+        context['form'] = self.form_class(self.request.GET)
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         context['user_groups_followed'] = self.get_groups_followers(groups)
