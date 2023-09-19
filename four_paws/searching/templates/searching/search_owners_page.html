@@ -24,6 +24,12 @@
     </div>
 
     <div class="search_elements_block">
+        <div class="search_filters">
+            <form action="{% url 'searching_owners' %}" method="get">
+                {{ form.as_p }}
+                <input type="submit" value="Найти" class="form_button">
+            </form>
+        </div>
         {% for owner in owners %}
             <div class="foll_cell">
                 <div class="foll_avatar">

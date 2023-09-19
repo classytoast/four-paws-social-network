@@ -49,15 +49,22 @@ class SearchOwnersView(LoginRequiredMixin, DataMixin, ListView):
     """Страница поиска пользователей на сайте"""
     model = Owner
     template_name = 'searching/search_owners_page.html'
+    form_class = SearchUsersFilters
     context_object_name = 'owners'
 
     def get_queryset(self):
-        self.queryset = Owner.objects.all()
+        if self.request.GET:
+            self.queryset = Owner.objects.filter(
+                username__icontains=self.request.GET.get('username')
+            )
+        else:
+            self.queryset = Owner.objects.all()
         return self.queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Поиск пользователей"
+        context['form'] = self.form_class(self.request.GET)
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         return context

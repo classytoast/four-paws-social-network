@@ -815,3 +815,7 @@ html, body {
     border-radius: 12px;
 }
 .mem_status_btn a:hover, .del_group_btn a:hover {background: rgba(0, 24, 92, 0.8);}
+
+.search_filters {
+    padding: 20px 0 10px 0;
+}

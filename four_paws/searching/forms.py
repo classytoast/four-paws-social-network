@@ -1,6 +1,6 @@
 from django import forms
 
-from pet_owners.models import AnimalCategory, Animal
+from pet_owners.models import AnimalCategory, Animal, Owner
 
 blank_choice = (('', '---------'),)
 all_choices = blank_choice + Animal.GENDER
@@ -16,3 +16,9 @@ class SearchAnimalsFilters(forms.ModelForm):
     class Meta:
         model = Animal
         fields = ('category_of_animal', 'sex')
+
+
+class SearchUsersFilters(forms.Form):
+    username = forms.CharField(label='По логину', required=False,
+                               widget=forms.TextInput(attrs={'class': 'form-input'}))
+
