@@ -53,6 +53,14 @@
             {% endif %}
         </div>
     </div>
+    {% if topics %}
+    <div class="topics">
+        {% for topic in topics %}
+            <div class="topic">#{{topic}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="group_posts_block">
         <!-- если аутентифицированный пользователь - это владелец группы,
          добавляем кнопку создания поста-->

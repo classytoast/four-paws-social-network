@@ -819,3 +819,11 @@ html, body {
 .search_filters {
     padding: 20px 0 10px 0;
 }
+
+.topics {
+    text-align: left;
+    margin-left: 60px;
+    font-style: italic;
+    font-size: 17px;
+}
+.topic {display: inline-block;}

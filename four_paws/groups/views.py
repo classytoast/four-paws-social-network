@@ -73,6 +73,7 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
         all_posts = GroupPost.objects.filter(group=group)
         context['members'] = Owner.objects.filter(group_subscriptions__group=group)[:9]
         context['all_posts'] = all_posts
+        context['topics'] = group.topics.all()
         auth_user = self.request.user
         context['user_groups_followed'] = self.get_groups_followers([group])
         context['data_for_post'] = self.get_data_for_post(
