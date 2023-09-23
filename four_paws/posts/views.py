@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
 from pet_owners.utils import DataMixin
-from pet_owners.models import OwnerPost, PostImage, PostComment
+from pet_owners.models import OwnerPost, OwnerPostImage, PostComment
 
 
 class ShowPost(DataMixin, DetailView):
@@ -138,7 +138,7 @@ class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):
 def delete_img(request, img_id):
     """Функция удаления изображения"""
     user = request.user
-    image = PostImage.objects.get(pk=img_id)
+    image = OwnerPostImage.objects.get(pk=img_id)
     post_id = image.post.pk
     if image.owner == user:
         image.delete()

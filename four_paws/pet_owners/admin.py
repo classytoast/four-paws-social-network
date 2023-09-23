@@ -40,17 +40,6 @@ class AnimalFollowerAdmin(admin.ModelAdmin):
     fields = ['animal', 'follower']
 
 
-class OwnerPostAdmin(admin.ModelAdmin):
-    list_display = ['title', 'autor', 'date_create', 'is_published']
-    fields = ['title', 'text_of_post', 'autor', 'animals',
-              'is_published', 'views', 'likes']
-
-
-class PostImageAdmin(admin.ModelAdmin):
-    list_display = ['post', 'owner']
-    fields = ['post', 'owner', 'img']
-
-
 class OwnerCommentAdmin(admin.ModelAdmin):
     list_display = ['author', 'comment']
     fields = ['author', 'comment', 'post', 'likes']
@@ -60,6 +49,4 @@ admin.site.register(Owner, OwnerAdmin)
 admin.site.register(AnimalCategory, AnimalCategoryAdmin)
 admin.site.register(Animal, AnimalAdmin)
 admin.site.register(AnimalFollower, AnimalFollowerAdmin)
-admin.site.register(OwnerPost, OwnerPostAdmin)
-admin.site.register(PostImage, PostImageAdmin)
 admin.site.register(PostComment, OwnerCommentAdmin)

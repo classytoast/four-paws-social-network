@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.urls import reverse
 
+from posts.models import Post
+
 
 class AnimalCategory(models.Model):
     """Вид домашнего животного"""
@@ -81,26 +83,19 @@ class AnimalFollower(models.Model):
 
 class OwnerPost(models.Model):
     """пост в блоге пользователя"""
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='автор поста')
-    title = models.CharField(max_length=105, blank=True, verbose_name='заголовок')
-    text_of_post = models.TextField(max_length=2000, verbose_name='текст поста')
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, null=True, verbose_name='пост')
     animals = models.ManyToManyField(Animal, related_name='posts',
                                      verbose_name='питомцы в посте')
-    is_published = models.BooleanField(default=True)
-    date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата создания поста')
-    views = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='views', verbose_name='просмотры')
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes', verbose_name='лайки')
 
     def __str__(self):
-        return f'{self.text_of_post}'[:15]
+        return f'{self.post}'[:15]
 
     class Meta:
         verbose_name = 'Пост пользователя'
         verbose_name_plural = 'Посты пользователей'
-        ordering = ['-date_create']
 
 
-class PostImage(models.Model):
+class OwnerPostImage(models.Model):
     """изображение к посту"""
     img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
     post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')

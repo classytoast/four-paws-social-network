@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+from posts.models import Post
+
 
 class GroupTopic(models.Model):
     """Класс для тематик в группах"""
@@ -42,19 +44,14 @@ class GroupMember(models.Model):
 class GroupPost(models.Model):
     """пост в группе"""
     group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='группа')
-    title = models.CharField(max_length=105, blank=True, verbose_name='заголовок')
-    text_of_post = models.TextField(max_length=2000, verbose_name='текст поста')
-    is_published = models.BooleanField(default=True)
-    date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата создания поста')
-    views = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='grp_views', verbose_name='просмотры')
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='grp_likes', verbose_name='лайки')
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, null=True, verbose_name='пост')
 
     def __str__(self):
-        return f'{self.text_of_post}'[:15]
+        return f'{self.post}'[:15]
 
     class Meta:
-        verbose_name = 'Пост пользователя'
-        verbose_name_plural = 'Посты пользователей'
+        verbose_name = 'Пост в группе'
+        verbose_name_plural = 'Посты в группах'
 
 
 class GroupPostImage(models.Model):

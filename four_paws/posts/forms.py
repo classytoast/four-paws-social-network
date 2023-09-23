@@ -1,6 +1,6 @@
 from django import forms
 
-from pet_owners.models import Owner, OwnerPost, Animal, PostImage
+from pet_owners.models import Owner, OwnerPost, Animal, OwnerPostImage
 
 
 class AddOrEditPostForm(forms.ModelForm):
@@ -25,6 +25,6 @@ class AddImageForm(forms.ModelForm):
     img = forms.ImageField(label='Добавьте фотку :)', required=False)
 
     class Meta:
-        model = PostImage
+        model = OwnerPostImage
         fields = ('img',)
 
