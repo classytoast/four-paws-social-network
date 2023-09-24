@@ -7,11 +7,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
 from pet_owners.utils import DataMixin
 from pet_owners.models import OwnerPost, OwnerPostImage, PostComment
+from .models import Post
+from .utils import PostDataMixin
 
 
-class ShowPost(DataMixin, DetailView):
+class ShowPost(PostDataMixin, DataMixin, DetailView):
     """Страница отдельно взятого поста"""
-    model = OwnerPost
+    model = Post
     template_name = 'posts/post_page.html'
     context_object_name = 'post'
     pk_url_kwarg = 'post_id'
@@ -21,13 +23,13 @@ class ShowPost(DataMixin, DetailView):
         post = self.model.objects.get(pk=self.kwargs['post_id'])
         context['title'] = post.title
         context.update(self.get_left_menu())
-        auth_user = self.request.user
-        context.update(self.get_right_menu(auth_user))
-        context['data_for_post'] = self.get_data_for_post([post], auth_user, all_images=True)
-        self.add_one_view_for_post(post, auth_user)
+        context.update(self.get_right_menu(self.request.user))
+        context['data_for_posts'] = self.get_data_for_posts([post], all_images=True,
+                                                            type_of_post=self.kwargs['type_of_post'])
+        self.add_one_view_for_post(post, self.request.user)
         comments = PostComment.objects.filter(post=post)
         context['comments'] = comments
-        context['likes_for_comments'] = self.get_likes_for_comments(comments, auth_user)
+        context['likes_for_comments'] = self.get_likes_for_comments(comments, self.request.user)
         return context
 
 

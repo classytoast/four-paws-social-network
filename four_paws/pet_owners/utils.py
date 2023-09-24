@@ -49,41 +49,6 @@ class DataMixin:
                                                                      }
         return user_animals_followed
 
-    def get_data_for_post(self, posts, auth_user,
-                          all_images=False, post_is_in_group=False):
-        """Выгружает данные для переданных постов"""
-        data_for_post = {}
-        for post in posts:
-            if self.request.user.is_authenticated and auth_user in post.likes.all():
-                is_liked = True
-            else:
-                is_liked = False
-            if all_images:
-                img = post.images.all()
-            else:
-                img = post.images.first()
-            if not post_is_in_group:
-                comments_count = PostComment.objects.filter(post=post).count()
-                if post.autor == self.request.user:
-                    is_admin = True
-                else:
-                    is_admin = False
-            else:
-                comments_count = GroupPostComment.objects.filter(post=post).count()
-                if post_is_in_group['is_admin']:
-                    is_admin = True
-                else:
-                    is_admin = False
-
-            data_for_post[f'{post.title}'] = {
-                'img': img,
-                'is_liked': is_liked,
-                'is_admin': is_admin,
-                'comments_count': comments_count
-            }
-
-        return data_for_post
-
     def get_groups_followers(self, groups):
         """Выдает подписчиков групп юзера"""
         user_groups_followed = {}
