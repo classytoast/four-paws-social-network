@@ -1,31 +1,47 @@
-from groups.models import GroupPostComment
+from groups.models import GroupPostComment, GroupMember, GroupPost
 from pet_owners.models import PostComment, OwnerPost
 
 
 class PostDataMixin:
     """Миксин работы с данными для постов"""
 
-    def get_data_for_posts(self, posts, type_of_post, all_images=False):
-        """Выгружает необходимые для отображения данные переданных постов"""
+    def get_data_for_posts(self, posts: list[object], type_of_posts: str,
+                           all_images: bool = False) -> dict:
+        """
+        Выгрузить необходимые для отображения данные переданных постов
+        :param posts: список постов
+        :param type_of_posts: тип постов (напр. в группе или на странице юзера)
+        :param all_images: параметр, указывающий сколько фотографий нужно выгружать для каждого поста
+        (все или один)
+        :return: словарь, ключами которого являются заголовки постов, а значениями - выгруженные данные
+        """
         data_for_posts = {}
-        auth_user = self.request.user
 
         for post in posts:
             data_for_posts[f'{post.title}'] = {}
 
-            if auth_user.is_authenticated and auth_user in post.likes.all():
+            if self.request.user.is_authenticated and self.request.user in post.likes.all():
                 data_for_posts[f'{post.title}']['is_liked'] = True
             else:
                 data_for_posts[f'{post.title}']['is_liked'] = False
 
             data_for_posts[f'{post.title}']['img'] = post.images.all() if all_images else post.images.first()
 
-            if type_of_post == 'owner-post':
-                data_for_posts[f'{post.title}']['animals'] = OwnerPost.objects.get(post=post).animals.all()
-                data_for_posts[f'{post.title}']['comments_count'] = PostComment.objects.filter(post=post).count()
-                is_admin = True if post.author == auth_user else False
-            elif type_of_post == 'group-post':
-                data_for_posts[f'{post.title}']['comments_count'] = GroupPostComment.objects.filter(post=post).count()
-                is_admin = True if post_is_in_group['is_admin'] else False
+            if type_of_posts == 'owner-post':
+                data_for_posts[f'{post.title}'].update(self.get_data_for_owner_post(post))
+            elif type_of_posts == 'group-post':
+                data_for_posts[f'{post.title}'].update(self.get_data_for_group_post(post))
 
         return data_for_posts
+
+    def get_data_for_owner_post(self, post: object) -> dict:
+        """Выгрузить данные для поста юзера"""
+        return {'animals': OwnerPost.objects.get(post=post).animals.all(),
+                'comments_count': PostComment.objects.filter(post=post).count(),
+                'is_admin': True if post.author == self.request.user else False}
+
+    def get_data_for_group_post(self, post: object) -> dict:
+        """Выгрузить данные для поста группы"""
+        admins = GroupMember.objects.filter(group=GroupPost.objects.get(post=post), is_admin=True)
+        return {'comments_count': GroupPostComment.objects.filter(post=post).count(),
+                'is_admin': True if self.request.user in admins else False}

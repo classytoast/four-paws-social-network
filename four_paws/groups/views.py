@@ -6,6 +6,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from pet_owners.models import Owner
+from posts.utils import PostDataMixin
 from .forms import *
 from .models import *
 from pet_owners.utils import DataMixin
@@ -56,7 +57,7 @@ class CreateGroup(LoginRequiredMixin, DataMixin, CreateView):
         return redirect('my_groups')
 
 
-class GroupView(LoginRequiredMixin, DataMixin, ListView):
+class GroupView(LoginRequiredMixin, DataMixin, PostDataMixin, ListView):
     """Страница выбранной группы"""
     model = Group
     template_name = 'groups/group_view_page.html'
@@ -74,17 +75,10 @@ class GroupView(LoginRequiredMixin, DataMixin, ListView):
         context['members'] = Owner.objects.filter(group_subscriptions__group=group)[:9]
         context['all_posts'] = all_posts
         context['topics'] = group.topics.all()
-        auth_user = self.request.user
         context['user_groups_followed'] = self.get_groups_followers([group])
-        context['data_for_post'] = self.get_data_for_post(
-            all_posts,
-            auth_user,
-            post_is_in_group={
-                "is_admin": context['user_groups_followed'][group.name_of_group]['is_admin']
-            }
-        )
+        context['data_for_post'] = self.get_data_for_posts(all_posts, type_of_posts='group-post')
         context.update(self.get_left_menu())
-        context.update(self.get_right_menu(auth_user))
+        context.update(self.get_right_menu())
         return context
 
 
@@ -100,33 +94,6 @@ def add_or_del_follower_for_group(request, group_id):
         GroupMember.objects.create(member=user,
                                    group=group)
     return redirect('my_groups')
-
-
-class ShowGroupPost(DataMixin, DetailView):
-    """Страница отдельно взятого поста в группе"""
-    model = GroupPost
-    template_name = 'groups/group_post_page.html'
-    context_object_name = 'post'
-    pk_url_kwarg = 'post_id'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        post = self.model.objects.get(pk=self.kwargs['post_id'])
-        context['title'] = post.title
-        context.update(self.get_left_menu())
-        auth_user = self.request.user
-        context.update(self.get_right_menu(auth_user))
-        context['data_for_post'] = self.get_data_for_post(
-            [post],
-            auth_user,
-            post_is_in_group={"is_admin": False},
-            all_images=True
-        )
-        self.add_one_view_for_post(post, auth_user)
-        comments = GroupPostComment.objects.filter(post=post)
-        context['comments'] = comments
-        context['likes_for_comments'] = self.get_likes_for_comments(comments, auth_user)
-        return context
 
 
 class CreateGroupPostView(LoginRequiredMixin, DataMixin, CreateView):

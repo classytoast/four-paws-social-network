@@ -96,7 +96,7 @@
                                     {{post.title}}
                                 </div>
                             </div>
-                            <a href="{% url 'group_post' group.pk post.pk %}"><div class="post_text">
+                            <a href="{% url 'post' post.pk  'group-post' %}"><div class="post_text">
                                 {{post.text_of_post|truncatewords:35}}
                             </div></a>
                             <div class="post_datetime">
@@ -110,7 +110,7 @@
                     <div class="post_parameters">
                         {% show_likes_and_views post post_data 'group_posts' group.pk %}
                         <div class="post_comments">
-                            <a href="{% url 'group_post' group.pk post.pk %}">
+                            <a href="{% url 'post' post.pk  'group-post' %}">
                                 комментарии...({{post_data.comments_count}})
                             </a>
                         </div>
