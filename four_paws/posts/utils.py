@@ -36,8 +36,9 @@ class PostDataMixin:
 
     def get_data_for_owner_post(self, post: object) -> dict:
         """Выгрузить данные для поста юзера"""
-        return {'animals': OwnerPost.objects.get(post=post).animals.all(),
-                'comments_count': PostComment.objects.filter(post=post).count(),
+        owner_post = OwnerPost.objects.get(post=post)
+        return {'animals': owner_post.animals.all(),
+                'comments_count': PostComment.objects.filter(post=owner_post).count(),
                 'is_admin': True if post.author == self.request.user else False}
 
     def get_data_for_group_post(self, post: object) -> dict:
