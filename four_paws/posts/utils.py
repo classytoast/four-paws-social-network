@@ -1,5 +1,5 @@
-from groups.models import GroupPostComment, GroupMember, GroupPost
-from pet_owners.models import PostComment, OwnerPost
+from groups.models import GroupMember
+from .models import OwnerPost, GroupPost, GroupPostComment, PostComment
 
 
 class PostDataMixin:
@@ -43,6 +43,11 @@ class PostDataMixin:
 
     def get_data_for_group_post(self, post: object) -> dict:
         """Выгрузить данные для поста группы"""
-        admins = GroupMember.objects.filter(group=GroupPost.objects.get(post=post), is_admin=True)
-        return {'comments_count': GroupPostComment.objects.filter(post=post).count(),
-                'is_admin': True if self.request.user in admins else False}
+        group_post = GroupPost.objects.get(post=post)
+        try:
+            GroupMember.objects.get(group=group_post.group, member=self.request.user, is_admin=True)
+            is_admin = True
+        except GroupMember.DoesNotExist:
+            is_admin = False
+        return {'comments_count': GroupPostComment.objects.filter(post=group_post).count(),
+                'is_admin': is_admin}

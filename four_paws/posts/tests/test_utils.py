@@ -1,8 +1,8 @@
 from django.test import TestCase, RequestFactory
 
-from groups.models import GroupPostComment, GroupMember, GroupPost
-from pet_owners.models import PostComment, OwnerPost, Owner, Animal, AnimalCategory
-from posts.models import Post
+from groups.models import Group, GroupMember
+from pet_owners.models import Owner, Animal, AnimalCategory
+from posts.models import Post, GroupPostComment, GroupPost, PostComment, OwnerPost
 from posts.utils import *
 
 
@@ -62,4 +62,52 @@ class GetDataForOwnerPostTestClass(TestCase):
     def test_return_without_comments(self):
         post = Post.objects.get(text_of_post='simple_text2')
         result = self.utils_mixin.get_data_for_owner_post(post)
+        return self.assertEqual(0, result['comments_count'])
+
+
+class GetDataForGroupPostTestClass(TestCase):
+    utils_mixin = PostDataMixin()
+
+    @classmethod
+    def setUpTestData(cls):
+        user = Owner.objects.create(username='simple_user', password='12345')
+        user2 = Owner.objects.create(username='simple_user2', password='12345')
+        group = Group.objects.create(name_of_group='group1', about_group='some_text')
+        group_member = GroupMember.objects.create(member=user, group=group, is_admin=True)
+        post = Post.objects.create(author=user,
+                                   title='simple_title',
+                                   text_of_post='simple_text')
+        group_post = GroupPost.objects.create(group=group, post=post)
+        comment1 = GroupPostComment.objects.create(author=user,
+                                                   comment='some_comment',
+                                                   post=group_post)
+        comment2 = GroupPostComment.objects.create(author=user,
+                                                   comment='some_comment2',
+                                                   post=group_post)
+        post_without_comments = Post.objects.create(author=user, text_of_post='simple_text2')
+        group_post_without_comments = GroupPost.objects.create(group=group, post=post_without_comments)
+
+    def setUp(self) -> None:
+        self.utils_mixin.request = RequestFactory()
+        self.utils_mixin.request.user = Owner.objects.get(username='simple_user')
+
+    def test_for_user_is_admin(self):
+        post = Post.objects.get(title='simple_title')
+        result = self.utils_mixin.get_data_for_group_post(post)
+        return self.assertEqual(True, result['is_admin'])
+
+    def test_for_user_is_no_admin(self):
+        post = Post.objects.get(title='simple_title')
+        self.utils_mixin.request.user = Owner.objects.get(username='simple_user2')
+        result = self.utils_mixin.get_data_for_group_post(post)
+        return self.assertEqual(False, result['is_admin'])
+
+    def test_return_comments(self):
+        post = Post.objects.get(title='simple_title')
+        result = self.utils_mixin.get_data_for_group_post(post)
+        return self.assertEqual(2, result['comments_count'])
+
+    def test_return_without_comments(self):
+        post = Post.objects.get(text_of_post='simple_text2')
+        result = self.utils_mixin.get_data_for_group_post(post)
         return self.assertEqual(0, result['comments_count'])
