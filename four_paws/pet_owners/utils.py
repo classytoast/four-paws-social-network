@@ -1,5 +1,5 @@
-from .models import Animal, AnimalFollower, PostComment
-from groups.models import GroupMember, GroupPostComment
+from .models import Animal, AnimalFollower
+from groups.models import GroupMember
 
 
 class DataMixin:

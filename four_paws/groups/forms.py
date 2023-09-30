@@ -1,6 +1,7 @@
 from django import forms
 
-from .models import Group, GroupPost, GroupPostImage, GroupTopic
+from .models import Group, GroupTopic
+from posts.models import GroupPost, GroupPostImage
 
 
 class AddOrEditGroupForm(forms.ModelForm):

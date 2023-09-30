@@ -4,9 +4,8 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
-from groups.models import GroupPost
 from pet_owners.utils import DataMixin
-from pet_owners.models import OwnerPost, PostComment
+from posts.models import GroupPost, OwnerPost, PostComment
 from .forms import *
 
 

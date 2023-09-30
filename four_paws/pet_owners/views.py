@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .utils import DataMixin
 from .models import *
-from groups.models import GroupPost
+from posts.models import GroupPost
 
 
 @login_required

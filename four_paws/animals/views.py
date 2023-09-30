@@ -7,7 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
 from pet_owners.utils import DataMixin
-from pet_owners.models import Animal, Owner, OwnerPost
+from pet_owners.models import Animal, Owner
+from posts.models import OwnerPost
 
 
 class AnimalsHome(LoginRequiredMixin, DataMixin, ListView):

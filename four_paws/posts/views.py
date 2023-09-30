@@ -4,11 +4,9 @@ from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from groups.models import GroupPostComment
 from .forms import *
 from pet_owners.utils import DataMixin
-from pet_owners.models import OwnerPost, OwnerPostImage, PostComment
-from .models import Post
+from .models import Post, OwnerPost, OwnerPostImage, PostComment, GroupPostComment
 from .utils import PostDataMixin
 
 

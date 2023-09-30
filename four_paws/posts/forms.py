@@ -1,6 +1,7 @@
 from django import forms
 
-from pet_owners.models import Owner, OwnerPost, Animal, OwnerPostImage
+from pet_owners.models import Owner, Animal
+from .models import OwnerPost, OwnerPostImage
 
 
 class AddOrEditPostForm(forms.ModelForm):

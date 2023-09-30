@@ -1,7 +1,6 @@
 from django import forms
 
-from groups.models import GroupPostComment
-from pet_owners.models import PostComment
+from posts.models import GroupPostComment, PostComment
 
 
 class AddOrEditCommentForm(forms.ModelForm):

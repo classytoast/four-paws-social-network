@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
+from four_paws import settings
 from django.urls import reverse
-
-from posts.models import Post
 
 
 class AnimalCategory(models.Model):
@@ -79,37 +77,3 @@ class AnimalFollower(models.Model):
     class Meta:
         verbose_name = 'Подписчик питомца'
         verbose_name_plural = 'Подписчики питомцев'
-
-
-class OwnerPost(models.Model):
-    """пост в блоге пользователя"""
-    post = models.OneToOneField(Post, on_delete=models.CASCADE, null=True, verbose_name='пост')
-    animals = models.ManyToManyField(Animal, related_name='posts',
-                                     verbose_name='питомцы в посте')
-
-    def __str__(self):
-        return f'{self.post}'[:15]
-
-    class Meta:
-        verbose_name = 'Пост пользователя'
-        verbose_name_plural = 'Посты пользователей'
-
-
-class OwnerPostImage(models.Model):
-    """изображение к посту"""
-    img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
-    post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец фото')
-
-
-class PostComment(models.Model):
-    """комментарий к посту"""
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comments',
-                               on_delete=models.CASCADE, verbose_name='автор комментария', null=True)
-    comment = models.TextField(max_length=550, verbose_name='комментарий')
-    date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата')
-    post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='comments', verbose_name='пост')
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comments_likes', verbose_name='лайки')
-
-
-

@@ -1,7 +1,5 @@
 from django.db import models
-from django.conf import settings
-
-from posts.models import Post
+from four_paws import settings
 
 
 class GroupTopic(models.Model):
@@ -40,33 +38,3 @@ class GroupMember(models.Model):
     is_owner = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
-
-class GroupPost(models.Model):
-    """пост в группе"""
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='группа')
-    post = models.OneToOneField(Post, on_delete=models.CASCADE, null=True, verbose_name='пост')
-
-    def __str__(self):
-        return f'{self.post}'[:15]
-
-    class Meta:
-        verbose_name = 'Пост в группе'
-        verbose_name_plural = 'Посты в группах'
-
-
-class GroupPostImage(models.Model):
-    """изображение к посту в группе"""
-    img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
-    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='группа')
-
-
-class GroupPostComment(models.Model):
-    """комментарий к посту в группе"""
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='group_comments',
-                               on_delete=models.CASCADE, verbose_name='автор комментария', null=True)
-    comment = models.TextField(max_length=550, verbose_name='комментарий')
-    date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата')
-    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='comments', verbose_name='пост')
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                   related_name='group_comments_likes', verbose_name='лайки')
