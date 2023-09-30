@@ -18,32 +18,35 @@ class PostDataMixin:
         data_for_posts = {}
 
         for post in posts:
-            data_for_posts[f'{post.title}'] = {}
+            data_for_posts[f'{post.pk}'] = {}
 
             if self.request.user.is_authenticated and self.request.user in post.likes.all():
-                data_for_posts[f'{post.title}']['is_liked'] = True
+                data_for_posts[f'{post.pk}']['is_liked'] = True
             else:
-                data_for_posts[f'{post.title}']['is_liked'] = False
-
-            data_for_posts[f'{post.title}']['img'] = post.images.all() if all_images else post.images.first()
+                data_for_posts[f'{post.pk}']['is_liked'] = False
 
             if type_of_posts == 'owner-post':
-                data_for_posts[f'{post.title}'].update(self.get_data_for_owner_post(post))
+                owner_post = OwnerPost.objects.get(post=post)
+                data_for_posts[f'{post.pk}']['img'] = owner_post.images.all() if all_images \
+                    else owner_post.images.first()
+                data_for_posts[f'{post.pk}'].update(self.get_data_for_owner_post(post, owner_post))
+
             elif type_of_posts == 'group-post':
-                data_for_posts[f'{post.title}'].update(self.get_data_for_group_post(post))
+                group_post = GroupPost.objects.get(post=post)
+                data_for_posts[f'{post.pk}']['img'] = group_post.images.all() if all_images \
+                    else group_post.images.first()
+                data_for_posts[f'{post.pk}'].update(self.get_data_for_group_post(group_post))
 
         return data_for_posts
 
-    def get_data_for_owner_post(self, post: object) -> dict:
+    def get_data_for_owner_post(self, post: object, owner_post: object) -> dict:
         """Выгрузить данные для поста юзера"""
-        owner_post = OwnerPost.objects.get(post=post)
         return {'animals': owner_post.animals.all(),
                 'comments_count': PostComment.objects.filter(post=owner_post).count(),
-                'is_admin': True if post.author == self.request.user else False}
+                'is_admin': True if self.request.user.is_authenticated and post.author == self.request.user else False}
 
-    def get_data_for_group_post(self, post: object) -> dict:
+    def get_data_for_group_post(self, group_post: object) -> dict:
         """Выгрузить данные для поста группы"""
-        group_post = GroupPost.objects.get(post=post)
         try:
             GroupMember.objects.get(group=group_post.group, member=self.request.user, is_admin=True)
             is_admin = True
