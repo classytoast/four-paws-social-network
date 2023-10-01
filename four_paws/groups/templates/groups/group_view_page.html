@@ -1,5 +1,6 @@
 {% extends 'pet_owners/base.html' %}
 {% load pet_owners_tags %}
+{% load posts_tags %}
 
 {% block content %}
 <div class="group_block">
@@ -73,7 +74,7 @@
         {% endif %}
         <div class="all_posts">
             {% for post in all_posts %}
-                {% get_data_for_post post.title data_for_post as post_data %}
+                {% get_data_for_post post.pk data_for_post as post_data %}
                 <div class="post_cell">
                     <div class="post_info">
                         <div class="title_and_text">

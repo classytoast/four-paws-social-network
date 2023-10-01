@@ -1,9 +1,10 @@
 {% extends 'pet_owners/base.html' %}
 {% load pet_owners_tags %}
+{% load posts_tags %}
 
 {% block content %}
 
-{% get_data_for_post post.title data_for_post as post_data %}
+{% get_data_for_post post.pk data_for_post as post_data %}
 <table border=0 cellpadding="0" cellspacing="0" class="post_table">
 <!-- блок информации о посте -->
 <tr class="post_title_detail">

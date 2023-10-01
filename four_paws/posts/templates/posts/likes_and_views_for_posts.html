@@ -1,0 +1,18 @@
+<div class="post_likes">
+    <div class="img_like">
+    <a href="{% url 'like_for_post' post.pk name_page_for_likes object_id %}">
+        {% if post_data.is_liked %}
+            <img src="/static/pet_owners/images/active_like.png" width="45">
+        {% else %}
+            <img src="/static/pet_owners/images/like.png" width="45">
+        {% endif %}
+    </a>
+    </div>
+    <div class="like_count">{{post.likes.count}}</div>
+</div>
+<div class="post_views">
+    <div class="img_view">
+        <img src="/static/pet_owners/images/view.png" width="45">
+    </div>
+    <div class="view_count">{{post.views.count}}</div>
+</div>
