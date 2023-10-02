@@ -5,7 +5,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from pet_owners.utils import DataMixin
-from posts.models import GroupPost, OwnerPost, PostComment
+from posts.models import GroupPost, OwnerPost
+from .models import PostComment
 from .forms import *
 
 
@@ -46,10 +47,7 @@ class UpdateComment(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'comments/edit_comment_page.html'
 
     def get_queryset(self):
-        if self.kwargs['which_post'] == 'for-user-post':
-            return PostComment.objects.filter(pk=self.kwargs['pk'])
-        elif self.kwargs['which_post'] == 'for-group-post':
-            return GroupPostComment.objects.filter(pk=self.kwargs['pk'])
+        return PostComment.objects.filter(pk=self.kwargs['pk'])
 
     def get_form(self, form_class=None):
         if self.kwargs['which_post'] == 'for-user-post':
@@ -95,36 +93,12 @@ class DeleteComment(LoginRequiredMixin, DataMixin, DeleteView):
         return context
 
 
-class DeleteGroupComment(LoginRequiredMixin, DataMixin, DeleteView):
-    """Страница удаления комментария в группе"""
-    model = GroupPostComment
-    template_name = 'comments/delete_comment_page.html'
-
-    def get_success_url(self):
-        post = GroupPost.objects.get(pk=self.kwargs['post_id'])
-        return reverse_lazy('group_post', kwargs={'post_id': self.kwargs['post_id'],
-                                                  'group_id': post.group.pk})
-
-    def get_queryset(self):
-        qs = super(DeleteGroupComment, self).get_queryset()
-        return qs.filter(author=self.request.user)
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "Удаление комментария"
-        context.update(self.get_left_menu())
-        context.update(self.get_right_menu())
-        return context
-
-
 @login_required
 def put_or_remove_like_for_comment(request, post_id, comment_id, which_post):
     """Ставит или убирает лайк комментарию"""
     user = request.user
     if which_post == 'for-user-post':
         comment = PostComment.objects.get(pk=comment_id)
-    elif which_post == 'for-group-post':
-        comment = GroupPostComment.objects.get(pk=comment_id)
 
     if user in comment.likes.all():
         comment.likes.remove(user)

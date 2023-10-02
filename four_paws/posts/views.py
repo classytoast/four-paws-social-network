@@ -6,7 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
 from pet_owners.utils import DataMixin
-from .models import Post, OwnerPost, OwnerPostImage, PostComment, GroupPostComment
+from .models import Post, OwnerPost, OwnerPostImage
+from comments.models import PostComment
 from .utils import PostDataMixin
 
 
@@ -23,14 +24,13 @@ class ShowPost(PostDataMixin, DataMixin, DetailView):
         context['title'] = post.title
         context.update(self.get_left_menu())
         context.update(self.get_right_menu(self.request.user))
-        context['data_for_posts'] = self.get_data_for_posts([post], all_images=True,
-                                                            type_of_posts=self.kwargs['type_of_post'])
         self.add_one_view_for_post(post, self.request.user)
-        if self.kwargs['type_of_post'] == 'owner-post':
-            comments = PostComment.objects.filter(post=post)
-        elif self.kwargs['type_of_post'] == 'group-post':
-            comments = GroupPostComment.objects.filter(post=post)
+        comments = PostComment.objects.filter(post=post)
         context['comments'] = comments
+        context['data_for_posts'] = self.get_data_for_posts([post],
+                                                            all_images=True,
+                                                            type_of_posts=self.kwargs['type_of_post'],
+                                                            comments=comments)
         context['likes_for_comments'] = self.get_likes_for_comments(comments, self.request.user)
         return context
 

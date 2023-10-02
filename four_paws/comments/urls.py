@@ -8,8 +8,6 @@ urlpatterns = [
          name='add_comment'),
     path('<int:post_id>/<int:pk>/delete-comment/', DeleteComment.as_view(),
          name='delete_comment'),
-    path('<int:post_id>/<int:pk>/delete-comment-in-group/', DeleteGroupComment.as_view(),
-         name='delete_comment_in_group'),
     path('<int:post_id>/<int:pk>/edit-comment/<str:which_post>/', UpdateComment.as_view(),
          name='edit_comment'),
     path('<int:post_id>/change-like-for-comment/<int:comment_id>/<str:which_post>/',

@@ -1,6 +1,6 @@
 from django import forms
 
-from posts.models import GroupPostComment, PostComment
+from .models import PostComment
 
 
 class AddOrEditCommentForm(forms.ModelForm):
@@ -17,5 +17,5 @@ class AddOrEditGroupCommentForm(forms.ModelForm):
                               widget=forms.Textarea(attrs={'class': 'form-input'}))
 
     class Meta:
-        model = GroupPostComment
+        model = PostComment
         fields = ('comment',)

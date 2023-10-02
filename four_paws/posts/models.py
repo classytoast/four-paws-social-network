@@ -45,16 +45,6 @@ class OwnerPostImage(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец фото')
 
 
-class PostComment(models.Model):
-    """комментарий к посту"""
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comments',
-                               on_delete=models.CASCADE, verbose_name='автор комментария', null=True)
-    comment = models.TextField(max_length=550, verbose_name='комментарий')
-    date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата')
-    post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='comments', verbose_name='пост')
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comments_likes', verbose_name='лайки')
-
-
 class GroupPost(models.Model):
     """пост в группе"""
     group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='группа')
@@ -73,14 +63,3 @@ class GroupPostImage(models.Model):
     img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
     post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='группа')
-
-
-class GroupPostComment(models.Model):
-    """комментарий к посту в группе"""
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='group_comments',
-                               on_delete=models.CASCADE, verbose_name='автор комментария', null=True)
-    comment = models.TextField(max_length=550, verbose_name='комментарий')
-    date_create = models.DateTimeField(auto_now_add=True, verbose_name='дата')
-    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='comments', verbose_name='пост')
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                   related_name='group_comments_likes', verbose_name='лайки')
