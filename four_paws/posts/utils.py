@@ -62,3 +62,8 @@ class PostDataMixin:
         except GroupMember.DoesNotExist:
             is_admin = False
         return {'is_admin': is_admin}
+
+    def check_user_saw_the_post(self, post, user):
+        """Добавляет просмотр посту"""
+        if self.request.user.is_authenticated and user not in post.views.all():
+            post.views.add(user)

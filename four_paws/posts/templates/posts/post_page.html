@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% get_data_for_post post.pk data_for_post as post_data %}
+{% get_data_for_post post.pk data_for_posts as post_data %}
 <table border=0 cellpadding="0" cellspacing="0" class="post_table">
 <!-- блок информации о посте -->
 <tr class="post_title_detail">
@@ -46,7 +46,11 @@
             <div class="author_info">
                 <a href="{{ comm.author.get_absolute_url }}">
                     <div class="author_avatar">
-                        <img src="{{comm.author.avatar.url}}" height=120>
+                        {% if comm.author.avatar %}
+                            <img src="{{comm.author.avatar.url}}" height=120>
+                        {% else %}
+                            <img src="/static/pet_owners/images/no_photo.jpg" width=120>
+                        {% endif %}
                     </div>
                     <div>{{comm.author.username}}</div>
                 </a>

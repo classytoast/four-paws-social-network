@@ -2,7 +2,8 @@ from django.test import TestCase, RequestFactory
 
 from groups.models import Group, GroupMember
 from pet_owners.models import Owner, Animal, AnimalCategory
-from posts.models import Post, GroupPostComment, GroupPost, PostComment, OwnerPost, OwnerPostImage, GroupPostImage
+from posts.models import Post, GroupPost, OwnerPost, OwnerPostImage, GroupPostImage
+from comments.models import PostComment
 from posts.utils import *
 
 
@@ -24,6 +25,13 @@ class GetDataForPosts(TestCase):
                                     text_of_post='simple_text4')
         post5 = Post.objects.create(author=user, text_of_post='simple_text5')
         post6 = Post.objects.create(author=user, text_of_post='very looooooooooooooooooooooooooooooooong text')
+
+        comment1 = PostComment.objects.create(author=user,
+                                              comment='some_comment',
+                                              post=post1)
+        comment2 = PostComment.objects.create(author=user,
+                                              comment='some_comment2',
+                                              post=post1)
 
         post1.likes.add(user)
         post2.likes.add(user)
@@ -51,13 +59,13 @@ class GetDataForPosts(TestCase):
     def test_user_likes_the_post(self):
         post = Post.objects.get(pk=1)
         result = self.utils_mixin.get_data_for_posts([post], 'owner-post')
-        self.assertEqual(True, result[str(post.pk)]['is_liked'])
+        self.assertTrue(result[str(post.pk)]['is_liked'])
 
     def test_user_no_likes_the_post(self):
         self.utils_mixin.request.user = Owner.objects.get(username='simple_user2')
         post = Post.objects.get(pk=1)
         result = self.utils_mixin.get_data_for_posts([post], 'owner-post')
-        self.assertEqual(False, result[str(post.pk)]['is_liked'])
+        self.assertFalse(result[str(post.pk)]['is_liked'])
 
     def test_one_img_for_owner_post(self):
         posts = Post.objects.filter(pk__lte=3)
@@ -95,14 +103,30 @@ class GetDataForPosts(TestCase):
         post = Post.objects.get(pk=1)
         result = self.utils_mixin.get_data_for_posts([post], 'owner-post')
         self.assertTrue('animals' in result[str(post.pk)])
-        self.assertTrue('comments_count' in result[str(post.pk)])
         self.assertTrue('is_admin' in result[str(post.pk)])
 
     def test_get_extra_data_from_group_post(self):
         post = Post.objects.get(pk=4)
         result = self.utils_mixin.get_data_for_posts([post], 'group-post')
-        self.assertTrue('comments_count' in result[str(post.pk)])
         self.assertTrue('is_admin' in result[str(post.pk)])
+
+    def test_get_comments_count_with_transmitted_params(self):
+        post = Post.objects.get(pk=1)
+        comments = PostComment.objects.filter(post=post)
+        result = self.utils_mixin.get_data_for_posts([post], 'owner-post', comments=comments)
+        self.assertEqual(2, result[str(1)]['comments_count'])
+        post2 = Post.objects.get(pk=2)
+        comments2 = PostComment.objects.filter(post=post2)
+        result = self.utils_mixin.get_data_for_posts([post2], 'owner-post', comments=comments2)
+        self.assertEqual(0, result[str(2)]['comments_count'])
+
+    def test_get_comments_count_with_none_param(self):
+        post = Post.objects.get(pk=1)
+        result = self.utils_mixin.get_data_for_posts([post], 'owner-post')
+        self.assertEqual(2, result[str(1)]['comments_count'])
+        post2 = Post.objects.get(pk=2)
+        result = self.utils_mixin.get_data_for_posts([post2], 'owner-post')
+        self.assertEqual(0, result[str(2)]['comments_count'])
 
 
 class GetDataForOwnerPostTestClass(TestCase):
@@ -122,15 +146,6 @@ class GetDataForOwnerPostTestClass(TestCase):
                                    text_of_post='simple_text')
         owner_post = OwnerPost.objects.create(post=post)
         owner_post.animals.add(animal1)
-        comment1 = PostComment.objects.create(author=user,
-                                              comment='some_comment',
-                                              post=owner_post)
-        comment2 = PostComment.objects.create(author=user,
-                                              comment='some_comment2',
-                                              post=owner_post)
-        post_without_comments = Post.objects.create(author=user, text_of_post='simple_text2')
-        owner_post = OwnerPost.objects.create(post=post_without_comments)
-        owner_post.animals.add(animal1)
 
     def setUp(self) -> None:
         self.factory = RequestFactory()
@@ -141,14 +156,14 @@ class GetDataForOwnerPostTestClass(TestCase):
         post = Post.objects.get(title='simple_title')
         owner_post = OwnerPost.objects.get(post=post)
         result = self.utils_mixin.get_data_for_owner_post(post, owner_post)
-        self.assertEqual(True, result['is_admin'])
+        self.assertTrue(result['is_admin'])
 
     def test_for_auth_user_is_no_admin(self):
         self.utils_mixin.request.user = Owner.objects.get(username='simple_user2')
         post = Post.objects.get(title='simple_title')
         owner_post = OwnerPost.objects.get(post=post)
         result = self.utils_mixin.get_data_for_owner_post(post, owner_post)
-        self.assertEqual(False, result['is_admin'])
+        self.assertFalse(result['is_admin'])
 
     def test_return_animals(self):
         post = Post.objects.get(title='simple_title')
@@ -156,18 +171,6 @@ class GetDataForOwnerPostTestClass(TestCase):
         result = self.utils_mixin.get_data_for_owner_post(post, owner_post)
         animals = [animal.name_of_animal for animal in result['animals']]
         self.assertEqual(['animal1'], animals)
-
-    def test_return_comments(self):
-        post = Post.objects.get(title='simple_title')
-        owner_post = OwnerPost.objects.get(post=post)
-        result = self.utils_mixin.get_data_for_owner_post(post, owner_post)
-        self.assertEqual(2, result['comments_count'])
-
-    def test_return_without_comments(self):
-        post = Post.objects.get(text_of_post='simple_text2')
-        owner_post = OwnerPost.objects.get(post=post)
-        result = self.utils_mixin.get_data_for_owner_post(post, owner_post)
-        self.assertEqual(0, result['comments_count'])
 
 
 class GetDataForGroupPostTestClass(TestCase):
@@ -183,14 +186,6 @@ class GetDataForGroupPostTestClass(TestCase):
                                    title='simple_title',
                                    text_of_post='simple_text')
         group_post = GroupPost.objects.create(group=group, post=post)
-        comment1 = GroupPostComment.objects.create(author=user,
-                                                   comment='some_comment',
-                                                   post=group_post)
-        comment2 = GroupPostComment.objects.create(author=user,
-                                                   comment='some_comment2',
-                                                   post=group_post)
-        post_without_comments = Post.objects.create(author=user, text_of_post='simple_text2')
-        group_post_without_comments = GroupPost.objects.create(group=group, post=post_without_comments)
 
     def setUp(self) -> None:
         self.factory = RequestFactory()
@@ -201,23 +196,11 @@ class GetDataForGroupPostTestClass(TestCase):
         post = Post.objects.get(title='simple_title')
         group_post = GroupPost.objects.get(post=post)
         result = self.utils_mixin.get_data_for_group_post(group_post)
-        self.assertEqual(True, result['is_admin'])
+        self.assertTrue(result['is_admin'])
 
     def test_for_user_is_no_admin(self):
         post = Post.objects.get(title='simple_title')
         self.utils_mixin.request.user = Owner.objects.get(username='simple_user2')
         group_post = GroupPost.objects.get(post=post)
         result = self.utils_mixin.get_data_for_group_post(group_post)
-        self.assertEqual(False, result['is_admin'])
-
-    def test_return_comments(self):
-        post = Post.objects.get(title='simple_title')
-        group_post = GroupPost.objects.get(post=post)
-        result = self.utils_mixin.get_data_for_group_post(group_post)
-        self.assertEqual(2, result['comments_count'])
-
-    def test_return_without_comments(self):
-        post = Post.objects.get(text_of_post='simple_text2')
-        group_post = GroupPost.objects.get(post=post)
-        result = self.utils_mixin.get_data_for_group_post(group_post)
-        self.assertEqual(0, result['comments_count'])
+        self.assertFalse(result['is_admin'])

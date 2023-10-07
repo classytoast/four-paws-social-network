@@ -4,6 +4,7 @@ from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from groups.models import Group
 from .forms import *
 from pet_owners.utils import DataMixin
 from .models import Post, OwnerPost, OwnerPostImage
@@ -21,10 +22,10 @@ class ShowPost(PostDataMixin, DataMixin, DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         post = self.model.objects.get(pk=self.kwargs['post_id'])
-        context['title'] = post.title
+        context['title'] = post.title if post.title else post.text_of_post[:10]
         context.update(self.get_left_menu())
         context.update(self.get_right_menu(self.request.user))
-        self.add_one_view_for_post(post, self.request.user)
+        self.check_user_saw_the_post(post, self.request.user)
         comments = PostComment.objects.filter(post=post)
         context['comments'] = comments
         context['data_for_posts'] = self.get_data_for_posts([post],
@@ -35,15 +36,9 @@ class ShowPost(PostDataMixin, DataMixin, DetailView):
         return context
 
 
-class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
+class AbstractCreatePostView(LoginRequiredMixin, DataMixin, CreateView):
     """Страница создания поста"""
-    form_class = AddOrEditPostForm
     template_name = 'posts/add_post_page.html'
-
-    def get_form_kwargs(self, *args, **kwargs):
-        form_kwargs = super(CreatePostView, self).get_form_kwargs(*args, **kwargs)
-        form_kwargs['user_id'] = self.request.user.id
-        return form_kwargs
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,13 +47,40 @@ class CreatePostView(LoginRequiredMixin, DataMixin, CreateView):
         context.update(self.get_right_menu())
         return context
 
+
+class CreateOwnerPostView(AbstractCreatePostView):
+    form_class = AddOrEditOwnerPostForm
+
+    def get_form_kwargs(self, *args, **kwargs):
+        form_kwargs = super(CreateOwnerPostView, self).get_form_kwargs(*args, **kwargs)
+        form_kwargs['user_id'] = self.request.user.id
+        return form_kwargs
+
     def form_valid(self, form):
-        form.instance.autor = self.request.user
-        post = form.save()
+        post = Post.objects.create(author=self.request.user,
+                                   title=form.data['title'],
+                                   text_of_post=form.data['text_of_post'])
+        owner_post = OwnerPost.objects.create(post=post,
+                                              animals=form.data['animals'])
         if 'add_photos' in self.request.POST:
-            return redirect('add_images_to_post', post_id=post.pk)
+            return redirect('add_images_to_post', post_id=owner_post.pk)
         elif 'to_publish' in self.request.POST:
             return redirect('profile_home', id=self.request.user.id)
+
+
+class CreateGroupPostView(AbstractCreatePostView):
+    """Страница создания поста в группу"""
+    form_class = AddOrEditGroupPostForm
+
+    def form_valid(self, form):
+        form.instance.group = Group.objects.get(pk=self.kwargs['group_id'])
+        post = form.save()
+        if 'add_photos' in self.request.POST:
+            return redirect('add_images_to_group_post',
+                            group_id=self.kwargs['group_id'],
+                            post_id=post.pk)
+        elif 'to_publish' in self.request.POST:
+            return redirect('show_group', group_id=self.kwargs['group_id'])
 
 
 class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
@@ -90,7 +112,7 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
 
 class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
     """Страница редактирования поста"""
-    form_class = AddOrEditPostForm
+    form_class = AddOrEditOwnerPostForm
     template_name = 'posts/edit_post_page.html'
 
     def get_queryset(self):

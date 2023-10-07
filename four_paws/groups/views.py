@@ -2,10 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from pet_owners.models import Owner
+from posts.models import GroupPost
 from posts.utils import PostDataMixin
 from .forms import *
 from .models import *
@@ -94,29 +95,6 @@ def add_or_del_follower_for_group(request, group_id):
         GroupMember.objects.create(member=user,
                                    group=group)
     return redirect('my_groups')
-
-
-class CreateGroupPostView(LoginRequiredMixin, DataMixin, CreateView):
-    """Страница создания поста в группу"""
-    form_class = AddOrEditPostForm
-    template_name = 'groups/add_group_post_page.html'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "Добавление поста в группу"
-        context.update(self.get_left_menu())
-        context.update(self.get_right_menu())
-        return context
-
-    def form_valid(self, form):
-        form.instance.group = Group.objects.get(pk=self.kwargs['group_id'])
-        post = form.save()
-        if 'add_photos' in self.request.POST:
-            return redirect('add_images_to_group_post',
-                            group_id=self.kwargs['group_id'],
-                            post_id=post.pk)
-        elif 'to_publish' in self.request.POST:
-            return redirect('show_group', group_id=self.kwargs['group_id'])
 
 
 class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):

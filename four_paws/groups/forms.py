@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Group, GroupTopic
-from posts.models import GroupPost, GroupPostImage
+from posts.models import GroupPostImage
 
 
 class AddOrEditGroupForm(forms.ModelForm):
@@ -20,15 +20,8 @@ class AddOrEditGroupForm(forms.ModelForm):
         fields = ('name_of_group', 'about_group', 'img_of_group', 'topics')
 
 
-class AddOrEditPostForm(forms.ModelForm):
-    title = forms.CharField(label='Заголовок', required=False,
-                            widget=forms.TextInput(attrs={'class': 'form-input'}))
-    text_of_post = forms.CharField(label='Текст', required=False,
-                                   widget=forms.Textarea(attrs={'class': 'form-input'}))
-
-    class Meta:
-        model = GroupPost
-        fields = ('title', 'text_of_post')
+class AddOrEditPostForm:
+    pass
 
 
 class AddGroupImageForm(forms.ModelForm):

@@ -133,7 +133,7 @@
         {% if request.user.id == profile.pk and num_of_animals %}
             <div class="create_post_zone">
                 <div class="create_post_button">
-                    <a href="{% url 'create_post' %}">Добавить новый пост</a>
+                    <a href="{% url 'create_owner_post' %}">Добавить новый пост</a>
                 </div>
             </div>
         {% endif %}

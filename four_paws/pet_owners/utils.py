@@ -69,11 +69,6 @@ class DataMixin:
                                                                   "is_admin": False}
         return user_groups_followed
 
-    def add_one_view_for_post(self, post, user):
-        """Добавляет просмотр посту"""
-        if self.request.user.is_authenticated and user not in post.views.all():
-            post.views.add(user)
-
     def get_likes_for_comments(self, comments, auth_user=False):
         """Выгружает данные о лайках для переданных комментариев"""
         likes_for_comment = {}
