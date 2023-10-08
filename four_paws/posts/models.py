@@ -38,13 +38,6 @@ class OwnerPost(models.Model):
         verbose_name_plural = 'Посты пользователей'
 
 
-class OwnerPostImage(models.Model):
-    """изображение к посту"""
-    img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
-    post = models.ForeignKey(OwnerPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец фото')
-
-
 class GroupPost(models.Model):
     """пост в группе"""
     group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='группа')
@@ -58,8 +51,7 @@ class GroupPost(models.Model):
         verbose_name_plural = 'Посты в группах'
 
 
-class GroupPostImage(models.Model):
-    """изображение к посту в группе"""
+class PostImage(models.Model):
+    """изображение к посту"""
     img = models.ImageField(upload_to="img_of_post/%Y/%m/%d/", verbose_name='изображение')
-    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='images', verbose_name='пост')
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='группа')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images', verbose_name='пост')

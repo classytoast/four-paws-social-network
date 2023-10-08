@@ -1,11 +1,11 @@
-from django.test import TestCase, Client, RequestFactory
+from django.test import TestCase, Client
 
 from django.urls import reverse
 
 from comments.models import PostComment
 from groups.models import Group
 from pet_owners.models import Owner, AnimalCategory, Animal
-from posts.models import Post, OwnerPost
+from posts.models import Post, OwnerPost, PostImage
 
 
 class TestShowPostView(TestCase):
@@ -166,3 +166,72 @@ class TestCreateGroupPostView(TestCase):
         self.client.force_login(self.auth_user)
         resp = self.client.get(reverse('create_group_post', kwargs={'group_id': self.group.pk}))
         self.assertTrue('animals_for_right_menu' in resp.context)
+
+
+class TestAddImgsView(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        user = Owner.objects.create(username='simple_user', password='12345')
+
+        post = Post.objects.create(author=user, text_of_post='simple_text')
+        post2 = Post.objects.create(author=user, text_of_post='simple_text2')
+
+        img = PostImage.objects.create(post=post)
+
+    def setUp(self):
+        self.client = Client()
+        self.auth_user = Owner.objects.get(username='simple_user')
+        self.post = Post.objects.get(text_of_post='simple_text')
+
+    def test_view_url_exists_at_desired_location(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('add_images_to_post', kwargs={'post_id': self.post.pk,
+                                                                     'type_of_post': 'owner_post'}))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_redirect_if_user_not_auth(self):
+        resp = self.client.get(reverse('add_images_to_post', kwargs={'post_id': self.post.pk,
+                                                                     'type_of_post': 'owner_post'}))
+        self.assertRedirects(resp, '/login/?next=/posts/1/imgs/owner_post/', 302)
+
+    def test_view_uses_correct_template(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('add_images_to_post', kwargs={'post_id': self.post.pk,
+                                                                     'type_of_post': 'owner_post'}))
+        self.assertTemplateUsed(resp, 'posts/add_images.html')
+
+    def test_correct_title_in_context(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('add_images_to_post', kwargs={'post_id': self.post.pk,
+                                                                     'type_of_post': 'owner_post'}))
+        self.assertEqual(resp.context['title'], "Добавление изображений")
+
+    def test_view_gets_data_for_left_menu(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('add_images_to_post', kwargs={'post_id': self.post.pk,
+                                                                     'type_of_post': 'owner_post'}))
+        self.assertTrue('left_menu' in resp.context)
+
+    def test_view_gets_data_for_right_menu(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('add_images_to_post', kwargs={'post_id': self.post.pk,
+                                                                     'type_of_post': 'owner_post'}))
+        self.assertTrue('animals_for_right_menu' in resp.context)
+
+    def test_there_is_added_images_in_post(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('add_images_to_post', kwargs={'post_id': self.post.pk,
+                                                                     'type_of_post': 'owner_post'}))
+        self.assertTrue('added_images' in resp.context)
+        added_images = self.post.images.all()
+        self.assertQuerysetEqual(resp.context['added_images'], added_images)
+
+    def test_there_no_added_images_in_post(self):
+        self.client.force_login(self.auth_user)
+        post2 = Post.objects.get(text_of_post='simple_text2')
+        resp = self.client.get(reverse('add_images_to_post', kwargs={'post_id': post2.pk,
+                                                                     'type_of_post': 'owner_post'}))
+        self.assertTrue('added_images' in resp.context)
+        added_images = post2.images.all()
+        self.assertQuerysetEqual(resp.context['added_images'], added_images)

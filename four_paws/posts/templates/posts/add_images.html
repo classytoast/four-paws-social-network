@@ -6,6 +6,7 @@
 <div class="form_block">
     <h1>{{title}}</h1>
     {% for img in added_images %}
+        {% if img.img %}
         <div class="imgs_in_post_detail">
             <div><a href="{{img.img.url}}">
                 <img src="{{img.img.url}}" width=180>
@@ -15,6 +16,9 @@
                     <img src="/static/pet_owners/images/button_delete.png" width=30>
                 </a>
             </div>
+        {% else %}
+            Изображение не загруженно
+        {% endif %}
         </div>
     {% endfor %}
     <form method="post" enctype="multipart/form-data">

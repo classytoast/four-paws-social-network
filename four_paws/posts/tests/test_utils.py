@@ -2,7 +2,7 @@ from django.test import TestCase, RequestFactory
 
 from groups.models import Group, GroupMember
 from pet_owners.models import Owner, Animal, AnimalCategory
-from posts.models import Post, GroupPost, OwnerPost, OwnerPostImage, GroupPostImage
+from posts.models import Post, GroupPost, OwnerPost, PostImage
 from comments.models import PostComment
 from posts.utils import *
 
@@ -46,10 +46,10 @@ class GetDataForPosts(TestCase):
         post2_group = GroupPost.objects.create(group=group, post=post5)
         post3_group = GroupPost.objects.create(group=group, post=post6)
 
-        image1 = OwnerPostImage.objects.create(post=post1_owner, owner=user)
-        image2 = OwnerPostImage.objects.create(post=post1_owner, owner=user)
-        image3 = GroupPostImage.objects.create(post=post1_group, group=group)
-        image4 = GroupPostImage.objects.create(post=post1_group, group=group)
+        image1 = PostImage.objects.create(post=post1)
+        image2 = PostImage.objects.create(post=post1)
+        image3 = PostImage.objects.create(post=post4)
+        image4 = PostImage.objects.create(post=post4)
 
     def setUp(self) -> None:
         self.factory = RequestFactory()
@@ -70,7 +70,7 @@ class GetDataForPosts(TestCase):
     def test_one_img_for_owner_post(self):
         posts = Post.objects.filter(pk__lte=3)
         result = self.utils_mixin.get_data_for_posts(posts, 'owner-post')
-        img = OwnerPost.objects.get(post__pk=1).images.first()
+        img = Post.objects.get(pk=1).images.first()
         self.assertEqual(img, result[str(1)]['img'])
 
     def test_all_img_for_owner_post(self):
@@ -86,7 +86,7 @@ class GetDataForPosts(TestCase):
     def test_one_img_for_group_post(self):
         posts = Post.objects.filter(pk__gte=4)
         result = self.utils_mixin.get_data_for_posts(posts, 'group-post')
-        img = GroupPost.objects.get(post__pk=4).images.first()
+        img = Post.objects.get(pk=4).images.first()
         self.assertEqual(img, result[str(4)]['img'])
 
     def test_all_img_for_group_post(self):

@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from groups.models import Group
 from .forms import *
 from pet_owners.utils import DataMixin
-from .models import Post, OwnerPost, OwnerPostImage
+from .models import Post, OwnerPost, PostImage
 from comments.models import PostComment
 from .utils import PostDataMixin
 
@@ -37,7 +37,7 @@ class ShowPost(PostDataMixin, DataMixin, DetailView):
 
 
 class AbstractCreatePostView(LoginRequiredMixin, DataMixin, CreateView):
-    """Страница создания поста"""
+    """Страница создания абстрактного поста"""
     template_name = 'posts/add_post_page.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -49,6 +49,7 @@ class AbstractCreatePostView(LoginRequiredMixin, DataMixin, CreateView):
 
 
 class CreateOwnerPostView(AbstractCreatePostView):
+    """Страница создания поста пользователя"""
     form_class = AddOrEditOwnerPostForm
 
     def get_form_kwargs(self, *args, **kwargs):
@@ -60,10 +61,11 @@ class CreateOwnerPostView(AbstractCreatePostView):
         post = Post.objects.create(author=self.request.user,
                                    title=form.data['title'],
                                    text_of_post=form.data['text_of_post'])
-        owner_post = OwnerPost.objects.create(post=post,
-                                              animals=form.data['animals'])
+        OwnerPost.objects.create(post=post, animals=form.data['animals'])
+
         if 'add_photos' in self.request.POST:
-            return redirect('add_images_to_post', post_id=owner_post.pk)
+            return redirect('add_images_to_post', post_id=post.pk,
+                            type_of_post=self.kwargs['owner_post'])
         elif 'to_publish' in self.request.POST:
             return redirect('profile_home', id=self.request.user.id)
 
@@ -73,12 +75,15 @@ class CreateGroupPostView(AbstractCreatePostView):
     form_class = AddOrEditGroupPostForm
 
     def form_valid(self, form):
-        form.instance.group = Group.objects.get(pk=self.kwargs['group_id'])
-        post = form.save()
+        group = Group.objects.get(pk=self.kwargs['group_id'])
+        post = Post.objects.create(author=self.request.user,
+                                   title=form.data['title'],
+                                   text_of_post=form.data['text_of_post'])
+        GroupPost.objects.create(post=post, group=group)
+
         if 'add_photos' in self.request.POST:
-            return redirect('add_images_to_group_post',
-                            group_id=self.kwargs['group_id'],
-                            post_id=post.pk)
+            return redirect('add_images_to_post', post_id=post.pk,
+                            type_of_post=self.kwargs['group_post'])
         elif 'to_publish' in self.request.POST:
             return redirect('show_group', group_id=self.kwargs['group_id'])
 
@@ -93,21 +98,26 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
         context['title'] = "Добавление изображений"
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
-        post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
+        post = Post.objects.get(pk=self.kwargs['post_id'])
         context['added_images'] = post.images.all()
         return context
 
     def form_valid(self, form):
         if form.instance.img:
-            post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
-            if post.autor == self.request.user:
-                form.instance.owner = self.request.user
+            post = Post.objects.get(pk=self.kwargs['post_id'])
+            if post.author == self.request.user:
                 form.instance.post = post
                 form.save()
+
         if 'add_more_photos' in self.request.POST:
-            return redirect('add_images_to_post', post_id=self.kwargs['post_id'])
+            return redirect('add_images_to_post', post_id=self.kwargs['post_id'],
+                            type_of_post=self.kwargs['type_of_post'])
         elif 'to_publish' in self.request.POST:
-            return redirect('profile_home', id=self.request.user.id)
+            if self.kwargs['type_of_post'] == 'owner_post':
+                return redirect('profile_home', id=self.request.user.id)
+            elif self.kwargs['type_of_post'] == 'group_post':
+                group_post = GroupPost.objects.get(post=post)
+                return redirect('show_group', group_id=group_post.group.pk)
 
 
 class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
@@ -164,10 +174,10 @@ class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):
 def delete_img(request, img_id):
     """Функция удаления изображения"""
     user = request.user
-    image = OwnerPostImage.objects.get(pk=img_id)
-    post_id = image.post.pk
-    if image.owner == user:
+    image = PostImage.objects.get(pk=img_id)
+    post = Post.objects.get(pk=image.post.pk)
+    if post.author == user:
         image.delete()
-    return redirect('add_images_to_post', post_id=post_id)
+    return redirect('add_images_to_post', post_id=post.pk)
 
 

@@ -30,16 +30,15 @@ class PostDataMixin:
             else:
                 data_for_posts[f'{post.pk}']['is_liked'] = False
 
+            data_for_posts[f'{post.pk}']['img'] = post.images.all() if all_images \
+                else post.images.first()
+
             if type_of_posts == 'owner-post':
                 owner_post = OwnerPost.objects.get(post=post)
-                data_for_posts[f'{post.pk}']['img'] = owner_post.images.all() if all_images \
-                    else owner_post.images.first()
                 data_for_posts[f'{post.pk}'].update(self.get_data_for_owner_post(post, owner_post))
 
             elif type_of_posts == 'group-post':
                 group_post = GroupPost.objects.get(post=post)
-                data_for_posts[f'{post.pk}']['img'] = group_post.images.all() if all_images \
-                    else group_post.images.first()
                 data_for_posts[f'{post.pk}'].update(self.get_data_for_group_post(group_post))
 
             if comments is None:

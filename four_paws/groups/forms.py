@@ -1,7 +1,6 @@
 from django import forms
 
 from .models import Group, GroupTopic
-from posts.models import GroupPostImage
 
 
 class AddOrEditGroupForm(forms.ModelForm):
@@ -22,11 +21,3 @@ class AddOrEditGroupForm(forms.ModelForm):
 
 class AddOrEditPostForm:
     pass
-
-
-class AddGroupImageForm(forms.ModelForm):
-    img = forms.ImageField(label='Добавьте фотку :)', required=False)
-
-    class Meta:
-        model = GroupPostImage
-        fields = ('img',)

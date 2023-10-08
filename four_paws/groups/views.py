@@ -97,35 +97,6 @@ def add_or_del_follower_for_group(request, group_id):
     return redirect('my_groups')
 
 
-class AddGroupImgsView(LoginRequiredMixin, DataMixin, CreateView):
-    """Страница добавления изображений к посту"""
-    form_class = AddGroupImageForm
-    template_name = 'groups/add_images.html'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "Добавление изображений"
-        context.update(self.get_left_menu())
-        context.update(self.get_right_menu())
-        post = GroupPost.objects.get(pk=self.kwargs['post_id'])
-        context['group_id'] = self.kwargs['group_id']
-        context['added_images'] = post.images.all()
-        return context
-
-    def form_valid(self, form):
-        if form.instance.img:
-            post = GroupPost.objects.get(pk=self.kwargs['post_id'])
-            form.instance.group = post.group
-            form.instance.post = post
-            form.save()
-        if 'add_more_photos' in self.request.POST:
-            return redirect('add_images_to_group_post',
-                            group_id=self.kwargs['group_id'],
-                            post_id=self.kwargs['post_id'])
-        elif 'to_publish' in self.request.POST:
-            return redirect('show_group', group_id=self.kwargs['group_id'])
-
-
 class UpdateGroupPostView(LoginRequiredMixin, DataMixin, UpdateView):
     """Страница редактирования поста в группе"""
     form_class = AddOrEditPostForm
@@ -174,15 +145,6 @@ class DeleteGroupPost(LoginRequiredMixin, DataMixin, DeleteView):
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         return context
-
-
-@login_required
-def delete_img_for_group_post(request, group_id, img_id):
-    """Функция удаления изображения"""
-    image = GroupPostImage.objects.get(pk=img_id)
-    post = image.post
-    image.delete()
-    return redirect('add_images_to_group_post', group_id=group_id, post_id=post.pk)
 
 
 class GroupMembersView(DataMixin, ListView):
