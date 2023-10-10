@@ -242,6 +242,8 @@ class TestUpdateOwnerPostView(TestCase):
     @classmethod
     def setUpTestData(cls):
         user = Owner.objects.create(username='simple_user', password='12345')
+        user2 = Owner.objects.create(username='simple_user2', password='12345')
+
         animal_cat = AnimalCategory.objects.create(category='cat1')
         animal1 = Animal.objects.create(name_of_animal='animal1',
                                         pet_owner=user,
@@ -291,6 +293,7 @@ class TestUpdateGroupPostView(TestCase):
     @classmethod
     def setUpTestData(cls):
         user = Owner.objects.create(username='simple_user', password='12345')
+        user2 = Owner.objects.create(username='simple_user2', password='12345')
 
         group = Group.objects.create(name_of_group='group1', about_group='some_text')
 
@@ -329,4 +332,58 @@ class TestUpdateGroupPostView(TestCase):
     def test_view_gets_data_for_right_menu(self):
         self.client.force_login(self.auth_user)
         resp = self.client.get(reverse('edit_group_post', kwargs={'pk': self.post.pk}))
+        self.assertTrue('animals_for_right_menu' in resp.context)
+
+
+class TestDeletePostView(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        user = Owner.objects.create(username='simple_user', password='12345')
+        user2 = Owner.objects.create(username='simple_user2', password='12345')
+
+        post = Post.objects.create(author=user, text_of_post='simple_text')
+
+    def setUp(self):
+        self.client = Client()
+        self.auth_user = Owner.objects.get(username='simple_user')
+        self.post = Post.objects.get(text_of_post='simple_text')
+
+    def test_view_url_exists_at_desired_location(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('delete_post', kwargs={'pk': self.post.pk,
+                                                              'type_of_post': 'owner_post'}))
+
+        self.assertEqual(resp.status_code, 200)
+        resp = self.client.get(reverse('delete_post', kwargs={'pk': self.post.pk,
+                                                              'type_of_post': 'group_post'}))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_redirect_if_user_not_auth(self):
+        resp = self.client.get(reverse('delete_post', kwargs={'pk': self.post.pk,
+                                                              'type_of_post': 'owner_post'}))
+        self.assertRedirects(resp, '/login/?next=/posts/1/delete-post/owner_post/', 302)
+
+    def test_view_uses_correct_template(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('delete_post', kwargs={'pk': self.post.pk,
+                                                              'type_of_post': 'owner_post'}))
+        self.assertTemplateUsed(resp, 'posts/delete_post_page.html')
+
+    def test_correct_title_in_context(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('delete_post', kwargs={'pk': self.post.pk,
+                                                              'type_of_post': 'owner_post'}))
+        self.assertEqual(resp.context['title'], "Удаление поста")
+
+    def test_view_gets_data_for_left_menu(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('delete_post', kwargs={'pk': self.post.pk,
+                                                              'type_of_post': 'owner_post'}))
+        self.assertTrue('left_menu' in resp.context)
+
+    def test_view_gets_data_for_right_menu(self):
+        self.client.force_login(self.auth_user)
+        resp = self.client.get(reverse('delete_post', kwargs={'pk': self.post.pk,
+                                                              'type_of_post': 'owner_post'}))
         self.assertTrue('animals_for_right_menu' in resp.context)

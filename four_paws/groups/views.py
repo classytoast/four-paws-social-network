@@ -97,29 +97,6 @@ def add_or_del_follower_for_group(request, group_id):
     return redirect('my_groups')
 
 
-class DeleteGroupPost(LoginRequiredMixin, DataMixin, DeleteView):
-    """Страница удаления поста в группе"""
-    model = GroupPost
-    template_name = 'posts/delete_post_page.html'
-
-    def get_success_url(self):
-        return reverse_lazy('show_group', kwargs={'group_id': self.kwargs['group_id']})
-
-    def get_queryset(self):
-        qs = super(DeleteGroupPost, self).get_queryset()
-        if GroupMember.objects.get(member=self.request.user, group=self.kwargs['group_id']).is_admin:
-            return qs
-        else:
-            return None
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "Удаление поста в группе"
-        context.update(self.get_left_menu())
-        context.update(self.get_right_menu())
-        return context
-
-
 class GroupMembersView(DataMixin, ListView):
     """Страница участников в выбранной группе"""
     model = Group

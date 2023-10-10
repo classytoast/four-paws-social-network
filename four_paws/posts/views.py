@@ -4,7 +4,7 @@ from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from groups.models import Group
+from groups.models import Group, GroupMember
 from .forms import *
 from pet_owners.utils import DataMixin
 from .models import Post, OwnerPost, PostImage
@@ -124,7 +124,7 @@ class AbstractUpdatePost(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'posts/edit_post_page.html'
 
     def get_queryset(self):
-        return Post.objects.filter(pk=self.kwargs['pk'])
+        return Post.objects.filter(pk=self.kwargs['pk'], author=self.request.user)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -176,15 +176,18 @@ class UpdateGroupPostView(AbstractUpdatePost):
 
 class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):
     """Страница удаления поста"""
-    model = OwnerPost
+    model = Post
     template_name = 'posts/delete_post_page.html'
 
     def get_success_url(self):
-        return reverse_lazy('profile_home', kwargs={'id': self.request.user.id})
+        if self.kwargs['type_of_post'] == 'owner_post':
+            return reverse_lazy('profile_home', kwargs={'id': self.request.user.id})
+        elif self.kwargs['type_of_post'] == 'group_post':
+            return reverse_lazy('my_groups')
 
     def get_queryset(self):
         qs = super(DeletePost, self).get_queryset()
-        return qs.filter(autor=self.request.user)
+        return qs.filter(author=self.request.user)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -15,7 +15,7 @@
                                 </a>
                             </div>
                             <div class="edit_but">
-                                <a href="{% url 'edit_post' post.pk %}">
+                                <a href="{% url 'edit_owner_post' post.pk %}">
                                 <img src="/static/pet_owners/images/button_edit.png" width="20">
                                 </a>
                             </div>
@@ -25,7 +25,7 @@
                             {{post.title}}
                         </div>
                     </div>
-                    <a href="{% url 'post' post.pk %}"><div class="post_text">
+                    <a href="{% url 'post' post.pk 'owner_post' %}"><div class="post_text">
                         {{post.text_of_post|truncatewords:35}}
                     </div></a>
                     <div class="post_datetime">
@@ -39,7 +39,7 @@
             <div class="post_parameters">
                 {% show_likes_and_views post post_data name_page_for_likes object_id %}
                 <div class="post_comments">
-                    <a href="{% url 'post' post.pk %}">
+                    <a href="{% url 'post' post.pk 'owner_post' %}">
                         комментарии...({{post_data.comments_count}})
                     </a>
                 </div>

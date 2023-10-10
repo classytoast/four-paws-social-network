@@ -7,10 +7,11 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
 from django.contrib.auth.decorators import login_required
 
+from posts.utils import PostDataMixin
 from .forms import *
 from .utils import DataMixin
 from .models import *
-from posts.models import GroupPost
+from posts.models import Post
 
 
 @login_required
@@ -20,7 +21,7 @@ def index(request):
     return redirect('profile_home', id=request.user.id)
 
 
-class ProfileHome(LoginRequiredMixin, DataMixin, ListView):
+class ProfileHome(LoginRequiredMixin, DataMixin, PostDataMixin, ListView):
     """Страница профиля"""
     model = Owner
     template_name = 'pet_owners/profile_page.html'
@@ -52,9 +53,9 @@ class ProfileHome(LoginRequiredMixin, DataMixin, ListView):
         subscriptions = owner.subscriptions.all()
         context['num_of_subs'] = subscriptions.count()
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
-        all_posts = owner.ownerpost_set.all()
+        all_posts = Post.objects.filter(author=self.request.user)
         context['all_posts'] = all_posts
-        context['data_for_post'] = self.get_data_for_post(all_posts, auth_user)
+        context['data_for_post'] = self.get_data_for_posts(all_posts, auth_user)
         return context
 
 
@@ -79,10 +80,8 @@ def add_or_del_follower_for_animal(request, animal_id):
 def put_or_remove_like_for_post(request, post_id, from_page, object_id):
     """Ставит или убирает лайк посту"""
     user = request.user
-    if from_page == 'group_posts':
-        post = GroupPost.objects.get(pk=post_id)
-    else:
-        post = OwnerPost.objects.get(pk=post_id)
+    post = Post.objects.get(pk=post_id)
+
     if user in post.likes.all():
         post.likes.remove(user)
     else:
