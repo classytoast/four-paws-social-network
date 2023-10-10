@@ -65,7 +65,7 @@ class CreateOwnerPostView(AbstractCreatePostView):
 
         if 'add_photos' in self.request.POST:
             return redirect('add_images_to_post', post_id=post.pk,
-                            type_of_post=self.kwargs['owner_post'])
+                            type_of_post='owner_post')
         elif 'to_publish' in self.request.POST:
             return redirect('profile_home', id=self.request.user.id)
 
@@ -83,7 +83,7 @@ class CreateGroupPostView(AbstractCreatePostView):
 
         if 'add_photos' in self.request.POST:
             return redirect('add_images_to_post', post_id=post.pk,
-                            type_of_post=self.kwargs['group_post'])
+                            type_of_post='group_post')
         elif 'to_publish' in self.request.POST:
             return redirect('show_group', group_id=self.kwargs['group_id'])
 
@@ -120,18 +120,11 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
                 return redirect('show_group', group_id=group_post.group.pk)
 
 
-class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
-    """Страница редактирования поста"""
-    form_class = AddOrEditOwnerPostForm
+class AbstractUpdatePost(LoginRequiredMixin, DataMixin, UpdateView):
     template_name = 'posts/edit_post_page.html'
 
     def get_queryset(self):
-        return OwnerPost.objects.filter(pk=self.kwargs['pk'])
-
-    def get_form_kwargs(self, *args, **kwargs):
-        form_kwargs = super(UpdatePostView, self).get_form_kwargs(*args, **kwargs)
-        form_kwargs['user_id'] = self.request.user.id
-        return form_kwargs
+        return Post.objects.filter(pk=self.kwargs['pk'])
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -140,14 +133,45 @@ class UpdatePostView(LoginRequiredMixin, DataMixin, UpdateView):
         context.update(self.get_right_menu())
         return context
 
+
+class UpdateOwnerPostView(AbstractUpdatePost):
+    """Страница редактирования поста"""
+    form_class = AddOrEditOwnerPostForm
+
+    def get_form_kwargs(self, *args, **kwargs):
+        form_kwargs = super(UpdateOwnerPostView, self).get_form_kwargs(*args, **kwargs)
+        form_kwargs['user_id'] = self.request.user.id
+        return form_kwargs
+
     def form_valid(self, form):
         if 'cancel' in self.request.POST:
-            return redirect('profile_home', id=self.request.user.id)
+            return redirect('post', post_id=self.kwargs['pk'])
+
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        owner_post = OwnerPost.objects.get(post=post)
+        post.title, post.text_of_post = form.data['title'], form.data['text_of_post']
+        owner_post.animals = form.data['animals']
+
+        if 'update_without_photos' in self.request.POST:
+            return redirect('post', post_id=self.kwargs['pk'])
+        elif 'update_with_photos' in self.request.POST:
+            return redirect('add_images_to_post', post_id=post.pk,
+                            type_of_post='owner_post')
+
+
+class UpdateGroupPostView(AbstractUpdatePost):
+    """Страница редактирования поста в группе"""
+    form_class = AddOrEditGroupPostForm
+
+    def form_valid(self, form):
+        if 'cancel' in self.request.POST:
+            return redirect('post', post_id=self.kwargs['pk'])
         post = form.save()
         if 'update_without_photos' in self.request.POST:
-            return redirect('profile_home', id=self.request.user.id)
+            return redirect('post', post_id=self.kwargs['pk'])
         elif 'update_with_photos' in self.request.POST:
-            return redirect('add_images_to_post', post_id=post.pk)
+            return redirect('add_images_to_post', post_id=post.pk,
+                            type_of_post='group_post')
 
 
 class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):

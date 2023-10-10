@@ -18,6 +18,3 @@ class AddOrEditGroupForm(forms.ModelForm):
         model = Group
         fields = ('name_of_group', 'about_group', 'img_of_group', 'topics')
 
-
-class AddOrEditPostForm:
-    pass

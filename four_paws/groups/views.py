@@ -97,33 +97,6 @@ def add_or_del_follower_for_group(request, group_id):
     return redirect('my_groups')
 
 
-class UpdateGroupPostView(LoginRequiredMixin, DataMixin, UpdateView):
-    """Страница редактирования поста в группе"""
-    form_class = AddOrEditPostForm
-    template_name = 'posts/edit_post_page.html'
-
-    def get_queryset(self):
-        return GroupPost.objects.filter(pk=self.kwargs['pk'])
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "Редактирование поста в группе"
-        context.update(self.get_left_menu())
-        context.update(self.get_right_menu())
-        return context
-
-    def form_valid(self, form):
-        if 'cancel' in self.request.POST:
-            return redirect('show_group', group_id=self.kwargs['group_id'])
-        post = form.save()
-        if 'update_without_photos' in self.request.POST:
-            return redirect('show_group', group_id=self.kwargs['group_id'])
-        elif 'update_with_photos' in self.request.POST:
-            return redirect('add_images_to_group_post',
-                            group_id=self.kwargs['group_id'],
-                            post_id=post.pk)
-
-
 class DeleteGroupPost(LoginRequiredMixin, DataMixin, DeleteView):
     """Страница удаления поста в группе"""
     model = GroupPost

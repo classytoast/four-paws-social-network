@@ -11,7 +11,6 @@ urlpatterns = [
     path('<int:group_id>/', GroupView.as_view(), name='show_group'),
     path('<int:pk>/edit-group/', EditGroupView.as_view(), name='edit_group'),
     path('<int:pk>/delete-group/', DeleteGroup.as_view(), name='delete_group'),
-    path('<int:group_id>/<int:pk>/edit/', UpdateGroupPostView.as_view(), name='edit_group_post'),
     path('<int:group_id>/<int:pk>/delete-post/', DeleteGroupPost.as_view(), name='delete_group_post'),
     path('<int:group_id>/members/', GroupMembersView.as_view(), name='group_members'),
     path('<int:group_id>/group_settings/', GroupSettings.as_view(), name='group_settings'),
