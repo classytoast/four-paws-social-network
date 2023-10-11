@@ -20,7 +20,11 @@
                             <div class="mem_cell">
                                 <a href="{{ mem.get_absolute_url }}">
                                     <div class="mem_cell_avatar">
-                                        <img src="{{mem.avatar.url}}" height=60>
+                                        {% if mem.avatar %}
+                                            <img src="{{mem.avatar.url}}" height=60>
+                                        {% else %}
+                                            <img src="/static/pet_owners/images/no_photo.jpg" width=60>
+                                        {% endif %}
                                     </div>
                                 </a>
                             </div>
@@ -82,12 +86,12 @@
                                 <div class="edit_delete_buttons">
                                     {% if post_data.is_admin %}
                                     <div class="del_but">
-                                        <a href="{% url 'delete_post' group.pk post.pk %}">
+                                        <a href="{% url 'delete_post' post.pk 'group_post' %}">
                                         <img src="/static/pet_owners/images/button_delete.png" width="20">
                                         </a>
                                     </div>
                                     <div class="edit_but">
-                                        <a href="{% url 'edit_group_post' group.pk post.pk %}">
+                                        <a href="{% url 'edit_group_post' post.pk %}">
                                         <img src="/static/pet_owners/images/button_edit.png" width="20">
                                         </a>
                                     </div>
@@ -97,7 +101,7 @@
                                     {{post.title}}
                                 </div>
                             </div>
-                            <a href="{% url 'post' post.pk  'group-post' %}"><div class="post_text">
+                            <a href="{% url 'post' post.pk  'group_post' %}"><div class="post_text">
                                 {{post.text_of_post|truncatewords:35}}
                             </div></a>
                             <div class="post_datetime">
@@ -111,7 +115,7 @@
                     <div class="post_parameters">
                         {% show_likes_and_views post post_data 'group_posts' group.pk %}
                         <div class="post_comments">
-                            <a href="{% url 'post' post.pk  'group-post' %}">
+                            <a href="{% url 'post' post.pk  'group_post' %}">
                                 комментарии...({{post_data.comments_count}})
                             </a>
                         </div>

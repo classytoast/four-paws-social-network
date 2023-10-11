@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from pet_owners.utils import DataMixin
-from posts.models import GroupPost, OwnerPost
+from posts.models import Post
 from .models import PostComment
 from .forms import *
 
@@ -30,15 +30,12 @@ class CreateComment(LoginRequiredMixin, DataMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        form.instance.post = Post.objects.get(pk=self.kwargs['post_id'])
+        form.save()
         if self.kwargs['which_post'] == 'for-user-post':
-            form.instance.post = OwnerPost.objects.get(pk=self.kwargs['post_id'])
-            form.save()
-            return redirect('post', post_id=self.kwargs['post_id'])
+            return redirect('post', post_id=self.kwargs['post_id'], type_of_post='owner_post')
         elif self.kwargs['which_post'] == 'for-group-post':
-            post = GroupPost.objects.get(pk=self.kwargs['post_id'])
-            form.instance.post = post
-            form.save()
-            return redirect('group_post', group_id=post.group.pk, post_id=self.kwargs['post_id'])
+            return redirect('post', post_id=self.kwargs['post_id'], type_of_post='group_post')
 
 
 class UpdateComment(LoginRequiredMixin, DataMixin, UpdateView):
@@ -67,10 +64,9 @@ class UpdateComment(LoginRequiredMixin, DataMixin, UpdateView):
         if 'update' in self.request.POST:
             form.save()
         if self.kwargs['which_post'] == 'for-user-post':
-            return redirect('post', post_id=self.kwargs['post_id'])
+            return redirect('post', post_id=self.kwargs['post_id'], type_of_post='owner_post')
         elif self.kwargs['which_post'] == 'for-group-post':
-            post = GroupPost.objects.get(pk=self.kwargs['post_id'])
-            return redirect('group_post', group_id=post.group.pk, post_id=self.kwargs['post_id'])
+            return redirect('post', post_id=self.kwargs['post_id'], type_of_post='group_post')
 
 
 class DeleteComment(LoginRequiredMixin, DataMixin, DeleteView):
@@ -79,7 +75,12 @@ class DeleteComment(LoginRequiredMixin, DataMixin, DeleteView):
     template_name = 'comments/delete_comment_page.html'
 
     def get_success_url(self):
-        return reverse_lazy('post', kwargs={'post_id': self.kwargs['post_id']})
+        if self.kwargs['which_post'] == 'for-user-post':
+            return reverse_lazy('post', kwargs={'post_id': self.kwargs['post_id'],
+                                                'type_of_post': 'owner_post'})
+        elif self.kwargs['which_post'] == 'for-group-post':
+            return reverse_lazy('post', kwargs={'post_id': self.kwargs['post_id'],
+                                                'type_of_post': 'group_post'})
 
     def get_queryset(self):
         qs = super(DeleteComment, self).get_queryset()
@@ -97,8 +98,7 @@ class DeleteComment(LoginRequiredMixin, DataMixin, DeleteView):
 def put_or_remove_like_for_comment(request, post_id, comment_id, which_post):
     """Ставит или убирает лайк комментарию"""
     user = request.user
-    if which_post == 'for-user-post':
-        comment = PostComment.objects.get(pk=comment_id)
+    comment = PostComment.objects.get(pk=comment_id)
 
     if user in comment.likes.all():
         comment.likes.remove(user)
@@ -106,7 +106,6 @@ def put_or_remove_like_for_comment(request, post_id, comment_id, which_post):
         comment.likes.add(user)
 
     if which_post == 'for-user-post':
-        return redirect('post', post_id=post_id)
+        return redirect('post', post_id=post_id, type_of_post='owner_post')
     elif which_post == 'for-group-post':
-        post = GroupPost.objects.get(pk=post_id)
-        return redirect('group_post', group_id=post.group.pk, post_id=post_id)
+        return redirect('post', post_id=post_id, type_of_post='group_post')

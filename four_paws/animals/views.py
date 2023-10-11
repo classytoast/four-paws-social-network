@@ -5,10 +5,11 @@ from django.views.generic import ListView, \
     CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from posts.utils import PostDataMixin
 from .forms import *
 from pet_owners.utils import DataMixin
 from pet_owners.models import Animal, Owner
-from posts.models import OwnerPost
+from posts.models import OwnerPost, Post
 
 
 class AnimalsHome(LoginRequiredMixin, DataMixin, ListView):
@@ -33,26 +34,26 @@ class AnimalsHome(LoginRequiredMixin, DataMixin, ListView):
         return context
 
 
-class AnimalPosts(DataMixin, ListView):
+class AnimalPosts(DataMixin, PostDataMixin, ListView):
     """Страница постов выбранного питомца"""
     model = OwnerPost
     template_name = 'animals/animal_posts_page.html'
     context_object_name = 'posts'
 
     def get_queryset(self):
-        self.queryset = OwnerPost.objects.filter(animals__pk=self.kwargs['pk'])
+        self.queryset = OwnerPost.objects.filter(animals__pk=self.kwargs['pk']).select_related('post')
         return self.queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         animal = Animal.objects.get(pk=self.kwargs['pk'])
         context['animal'] = animal
-        posts = self.queryset
+        context['parent_posts'] = [owner_post.post for owner_post in self.queryset]
         context['title'] = f"Посты {animal.name_of_animal}"
         context.update(self.get_left_menu())
         auth_user = self.request.user
         context.update(self.get_right_menu(auth_user))
-        context['data_for_post'] = self.get_data_for_post(posts, auth_user)
+        context['data_for_post'] = self.get_data_for_posts(context['parent_posts'], 'owner_post')
         return context
 
 

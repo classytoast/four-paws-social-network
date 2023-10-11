@@ -33,11 +33,11 @@ class PostDataMixin:
             data_for_posts[f'{post.pk}']['img'] = post.images.all() if all_images \
                 else post.images.first()
 
-            if type_of_posts == 'owner-post':
+            if type_of_posts == 'owner_post':
                 owner_post = OwnerPost.objects.get(post=post)
                 data_for_posts[f'{post.pk}'].update(self.get_data_for_owner_post(post, owner_post))
 
-            elif type_of_posts == 'group-post':
+            elif type_of_posts == 'group_post':
                 group_post = GroupPost.objects.get(post=post)
                 data_for_posts[f'{post.pk}'].update(self.get_data_for_group_post(group_post))
 

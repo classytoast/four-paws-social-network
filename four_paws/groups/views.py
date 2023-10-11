@@ -72,12 +72,12 @@ class GroupView(LoginRequiredMixin, DataMixin, PostDataMixin, ListView):
         context = super().get_context_data(**kwargs)
         group = self.queryset
         context['title'] = f"{group.name_of_group}"
-        all_posts = GroupPost.objects.filter(group=group)
+        group_posts = GroupPost.objects.filter(group=group).select_related('post')
+        context['all_posts'] = [group_post.post for group_post in group_posts]
         context['members'] = Owner.objects.filter(group_subscriptions__group=group)[:9]
-        context['all_posts'] = all_posts
         context['topics'] = group.topics.all()
         context['user_groups_followed'] = self.get_groups_followers([group])
-        context['data_for_post'] = self.get_data_for_posts(all_posts, type_of_posts='group-post')
+        context['data_for_post'] = self.get_data_for_posts(context['all_posts'], type_of_posts='group_post')
         context.update(self.get_left_menu())
         context.update(self.get_right_menu())
         return context

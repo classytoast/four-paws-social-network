@@ -10,7 +10,7 @@
                         <div class="edit_delete_buttons">
                             {% if post_data.is_admin %}
                             <div class="del_but">
-                                <a href="{% url 'delete_post' post.pk %}">
+                                <a href="{% url 'delete_post' post.pk 'owner_post' %}">
                                 <img src="/static/pet_owners/images/button_delete.png" width="20">
                                 </a>
                             </div>

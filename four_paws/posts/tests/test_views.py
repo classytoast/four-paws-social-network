@@ -30,53 +30,53 @@ class TestShowPostView(TestCase):
         self.client.force_login(self.auth_user)
 
     def test_view_url_exists_at_desired_location(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         self.assertEqual(resp.status_code, 200)
 
     def test_view_uses_correct_template(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         self.assertTemplateUsed(resp, 'posts/post_page.html')
 
     def test_view_uses_correct_queryset(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         qs_for_test = Post.objects.get(pk=1)
         self.assertEqual(resp.context['post'], qs_for_test)
 
     def test_correct_title_in_context(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         post = Post.objects.get(pk=1)
         self.assertEqual(resp.context['title'], post.title)
 
-        resp = self.client.get(reverse('post', kwargs={'post_id': 2, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 2, 'type_of_post': 'owner_post'}))
         post = Post.objects.get(pk=2)
         self.assertEqual(resp.context['title'], post.text_of_post[:10])
 
     def test_view_gets_data_for_left_menu(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         self.assertTrue('left_menu' in resp.context)
 
     def test_view_gets_data_for_right_menu(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         self.assertTrue('animals_for_right_menu' in resp.context)
 
     def test_check_user_saw_the_post(self):
         post = Post.objects.get(pk=1)
         self.assertFalse(self.auth_user in post.views.all())
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         self.assertTrue(self.auth_user in post.views.all())
 
     def test_correct_comments_in_context(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         self.assertTrue('comments' in resp.context)
         comments = PostComment.objects.filter(post=Post.objects.get(pk=1))
         self.assertQuerySetEqual(resp.context['comments'], comments)
 
     def test_view_gets_data_for_post(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         self.assertTrue('data_for_posts' in resp.context)
 
     def test_view_gets_likes_for_comments_for_post(self):
-        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner-post'}))
+        resp = self.client.get(reverse('post', kwargs={'post_id': 1, 'type_of_post': 'owner_post'}))
         self.assertTrue('likes_for_comments' in resp.context)
 
 

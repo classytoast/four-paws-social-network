@@ -13,13 +13,13 @@
         </div>
     </div>
     {% if posts %}
-        {% show_all_posts posts data_for_post 'animal_posts' animal.pk %}
+        {% show_all_posts parent_posts data_for_post 'animal_posts' animal.pk %}
     {% else %}
         <h2>Про питомца нет постов</h2>
         {% if animal.pet_owner == request.user %}
             <div class="create_post_zone">
                 <div class="create_post_button">
-                    <a href="{% url 'create_post' %}">Добавьте пост</a>
+                    <a href="{% url 'create_owner_post' %}">Добавьте пост</a>
                 </div>
             </div>
         {% endif %}

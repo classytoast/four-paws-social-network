@@ -28,6 +28,10 @@ class ShowPost(PostDataMixin, DataMixin, DetailView):
         self.check_user_saw_the_post(post, self.request.user)
         comments = PostComment.objects.filter(post=post)
         context['comments'] = comments
+        if self.kwargs['type_of_post'] == 'owner_post':
+            context['info_for_comments'] = 'for-user-post'
+        elif self.kwargs['type_of_post'] == 'group_post':
+            context['info_for_comments'] = 'for-group-post'
         context['data_for_posts'] = self.get_data_for_posts([post],
                                                             all_images=True,
                                                             type_of_posts=self.kwargs['type_of_post'],
@@ -61,7 +65,9 @@ class CreateOwnerPostView(AbstractCreatePostView):
         post = Post.objects.create(author=self.request.user,
                                    title=form.data['title'],
                                    text_of_post=form.data['text_of_post'])
-        OwnerPost.objects.create(post=post, animals=form.data['animals'])
+        owner_post = OwnerPost.objects.create(post=post)
+        for animal in form.data['animals']:
+            owner_post.animals.add(animal)
 
         if 'add_photos' in self.request.POST:
             return redirect('add_images_to_post', post_id=post.pk,
@@ -100,6 +106,7 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
         context.update(self.get_right_menu())
         post = Post.objects.get(pk=self.kwargs['post_id'])
         context['added_images'] = post.images.all()
+        context['type_of_post'] = self.kwargs['type_of_post']
         return context
 
     def form_valid(self, form):
@@ -116,6 +123,8 @@ class AddImgsView(LoginRequiredMixin, DataMixin, CreateView):
             if self.kwargs['type_of_post'] == 'owner_post':
                 return redirect('profile_home', id=self.request.user.id)
             elif self.kwargs['type_of_post'] == 'group_post':
+                if not form.instance.img:
+                    post = Post.objects.get(pk=self.kwargs['post_id'])
                 group_post = GroupPost.objects.get(post=post)
                 return redirect('show_group', group_id=group_post.group.pk)
 
@@ -145,15 +154,16 @@ class UpdateOwnerPostView(AbstractUpdatePost):
 
     def form_valid(self, form):
         if 'cancel' in self.request.POST:
-            return redirect('post', post_id=self.kwargs['pk'])
+            return redirect('post', post_id=self.kwargs['pk'], type_of_post='owner_post')
 
         post = Post.objects.get(pk=self.kwargs['pk'])
         owner_post = OwnerPost.objects.get(post=post)
         post.title, post.text_of_post = form.data['title'], form.data['text_of_post']
-        owner_post.animals = form.data['animals']
+        for animal in form.data['animals']:
+            owner_post.animals.add(animal)
 
         if 'update_without_photos' in self.request.POST:
-            return redirect('post', post_id=self.kwargs['pk'])
+            return redirect('post', post_id=self.kwargs['pk'], type_of_post='owner_post')
         elif 'update_with_photos' in self.request.POST:
             return redirect('add_images_to_post', post_id=post.pk,
                             type_of_post='owner_post')
@@ -165,10 +175,10 @@ class UpdateGroupPostView(AbstractUpdatePost):
 
     def form_valid(self, form):
         if 'cancel' in self.request.POST:
-            return redirect('post', post_id=self.kwargs['pk'])
+            return redirect('post', post_id=self.kwargs['pk'], type_of_post='group_post')
         post = form.save()
         if 'update_without_photos' in self.request.POST:
-            return redirect('post', post_id=self.kwargs['pk'])
+            return redirect('post', post_id=self.kwargs['pk'], type_of_post='group_post')
         elif 'update_with_photos' in self.request.POST:
             return redirect('add_images_to_post', post_id=post.pk,
                             type_of_post='group_post')
@@ -198,13 +208,13 @@ class DeletePost(LoginRequiredMixin, DataMixin, DeleteView):
 
 
 @login_required
-def delete_img(request, img_id):
+def delete_img(request, img_id, type_of_post):
     """Функция удаления изображения"""
     user = request.user
     image = PostImage.objects.get(pk=img_id)
     post = Post.objects.get(pk=image.post.pk)
     if post.author == user:
         image.delete()
-    return redirect('add_images_to_post', post_id=post.pk)
+    return redirect('add_images_to_post', post_id=post.pk, type_of_post=type_of_post)
 
 

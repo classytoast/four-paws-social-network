@@ -26,7 +26,11 @@
             <div class="members_row">
                 <div class="mem_avatar_zone">
                     <div class="foll_avatar">
-                        <img src="{{mem.member.avatar.url}}" height=120>
+                        {% if mem.member.avatar %}
+                            <img src="{{mem.member.avatar.url}}" height=120>
+                        {% else %}
+                            <img src="/static/pet_owners/images/no_photo.jpg" width=120>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="member_name">

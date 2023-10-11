@@ -11,7 +11,7 @@ from posts.utils import PostDataMixin
 from .forms import *
 from .utils import DataMixin
 from .models import *
-from posts.models import Post
+from posts.models import Post, OwnerPost
 
 
 @login_required
@@ -53,9 +53,9 @@ class ProfileHome(LoginRequiredMixin, DataMixin, PostDataMixin, ListView):
         subscriptions = owner.subscriptions.all()
         context['num_of_subs'] = subscriptions.count()
         context['user_animals_followed'] = self.get_animals_followers_of_owner(animals)
-        all_posts = Post.objects.filter(author=self.request.user)
-        context['all_posts'] = all_posts
-        context['data_for_post'] = self.get_data_for_posts(all_posts, auth_user)
+        owner_posts = OwnerPost.objects.filter(post__author=self.request.user).select_related('post')
+        context['all_posts'] = [owner_post.post for owner_post in owner_posts]
+        context['data_for_post'] = self.get_data_for_posts(context['all_posts'], 'owner_post')
         return context
 
 
@@ -87,8 +87,10 @@ def put_or_remove_like_for_post(request, post_id, from_page, object_id):
     else:
         post.likes.add(user)
         post.views.add(user)
-    if from_page == 'post_detail':
-        return redirect('post', post_id=post_id)
+    if from_page == 'owner_post_detail':
+        return redirect('post', post_id=post_id, type_of_post='owner_post')
+    elif from_page == 'group_post_detail':
+        return redirect('post', post_id=post_id, type_of_post='group_post')
     elif from_page == 'owner_posts':
         return redirect('profile_home', id=object_id)
     elif from_page == 'animal_posts':

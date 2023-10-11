@@ -58,74 +58,74 @@ class GetDataForPosts(TestCase):
 
     def test_user_likes_the_post(self):
         post = Post.objects.get(pk=1)
-        result = self.utils_mixin.get_data_for_posts([post], 'owner-post')
+        result = self.utils_mixin.get_data_for_posts([post], 'owner_post')
         self.assertTrue(result[str(post.pk)]['is_liked'])
 
     def test_user_no_likes_the_post(self):
         self.utils_mixin.request.user = Owner.objects.get(username='simple_user2')
         post = Post.objects.get(pk=1)
-        result = self.utils_mixin.get_data_for_posts([post], 'owner-post')
+        result = self.utils_mixin.get_data_for_posts([post], 'owner_post')
         self.assertFalse(result[str(post.pk)]['is_liked'])
 
     def test_one_img_for_owner_post(self):
         posts = Post.objects.filter(pk__lte=3)
-        result = self.utils_mixin.get_data_for_posts(posts, 'owner-post')
+        result = self.utils_mixin.get_data_for_posts(posts, 'owner_post')
         img = Post.objects.get(pk=1).images.first()
         self.assertEqual(img, result[str(1)]['img'])
 
     def test_all_img_for_owner_post(self):
         posts = Post.objects.filter(pk__lte=3)
-        result = self.utils_mixin.get_data_for_posts(posts, 'owner-post', all_images=True)
+        result = self.utils_mixin.get_data_for_posts(posts, 'owner_post', all_images=True)
         self.assertEqual(2, len(result[str(1)]['img']))
 
     def test_owner_post_without_img(self):
         posts = Post.objects.filter(pk__lte=3)
-        result = self.utils_mixin.get_data_for_posts(posts, 'owner-post', all_images=True)
+        result = self.utils_mixin.get_data_for_posts(posts, 'owner_post', all_images=True)
         self.assertEqual(0, len(result[str(3)]['img']))
 
     def test_one_img_for_group_post(self):
         posts = Post.objects.filter(pk__gte=4)
-        result = self.utils_mixin.get_data_for_posts(posts, 'group-post')
+        result = self.utils_mixin.get_data_for_posts(posts, 'group_post')
         img = Post.objects.get(pk=4).images.first()
         self.assertEqual(img, result[str(4)]['img'])
 
     def test_all_img_for_group_post(self):
         posts = Post.objects.filter(pk__gte=4)
-        result = self.utils_mixin.get_data_for_posts(posts, 'group-post', all_images=True)
+        result = self.utils_mixin.get_data_for_posts(posts, 'group_post', all_images=True)
         self.assertEqual(2, len(result[str(4)]['img']))
 
     def test_group_post_without_img(self):
         posts = Post.objects.filter(pk__gte=4)
-        result = self.utils_mixin.get_data_for_posts(posts, 'group-post', all_images=True)
+        result = self.utils_mixin.get_data_for_posts(posts, 'group_post', all_images=True)
         self.assertEqual(0, len(result[str(6)]['img']))
 
     def test_get_extra_data_from_owner_post(self):
         post = Post.objects.get(pk=1)
-        result = self.utils_mixin.get_data_for_posts([post], 'owner-post')
+        result = self.utils_mixin.get_data_for_posts([post], 'owner_post')
         self.assertTrue('animals' in result[str(post.pk)])
         self.assertTrue('is_admin' in result[str(post.pk)])
 
     def test_get_extra_data_from_group_post(self):
         post = Post.objects.get(pk=4)
-        result = self.utils_mixin.get_data_for_posts([post], 'group-post')
+        result = self.utils_mixin.get_data_for_posts([post], 'group_post')
         self.assertTrue('is_admin' in result[str(post.pk)])
 
     def test_get_comments_count_with_transmitted_params(self):
         post = Post.objects.get(pk=1)
         comments = PostComment.objects.filter(post=post)
-        result = self.utils_mixin.get_data_for_posts([post], 'owner-post', comments=comments)
+        result = self.utils_mixin.get_data_for_posts([post], 'owner_post', comments=comments)
         self.assertEqual(2, result[str(1)]['comments_count'])
         post2 = Post.objects.get(pk=2)
         comments2 = PostComment.objects.filter(post=post2)
-        result = self.utils_mixin.get_data_for_posts([post2], 'owner-post', comments=comments2)
+        result = self.utils_mixin.get_data_for_posts([post2], 'owner_post', comments=comments2)
         self.assertEqual(0, result[str(2)]['comments_count'])
 
     def test_get_comments_count_with_none_param(self):
         post = Post.objects.get(pk=1)
-        result = self.utils_mixin.get_data_for_posts([post], 'owner-post')
+        result = self.utils_mixin.get_data_for_posts([post], 'owner_post')
         self.assertEqual(2, result[str(1)]['comments_count'])
         post2 = Post.objects.get(pk=2)
-        result = self.utils_mixin.get_data_for_posts([post2], 'owner-post')
+        result = self.utils_mixin.get_data_for_posts([post2], 'owner_post')
         self.assertEqual(0, result[str(2)]['comments_count'])
 
 

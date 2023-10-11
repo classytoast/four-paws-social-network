@@ -12,5 +12,5 @@ urlpatterns = [
     path('<int:post_id>/imgs/<str:type_of_post>/', AddImgsView.as_view(),
          name='add_images_to_post'),
     path('<int:pk>/delete-post/<str:type_of_post>/', DeletePost.as_view(), name='delete_post'),
-    path('<int:img_id>/delete-img/', delete_img, name='delete_image'),
+    path('<int:img_id>/delete-img/<str:type_of_post>/', delete_img, name='delete_image'),
 ]
